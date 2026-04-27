@@ -25,10 +25,10 @@ async function debug() {
     const employees = await sql`SELECT id, full_name, category FROM employees LIMIT 5`;
     console.log('--- Employees in DB ---');
     console.log(employees);
-    
+
     const count = await sql`SELECT COUNT(*) FROM employees`;
     console.log('Total count:', count[0].count);
-    
+
   } catch (err) {
     console.error('Debug failed:', err);
   } finally {

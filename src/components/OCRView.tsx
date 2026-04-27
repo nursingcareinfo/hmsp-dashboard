@@ -5,12 +5,12 @@
 
 import React, { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { 
-  Upload, 
-  Loader2, 
-  CheckCircle2, 
+import {
+  Upload,
+  Loader2,
+  CheckCircle2,
   XCircle,
-  FileText, 
+  FileText,
   CreditCard,
   User,
   MapPin,
@@ -43,10 +43,10 @@ export default function OCRView() {
 
   const handleStartExtraction = async () => {
     if (files.length === 0) return;
-    
+
     setIsExtracting(true);
     setError(null);
-    
+
     try {
       const base64Promises = files.map(file => {
         return new Promise<string>((resolve, reject) => {
@@ -76,19 +76,19 @@ export default function OCRView() {
 
   const handleCommit = async () => {
     if (!extractedData) return;
-    
+
     setIsSaving(true);
     setError(null);
-    
+
     const { identity, professional_profile, geographic_data, financial_reference, audit_metadata } = extractedData;
-    
+
     try {
       // Cleaner formatting for phone and CNIC to satisfy Supabase regex
       const cleanPhone = (phone: string | null | undefined) => {
         if (!phone) return null;
         // Remove all non-digits
         const digits = phone.replace(/\D/g, '');
-        
+
         let normalized = '';
         if (digits.startsWith('92') && digits.length === 12) {
           normalized = digits;
@@ -101,7 +101,7 @@ export default function OCRView() {
         if (normalized.length === 12) {
           return `+${normalized.slice(0, 2)} ${normalized.slice(2, 5)} ${normalized.slice(5)}`;
         }
-        
+
         return null;
       };
 
@@ -153,7 +153,7 @@ export default function OCRView() {
         } : null,
         phone_primary: cleanPhone(identity.mobileNumber),
         whatsapp_number: cleanPhone(identity.whatsappNumber || identity.mobileNumber),
-        district: geographic_data.district?.split('(')[0]?.trim() || geographic_data.district, 
+        district: geographic_data.district?.split('(')[0]?.trim() || geographic_data.district,
         complete_address: geographic_data.completeAddress,
         position_applied: professional_profile.positionApplied || 'Nurse',
         category: getCategory(professional_profile.positionApplied),
@@ -173,7 +173,7 @@ export default function OCRView() {
 
       console.debug('HMSP Commit Payload:', staffPayload);
       await staffService.createStaff(staffPayload);
-      
+
       alert('Staff successfully committed to Karachi HQ Ledger.');
       setExtractedData(null);
       setFiles([]);
@@ -198,9 +198,9 @@ export default function OCRView() {
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
               Registration Gatekeeper (Multimodal AI Batch)
             </h2>
-            
-            <div 
-              {...getRootProps()} 
+
+            <div
+              {...getRootProps()}
               className={cn(
                 "w-full border-2 border-dashed rounded-2xl p-12 transition-all cursor-pointer mb-8 flex flex-col items-center bg-white/5",
                 isDragActive ? "border-blue-500/50 bg-blue-500/5" : "border-white/10 hover:border-blue-500/30"
@@ -219,7 +219,7 @@ export default function OCRView() {
                   </div>
                   <div className="flex flex-col items-center">
                     <p className="text-sm text-white font-medium">{files.length} Documents Selected</p>
-                    <button 
+                    <button
                       onClick={clearFiles}
                       className="text-[9px] text-red-500 font-black uppercase tracking-widest mt-2 hover:text-red-400 transition-colors"
                     >
@@ -251,11 +251,11 @@ export default function OCRView() {
                 "Run Multimodal Extraction"
               )}
             </button>
-            
+
             {error && <p className="text-red-400 mt-4 text-xs font-bold uppercase tracking-widest">{error}</p>}
           </div>
         ) : (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="space-y-6"
@@ -264,7 +264,7 @@ export default function OCRView() {
               <h2 className="text-xl font-black flex items-center gap-3 tracking-tighter text-white uppercase">
                 <CheckCircle2 className="text-emerald-400" /> AI Extraction Result
               </h2>
-              <button 
+              <button
                 onClick={() => setExtractedData(null)}
                 className="text-[10px] font-black text-slate-500 hover:text-white uppercase tracking-widest transition-colors"
                >
@@ -292,26 +292,26 @@ export default function OCRView() {
                   <User size={14} /> Identity Details
                 </div>
                 <div className="space-y-1">
-                  <DataRow 
-                    label="Full Name" 
-                    value={extractedData.identity.fullName} 
+                  <DataRow
+                    label="Full Name"
+                    value={extractedData.identity.fullName}
                     error={extractedData.audit_metadata.missingFieldsList?.includes('fullName')}
                   />
                   <DataRow label="Father/Husband" value={extractedData.identity.fatherHusbandName} />
-                  <DataRow 
-                    label="CNIC Number" 
-                    value={extractedData.identity.cnicNumber} 
-                    mono 
+                  <DataRow
+                    label="CNIC Number"
+                    value={extractedData.identity.cnicNumber}
+                    mono
                     error={extractedData.audit_metadata.missingFieldsList?.includes('cnicNumber')}
                   />
                   <DataRow label="Date of Birth" value={extractedData.identity.dateOfBirth} mono />
                   <DataRow label="Marital Status" value={extractedData.identity.maritalStatus} />
                   <DataRow label="Gender" value={extractedData.identity.gender} />
                   <DataRow label="Religion" value={extractedData.identity.religion} />
-                  <DataRow 
-                    label="Mobile" 
-                    value={extractedData.identity.mobileNumber} 
-                    mono 
+                  <DataRow
+                    label="Mobile"
+                    value={extractedData.identity.mobileNumber}
+                    mono
                     error={extractedData.audit_metadata.missingFieldsList?.includes('mobileNumber')}
                   />
                   <DataRow label="WhatsApp" value={extractedData.identity.whatsappNumber} mono />
@@ -367,7 +367,7 @@ export default function OCRView() {
                   <DataRow label="Form Address" value={extractedData.geographic_data.completeAddress} />
                   <DataRow label="Bill Anchor" value={extractedData.geographic_data.addressFromBill} />
                   <DataRow label="Method" value={extractedData.financial_reference.preferredPayment} />
-                  
+
                   {extractedData.financial_reference.bankDetails && (
                     <div className="mt-4 p-3 bg-white/5 rounded-lg border border-white/5">
                       <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-2">Extraction: Bank Info</p>
@@ -394,7 +394,7 @@ export default function OCRView() {
                 <div className="flex items-center gap-2 text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] mb-6">
                    Policy Audit & Compliance
                 </div>
-                
+
                 <div className="space-y-4 mb-auto">
                   <div className="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10">
                     <div className={cn(
@@ -434,8 +434,8 @@ export default function OCRView() {
                     </div>
                   </div>
                 </div>
-                
-                <button 
+
+                <button
                   onClick={handleCommit}
                   disabled={isSaving}
                   className="w-full mt-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs rounded-xl uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-all active:scale-[0.98] disabled:grayscale flex items-center justify-center gap-2"

@@ -11,7 +11,7 @@
   --color-brand-dim: #059669;
   --color-accent: #3B82F6;
   --color-emerald-glow: #34D399;
-  
+
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 }
@@ -20,16 +20,16 @@
   body {
     @apply bg-[var(--color-bg)] text-[var(--color-ink)] font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-200;
   }
-  
+
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
-  
+
   ::-webkit-scrollbar-track {
     @apply bg-transparent;
   }
-  
+
   ::-webkit-scrollbar-thumb {
     @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
   }
@@ -39,11 +39,11 @@
   .glass-card {
     @apply bg-slate-900/40 border border-white/5 rounded-xl backdrop-blur-sm shadow-2xl;
   }
-  
+
   .input-field {
     @apply bg-black/40 border border-white/10 rounded-lg px-4 py-2 text-white placeholder:text-slate-600 focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 outline-none transition-all font-mono text-sm;
   }
-  
+
   .btn-primary {
     @apply bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black px-4 py-2 rounded-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-[0.1em] text-xs;
   }

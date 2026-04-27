@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS salary_advances (
 -- 5. Financial Intelligence Views
 -- Daily Margin View: Profit per residence
 CREATE OR REPLACE VIEW real_time_margin_view AS
-SELECT 
+SELECT
   p.id as patient_id,
   p.patient_name,
   p.monthly_package_pkr,
@@ -102,7 +102,7 @@ GROUP BY p.id, p.patient_name, p.monthly_package_pkr;
 -- Staff Accrual View: Monthly earning per employee (handles completed shifts, penalty deductions, and advances)
 CREATE OR REPLACE VIEW staff_accrual_view AS
 WITH shift_stats AS (
-  SELECT 
+  SELECT
     employee_id,
     COUNT(id) FILTER (WHERE attendance_status = 'Completed') as total_shifts_completed,
     COUNT(id) FILTER (WHERE attendance_status = 'Abandoned') as total_shifts_abandoned,
@@ -112,14 +112,14 @@ WITH shift_stats AS (
   GROUP BY employee_id
 ),
 advance_stats AS (
-  SELECT 
+  SELECT
     employee_id,
     SUM(amount_pkr) as total_advances
   FROM salary_advances
   WHERE status = 'Pending'
   GROUP BY employee_id
 )
-SELECT 
+SELECT
   e.id as employee_id,
   e.full_name,
   e.emp_no,

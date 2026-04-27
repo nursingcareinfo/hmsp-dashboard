@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
+import {
+  ChevronLeft,
+  ChevronRight,
   Calendar as CalendarIcon,
   Clock,
   User,
@@ -80,7 +80,7 @@ export default function CalendarView() {
             </h2>
             <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">Operational Shift Ledger • {monthNames[month]} {year}</p>
           </div>
-          
+
           <div className="flex items-center gap-4">
              <button onClick={prevMonth} className="p-2 hover:bg-white/5 rounded-lg border border-white/5 transition-colors">
                <ChevronLeft size={20} className="text-slate-400" />
@@ -101,7 +101,7 @@ export default function CalendarView() {
                  <div key={d} className="text-[10px] text-center font-black uppercase tracking-widest text-slate-500 py-2 border-b border-white/5">{d}</div>
                ))}
              </div>
-             
+
              <div className="grid grid-cols-7 flex-1 overflow-auto scrollbar-none relative">
                 {loading && (
                   <div className="absolute inset-0 bg-slate-950/20 backdrop-blur-sm z-10 flex items-center justify-center">
@@ -110,14 +110,14 @@ export default function CalendarView() {
                 )}
                 {days.map((date, i) => {
                   if (!date) return <div key={i} className="aspect-square border border-white/5 opacity-10"></div>;
-                  
+
                   const dayShifts = getDayShifts(date);
                   const isSelected = selectedDate?.toDateString() === date.toDateString();
                   const isToday = new Date().toDateString() === date.toDateString();
 
                   return (
-                    <div 
-                      key={i} 
+                    <div
+                      key={i}
                       onClick={() => setSelectedDate(date)}
                       className={cn(
                         "aspect-square border border-white/5 p-2 cursor-pointer transition-all hover:bg-white/5 flex flex-col items-start gap-1",
@@ -129,15 +129,15 @@ export default function CalendarView() {
                         "text-[10px] font-mono font-bold",
                         isSelected ? "text-blue-400" : "text-slate-500"
                       )}>{date.getDate()}</span>
-                      
+
                       <div className="flex flex-col gap-1 w-full overflow-hidden">
                          {dayShifts.map((s, idx) => (
-                           <div 
+                           <div
                              key={idx}
                              title={`${s.staff?.full_name} - ${s.shift_type}`}
                              className={cn(
                                "h-1.5 rounded-full w-full",
-                               s.is_completed ? "bg-emerald-500/40" : 
+                               s.is_completed ? "bg-emerald-500/40" :
                                s.is_abandoned ? "bg-red-500/40" : "bg-slate-500/40"
                              )}
                            />
@@ -164,7 +164,7 @@ export default function CalendarView() {
                     <h4 className="text-[10px] text-white font-mono font-bold uppercase tracking-widest px-2 mb-4">
                       {selectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </h4>
-                    
+
                     {selectedDayShifts.length === 0 ? (
                       <div className="p-8 text-center border border-dashed border-white/5 rounded-xl opacity-40">
                         <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest leading-relaxed">No shifts logged for<br/>this date.</p>
@@ -190,7 +190,7 @@ export default function CalendarView() {
                             {s.attendance_status}
                           </div>
                         </div>
-                        
+
                         <div className="pt-2 border-t border-white/5 flex justify-between items-center">
                            <div className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Rate (PKR)</div>
                            <div className="text-xs font-mono font-bold text-emerald-400">
@@ -201,7 +201,7 @@ export default function CalendarView() {
 
                         {s.attendance_status === 'Scheduled' && (
                           <div className="pt-4 grid grid-cols-2 gap-2">
-                            <button 
+                            <button
                               onClick={async () => {
                                 await shiftService.updateShiftStatus(s.id, 'Completed');
                                 const data = await shiftService.getShiftsByMonth(year, month);
@@ -211,7 +211,7 @@ export default function CalendarView() {
                             >
                               <CheckCircle2 size={12} /> Complete
                             </button>
-                            <button 
+                            <button
                               onClick={async () => {
                                 if (confirm("Mark shift as abandoned? This will apply a penalty (withholding one day's pay) as per policy.")) {
                                   await shiftService.updateShiftStatus(s.id, 'Abandoned', true);
@@ -227,7 +227,7 @@ export default function CalendarView() {
                         )}
                       </div>
                     ))}
-                    
+
                     <button className="w-full mt-4 py-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black text-xs rounded-xl uppercase tracking-[0.2em] hover:bg-emerald-500/20 transition-all">
                        Log New Manual Override
                     </button>

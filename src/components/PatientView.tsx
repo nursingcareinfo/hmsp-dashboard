@@ -4,11 +4,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { 
-  ClipboardList, 
-  Clock, 
-  MapPin, 
-  User, 
+import {
+  ClipboardList,
+  Clock,
+  MapPin,
+  User,
   CreditCard,
   Plus,
   AlertCircle,
@@ -97,7 +97,7 @@ export default function PatientView() {
           <h2 className="text-xl font-black text-white uppercase tracking-tighter">Patient Admissions</h2>
           <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">Karachi Active Households Ledger</p>
         </div>
-        <button 
+        <button
           onClick={() => setShowForm(!showForm)}
           className="btn-primary flex items-center gap-2 px-6"
         >
@@ -111,7 +111,7 @@ export default function PatientView() {
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">Full Name</label>
-              <input 
+              <input
                 required
                 value={formData.patient_name}
                 onChange={e => setFormData({ ...formData, patient_name: e.target.value })}
@@ -120,7 +120,7 @@ export default function PatientView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">CNIC (XXXXX-XXXXXXX-X)</label>
-              <input 
+              <input
                 placeholder="42101-1234567-1"
                 value={formData.cnic}
                 onChange={e => setFormData({ ...formData, cnic: e.target.value })}
@@ -129,7 +129,7 @@ export default function PatientView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">Mobile Number</label>
-              <input 
+              <input
                 required
                 value={formData.mobile_number}
                 onChange={e => setFormData({ ...formData, mobile_number: e.target.value })}
@@ -138,7 +138,7 @@ export default function PatientView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">District (Karachi)</label>
-              <select 
+              <select
                 required
                 value={formData.district}
                 onChange={e => setFormData({ ...formData, district: e.target.value })}
@@ -156,7 +156,7 @@ export default function PatientView() {
             </div>
             <div className="space-y-2 md:col-span-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">Complete Address</label>
-              <textarea 
+              <textarea
                 value={formData.complete_address}
                 onChange={e => setFormData({ ...formData, complete_address: e.target.value })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40 h-24"
@@ -164,7 +164,7 @@ export default function PatientView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">Service Type</label>
-              <select 
+              <select
                 value={formData.service_type}
                 onChange={e => setFormData({ ...formData, service_type: e.target.value })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
@@ -176,7 +176,7 @@ export default function PatientView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">Monthly Package (PKR)</label>
-              <input 
+              <input
                 type="number"
                 required
                 value={formData.monthly_package_pkr}
@@ -185,7 +185,7 @@ export default function PatientView() {
               />
             </div>
             <div className="space-y-2 text-right md:col-span-2 mt-4">
-              <button 
+              <button
                 type="submit"
                 disabled={isSubmitting}
                 className="px-8 py-4 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-slate-950 text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-xl shadow-emerald-500/20 flex items-center gap-2 ml-auto"
@@ -225,8 +225,8 @@ export default function PatientView() {
                     <span className="w-1 h-1 bg-slate-800 rounded-full"></span>
                     <span className={cn(
                       "px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border",
-                      patient.status === 'Active' 
-                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
+                      patient.status === 'Active'
+                        ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                         : "bg-blue-500/10 text-blue-400 border-blue-500/20"
                     )}>
                       {patient.status}
@@ -278,7 +278,7 @@ export default function PatientView() {
                     </div>
                     <div className="max-w-[100px]">
                       <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest text-right mb-1">Decided Rate</p>
-                      <input 
+                      <input
                         type="number"
                         placeholder="PKR"
                         className="w-full bg-slate-900 border border-white/5 rounded px-2 py-1 text-xs font-mono font-bold text-emerald-400 outline-none focus:border-emerald-500/40 text-right"
@@ -307,7 +307,7 @@ export default function PatientView() {
                     </div>
                     <div className="max-w-[100px]">
                        <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest text-right mb-1">Decided Rate</p>
-                       <input 
+                       <input
                         type="number"
                         placeholder="PKR"
                         className="w-full bg-slate-900 border border-white/5 rounded px-2 py-1 text-xs font-mono font-bold text-emerald-400 outline-none focus:border-emerald-500/40 text-right"

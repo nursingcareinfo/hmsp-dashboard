@@ -4,12 +4,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, 
-  Users, 
-  UserPlus, 
-  ClipboardList, 
-  Wallet, 
+import {
+  LayoutDashboard,
+  Users,
+  UserPlus,
+  ClipboardList,
+  Wallet,
   MessageSquare,
   Settings,
   LogOut,
@@ -83,7 +83,7 @@ export default function App() {
               HMSP <span className="text-emerald-500">HQ</span>
             </motion.div>
           )}
-          <button 
+          <button
             onClick={() => setSidebarOpen(!isSidebarOpen)}
             className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500"
           >
@@ -98,8 +98,8 @@ export default function App() {
               onClick={() => setActiveView(item.id as View)}
               className={cn(
                 "w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 group uppercase tracking-[0.15em] text-[10px] font-black",
-                activeView === item.id 
-                  ? "bg-white/10 text-white border border-white/10" 
+                activeView === item.id
+                  ? "bg-white/10 text-white border border-white/10"
                   : "hover:bg-white/5 text-slate-500 hover:text-slate-300"
               )}
             >
@@ -133,7 +133,7 @@ export default function App() {
               Manual Management • Karachi HQ • Karachi-S1
             </p>
           </div>
-          
+
           <div className="flex gap-4 md:gap-8 items-center justify-between md:justify-end">
             <div className="text-right">
               <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mb-1">Estimated MTD Margin</p>
@@ -174,7 +174,7 @@ export default function App() {
             {activeView === 'matchmaker' && <MatchmakerView />}
             {activeView === 'attendance' && <CalendarView />}
             {activeView === 'finance' && <FinanceView />}
-            
+
             {activeView === 'whatsapp' && (
               <div className="glass-card p-12 text-center opacity-50">
                 <MessageSquare size={48} className="mx-auto mb-4" />
@@ -207,4 +207,3 @@ export default function App() {
 }
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-

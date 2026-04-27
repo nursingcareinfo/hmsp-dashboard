@@ -4,12 +4,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Filter, 
-  MoreVertical, 
-  Phone, 
-  MapPin, 
+import {
+  Search,
+  Filter,
+  MoreVertical,
+  Phone,
+  MapPin,
   Star,
   Plus,
   Users,
@@ -122,7 +122,7 @@ export default function StaffView() {
 
   const handleGiveAdvance = async () => {
     if (!selectedStaffForAdvance || !advanceAmount) return;
-    
+
     setIsSubmittingAdvance(true);
     try {
       await advanceService.addAdvance({
@@ -143,13 +143,13 @@ export default function StaffView() {
   };
 
   const filteredStaff = staffList.filter(s => {
-    const matchesSearch = (s.full_name || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const matchesSearch = (s.full_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                           (s.district || '').toLowerCase().includes(searchTerm.toLowerCase());
-    
+
     if (categoryFilter === 'Action Required') {
       return matchesSearch && s.critical_missing_info;
     }
-    
+
     const matchesCategory = categoryFilter === 'All' || s.position_applied === categoryFilter || s.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
@@ -172,7 +172,7 @@ export default function StaffView() {
           </h2>
           <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mt-0.5">Manage and register Karachi medical professionals</p>
         </div>
-        <button 
+        <button
           onClick={() => setShowForm(!showForm)}
           className="btn-primary flex items-center gap-2 px-6"
         >
@@ -186,7 +186,7 @@ export default function StaffView() {
           <form onSubmit={handleRegisterStaff} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">Full Name</label>
-              <input 
+              <input
                 required
                 value={formData.full_name}
                 onChange={e => setFormData({ ...formData, full_name: e.target.value })}
@@ -195,7 +195,7 @@ export default function StaffView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">CNIC (XXXXX-XXXXXXX-X)</label>
-              <input 
+              <input
                 required
                 placeholder="42101-1234567-1"
                 value={formData.cnic_number}
@@ -205,7 +205,7 @@ export default function StaffView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">Mobile Number</label>
-              <input 
+              <input
                 required
                 value={formData.phone_primary}
                 onChange={e => setFormData({ ...formData, phone_primary: e.target.value })}
@@ -214,7 +214,7 @@ export default function StaffView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">District</label>
-              <select 
+              <select
                 required
                 value={formData.district}
                 onChange={e => setFormData({ ...formData, district: e.target.value })}
@@ -228,7 +228,7 @@ export default function StaffView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">Category</label>
-              <select 
+              <select
                 required
                 value={formData.category}
                 onChange={e => setFormData({ ...formData, category: e.target.value })}
@@ -241,7 +241,7 @@ export default function StaffView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">Position Applied</label>
-              <input 
+              <input
                 required
                 value={formData.position_applied}
                 onChange={e => setFormData({ ...formData, position_applied: e.target.value })}
@@ -251,7 +251,7 @@ export default function StaffView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">Experience Years</label>
-              <input 
+              <input
                 type="number"
                 value={formData.experience_years}
                 onChange={e => setFormData({ ...formData, experience_years: parseInt(e.target.value) || 0 })}
@@ -260,7 +260,7 @@ export default function StaffView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">Expected Salary (PKR)</label>
-              <input 
+              <input
                 type="number"
                 value={formData.expected_salary_pkr}
                 onChange={e => setFormData({ ...formData, expected_salary_pkr: parseInt(e.target.value) || 0 })}
@@ -268,7 +268,7 @@ export default function StaffView() {
               />
             </div>
             <div className="space-y-2 text-right md:col-span-2 mt-4">
-              <button 
+              <button
                 type="submit"
                 disabled={isSubmitting}
                 className="px-8 py-4 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-slate-950 text-xs font-black uppercase tracking-widest rounded-xl transition-all shadow-xl shadow-emerald-500/20 flex items-center gap-2 ml-auto"
@@ -284,15 +284,15 @@ export default function StaffView() {
       <div className="flex flex-wrap gap-4 items-center justify-between">
         <div className="relative flex-1 min-w-[300px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-ink-dim)]" size={18} />
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Search staff by name or area..."
             className="w-full pl-10 input-field"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
+
         <div className="flex gap-2 mb-2 w-full overflow-x-auto pb-2 scrollbar-hide">
           {['All', 'Action Required', ...STAFF_CATEGORIES].map(cat => (
             <button
@@ -300,8 +300,8 @@ export default function StaffView() {
               onClick={() => setCategoryFilter(cat)}
               className={cn(
                 "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all shrink-0 whitespace-nowrap",
-                categoryFilter === cat 
-                  ? (cat === 'Action Required' ? "bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]" : "bg-emerald-500 text-slate-950") 
+                categoryFilter === cat
+                  ? (cat === 'Action Required' ? "bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]" : "bg-emerald-500 text-slate-950")
                   : "bg-slate-900 text-slate-500 hover:text-slate-300 border border-white/5"
               )}
             >
@@ -315,8 +315,8 @@ export default function StaffView() {
       {filteredStaff.length > 0 ? (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {filteredStaff.map((staff) => (
-            <div 
-              key={staff.id} 
+            <div
+              key={staff.id}
               className={cn(
                 "glass-card hover:border-white/20 transition-all group relative overflow-hidden",
                 staff.critical_missing_info && "border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)] ring-1 ring-red-500/20"
@@ -368,7 +368,7 @@ export default function StaffView() {
                   <div className="bg-slate-900/50 p-3 rounded-xl border border-white/5 relative group/info">
                     <p className="text-slate-500 text-[10px] uppercase font-black tracking-widest mb-1">Expected Salary</p>
                     <div className="font-mono font-bold text-emerald-400 text-sm">PKR {staff.expected_salary_pkr?.toLocaleString() || '-'}</div>
-                    
+
                     {staff.relative_info && (
                       <div className="absolute inset-0 bg-slate-900 border border-red-500/20 rounded-xl opacity-0 group-hover/info:opacity-100 transition-opacity flex flex-col justify-center px-4 pointer-events-none">
                         <p className="text-[8px] text-red-400 uppercase font-black tracking-widest mb-0.5">Emergency Contact ({staff.relative_info.relationship})</p>
@@ -388,7 +388,7 @@ export default function StaffView() {
                     ))}
                   </div>
                   <div className="flex items-center gap-3">
-                      <button 
+                      <button
                         onClick={() => setSelectedStaffForAdvance(staff)}
                         className="flex items-center gap-1.5 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/10 rounded-lg transition-all"
                       >
@@ -397,7 +397,7 @@ export default function StaffView() {
                       <button className="text-blue-400 hover:scale-110 transition-transform">
                         <Phone size={20} />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleToggleAvailability(staff.id, staff.is_available)}
                         className={cn(
                           "px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest border transition-all active:scale-95",
@@ -419,12 +419,12 @@ export default function StaffView() {
           </div>
           <h3 className="text-sm font-black text-white uppercase tracking-widest">No Staff Members Found</h3>
           <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-2 max-w-xs leading-relaxed">
-            {searchTerm || categoryFilter !== 'All' 
-              ? "We couldn't find any staff matching your current search or filters." 
+            {searchTerm || categoryFilter !== 'All'
+              ? "We couldn't find any staff matching your current search or filters."
               : "The HQ Ledger is currently empty. Use the Register button or AI OCR to add professionals."}
           </p>
           {(searchTerm || categoryFilter !== 'All') && (
-            <button 
+            <button
               onClick={() => { setSearchTerm(''); setCategoryFilter('All'); }}
               className="mt-6 text-[10px] font-black text-emerald-400 uppercase tracking-widest border-b border-emerald-400/30 hover:border-emerald-400 transition-all pb-1"
             >
@@ -442,7 +442,7 @@ export default function StaffView() {
               <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
                 <Banknote size={16} /> Disburse Advance
               </h3>
-              <button 
+              <button
                 onClick={() => setSelectedStaffForAdvance(null)}
                 className="text-slate-500 hover:text-white"
               >
@@ -454,11 +454,11 @@ export default function StaffView() {
               <div>
                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-2">Recipient</p>
                 <p className="text-sm font-bold text-white mb-4">{selectedStaffForAdvance.full_name}</p>
-                
+
                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-2">Amount (PKR)</p>
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-500 font-bold ml-1">Rs.</span>
-                  <input 
+                  <input
                     type="number"
                     value={advanceAmount}
                     onChange={(e) => setAdvanceAmount(e.target.value)}

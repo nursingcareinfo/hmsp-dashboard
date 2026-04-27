@@ -4,11 +4,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { 
-  TrendingUp, 
-  TrendingDown, 
-  DollarSign, 
-  Users, 
+import {
+  TrendingUp,
+  TrendingDown,
+  DollarSign,
+  Users,
   ArrowUpRight,
   Loader2,
   Calendar
@@ -30,7 +30,7 @@ export default function FinanceView() {
           supabase.from('real_time_margin_view').select('*'),
           supabase.from('staff_accrual_view').select('*')
         ]);
-        
+
         if (marginsRes.data) setMargins(marginsRes.data);
         if (accrualsRes.data) setAccruals(accrualsRes.data);
       } catch (error) {

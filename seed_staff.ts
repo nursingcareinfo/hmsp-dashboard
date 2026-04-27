@@ -108,9 +108,9 @@ async function seed() {
   try {
     console.log('Cleaning old records...');
     await sql`DELETE FROM employees`;
-    
+
     console.log('Inserting new mock staff...');
-    
+
     // Ensure all objects have exactly the same keys to avoid UNDEFINED_VALUE
     const keys = [...new Set(mockStaff.flatMap(obj => Object.keys(obj)))];
     const normalizedStaff = mockStaff.map(s => {
@@ -123,7 +123,7 @@ async function seed() {
 
     await sql`INSERT INTO employees ${sql(normalizedStaff)}`;
     console.log('✅ 5 Staff members seeded successfully');
-    
+
   } catch (err) {
     console.error('❌ Seeding failed:', err);
   } finally {

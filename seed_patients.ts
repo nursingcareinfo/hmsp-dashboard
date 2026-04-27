@@ -22,7 +22,7 @@ async function seedPatients() {
   try {
     // Get some staff IDs to assign
     const staff = await sql`SELECT id FROM employees LIMIT 3`;
-    
+
     const mockPatients = [
       {
         patient_name: 'Mrs. Fatima Zahra',
@@ -62,7 +62,7 @@ async function seedPatients() {
     ];
 
     await sql`DELETE FROM patients`;
-    
+
     // Ensure all objects have same keys
     const keys = [...new Set(mockPatients.flatMap(obj => Object.keys(obj)))];
     const normalized = mockPatients.map(p => {
@@ -75,7 +75,7 @@ async function seedPatients() {
 
     await sql`INSERT INTO patients ${sql(normalized)}`;
     console.log('✅ 4 Patients seeded');
-    
+
     // Also disable RLS for patients
     await sql`ALTER TABLE patients DISABLE ROW LEVEL SECURITY`;
     console.log('🔓 RLS disabled for patients');

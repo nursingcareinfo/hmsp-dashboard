@@ -21,7 +21,7 @@ export const patientService = {
       .from('patients')
       .select('*')
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return data as Patient[];
   },
@@ -32,7 +32,7 @@ export const patientService = {
       .insert([patient])
       .select()
       .single();
-    
+
     if (error) throw error;
     return data as Patient;
   },
@@ -42,7 +42,7 @@ export const patientService = {
       .from('patients')
       .select('*', { count: 'exact', head: true })
       .eq('status', 'Active');
-    
+
     if (error) throw error;
     return count || 0;
   },
@@ -52,7 +52,7 @@ export const patientService = {
       .from('patients')
       .select('*', { count: 'exact', head: true })
       .eq('status', 'Pending');
-    
+
     if (error) throw error;
     return count || 0;
   }

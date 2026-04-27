@@ -104,7 +104,7 @@ export default function DashboardView() {
           </h2>
           <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mt-0.5">Real-time sync with remote Ledger</p>
         </div>
-        <button 
+        <button
           onClick={() => window.location.reload()}
           className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors border border-white/5"
         >
@@ -125,15 +125,15 @@ export default function DashboardView() {
               </div>
               <span className={cn(
                 "text-[9px] font-black px-2 py-0.5 rounded border uppercase tracking-widest",
-                stat.trend.startsWith('+') 
-                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
+                stat.trend.startsWith('+')
+                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                   : "bg-red-500/10 text-red-400 border-red-500/20"
               )}>
                 {stat.trend}
               </span>
             </div>
             <div className="absolute bottom-0 left-0 h-1 bg-emerald-500/20 w-full overflow-hidden">
-               <motion.div 
+               <motion.div
                  initial={{ width: 0 }}
                  animate={{ width: '60%' }}
                  className="h-full bg-emerald-500/40"
@@ -152,19 +152,19 @@ export default function DashboardView() {
            <div className="h-[300px] w-full">
              <ResponsiveContainer width="100%" height="100%">
                <BarChart data={chartData}>
-                 <XAxis 
-                   dataKey="name" 
-                   axisLine={false} 
-                   tickLine={false} 
-                   tick={{ fill: '#64748B', fontSize: 10, fontWeight: 700 }} 
+                 <XAxis
+                   dataKey="name"
+                   axisLine={false}
+                   tickLine={false}
+                   tick={{ fill: '#64748B', fontSize: 10, fontWeight: 700 }}
                    dy={10}
                  />
                  <YAxis hide />
-                 <Tooltip 
+                 <Tooltip
                    cursor={{ fill: 'rgba(255,255,255,0.02)' }}
-                   contentStyle={{ 
-                     backgroundColor: '#0F172A', 
-                     border: '1px solid rgba(255,255,255,0.1)', 
+                   contentStyle={{
+                     backgroundColor: '#0F172A',
+                     border: '1px solid rgba(255,255,255,0.1)',
                      borderRadius: '8px',
                      fontSize: '10px',
                      fontWeight: '700',

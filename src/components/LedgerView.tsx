@@ -4,11 +4,11 @@
  */
 
 import React, { useState } from 'react';
-import { 
-  Wallet, 
-  TrendingUp, 
-  Package, 
-  UserMinus, 
+import {
+  Wallet,
+  TrendingUp,
+  Package,
+  UserMinus,
   CheckCircle2,
   AlertTriangle
 } from 'lucide-react';
@@ -74,7 +74,7 @@ export default function LedgerView() {
             {LEDGER_DATA.map((row, i) => {
               const totalSalaries = row.assignments.reduce((sum, a) => sum + a.rate, 0);
               const marginPct = Math.round(((row.packagePrice - totalSalaries) / row.packagePrice) * 100);
-              
+
               return (
                 <div key={i} className="p-4 bg-emerald-950/20 border border-emerald-500/20 rounded-xl relative">
                   <div className="flex justify-between items-start mb-4">
@@ -86,7 +86,7 @@ export default function LedgerView() {
                       <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Margin: {marginPct}%</p>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     {row.assignments.map((assignment, j) => (
                       <div key={j} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/5 group hover:border-emerald-500/30 transition-all">
@@ -99,16 +99,16 @@ export default function LedgerView() {
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="text-[10px] text-slate-500 font-mono">PKR</span>
-                          <input 
-                            type="text" 
-                            defaultValue={assignment.rate.toLocaleString()} 
-                            className="w-20 bg-black/40 border border-white/10 rounded px-2 py-1 text-xs text-emerald-400 font-mono focus:outline-none focus:border-emerald-500/50" 
+                          <input
+                            type="text"
+                            defaultValue={assignment.rate.toLocaleString()}
+                            className="w-20 bg-black/40 border border-white/10 rounded px-2 py-1 text-xs text-emerald-400 font-mono focus:outline-none focus:border-emerald-500/50"
                           />
                         </div>
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="mt-4 pt-3 border-t border-white/5 flex justify-between items-center">
                     <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Verify Shift Completion</div>
                     <button className="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-[10px] rounded border border-emerald-500/30 uppercase font-bold hover:bg-emerald-500/30 transition-colors">
@@ -125,7 +125,7 @@ export default function LedgerView() {
         <div className="space-y-6">
           <div className="bg-slate-900/40 border border-white/5 rounded-xl p-6">
             <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Financial Ledger</h2>
-            
+
             <div className="space-y-8">
               <div>
                 <p className="text-[10px] text-slate-500 uppercase tracking-widest mb-2 font-bold">Total Staff Liabilities</p>

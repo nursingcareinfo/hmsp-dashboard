@@ -4,11 +4,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Users, 
-  Home, 
-  ArrowRight, 
-  MapPin, 
+import {
+  Users,
+  Home,
+  ArrowRight,
+  MapPin,
   Star,
   CheckCircle2,
   Plus,
@@ -33,7 +33,7 @@ export default function MatchmakerView() {
           staffService.getAllStaff(),
           patientService.getAllPatients()
         ]);
-        
+
         setStaff(allStaff.filter(s => s.is_available && s.is_active));
         setPatients(allPatients.filter(p => p.status === 'Pending'));
       } catch (error) {
@@ -49,7 +49,7 @@ export default function MatchmakerView() {
     if (selectedStaffId && selectedPatientId) {
       const selectedStaff = staff.find(s => s.id === selectedStaffId);
       const selectedPatient = patients.find(p => p.id === selectedPatientId);
-      
+
       alert(`Assigned ${selectedStaff?.full_name} to ${selectedPatient?.patient_name}`);
       setSelectedStaffId(null);
       setSelectedPatientId(null);
@@ -72,8 +72,8 @@ export default function MatchmakerView() {
             <h2 className="text-xl font-black text-white uppercase tracking-tighter">Manual Assignment Wall</h2>
             <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">Karachi Operations Hub • Secure Matchmaking</p>
           </div>
-          
-          <button 
+
+          <button
             disabled={!selectedStaffId || !selectedPatientId}
             onClick={handleMatch}
             className="w-full max-w-xs py-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs rounded-xl uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-all active:scale-[0.98] disabled:grayscale flex items-center justify-center gap-2"
@@ -99,8 +99,8 @@ export default function MatchmakerView() {
                   onClick={() => setSelectedStaffId(s.id)}
                   className={cn(
                     "w-full text-left bg-slate-900/40 border p-4 rounded-xl transition-all group",
-                    selectedStaffId === s.id 
-                      ? "border-blue-500/50 bg-blue-500/5 shadow-lg shadow-blue-500/10" 
+                    selectedStaffId === s.id
+                      ? "border-blue-500/50 bg-blue-500/5 shadow-lg shadow-blue-500/10"
                       : "border-white/5 hover:border-white/10"
                   )}
                 >
@@ -139,8 +139,8 @@ export default function MatchmakerView() {
                   onClick={() => setSelectedPatientId(p.id)}
                   className={cn(
                     "w-full text-left bg-slate-900/40 border p-4 rounded-xl transition-all group",
-                    selectedPatientId === p.id 
-                      ? "border-emerald-500/50 bg-emerald-500/5 shadow-lg shadow-emerald-500/10" 
+                    selectedPatientId === p.id
+                      ? "border-emerald-500/50 bg-emerald-500/5 shadow-lg shadow-emerald-500/10"
                       : "border-white/5 hover:border-white/10"
                   )}
                 >
@@ -154,8 +154,8 @@ export default function MatchmakerView() {
                     </div>
                     <div className={cn(
                       "w-8 h-8 rounded-full border flex items-center justify-center transition-all",
-                      selectedPatientId === p.id 
-                        ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400" 
+                      selectedPatientId === p.id
+                        ? "bg-emerald-500/20 border-emerald-500/30 text-emerald-400"
                         : "bg-white/5 border-white/5 text-slate-700"
                     )}>
                       <Plus size={16} />

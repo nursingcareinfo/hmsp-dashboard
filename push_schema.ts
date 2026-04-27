@@ -30,10 +30,10 @@ async function runSchema() {
     `);
 
     const schemaSql = readFileSync(join(process.cwd(), 'supabase_schema.sql'), 'utf8');
-    
+
     // Execute the schema
     await sql.unsafe(schemaSql);
-    
+
     console.log('✅ Robust Schema V2 executed successfully! Tables and Views created.');
   } catch (error) {
     console.error('❌ Failed to push schema:', error);
