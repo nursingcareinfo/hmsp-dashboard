@@ -11,6 +11,7 @@ import {
   ClipboardList,
   Wallet,
   MessageSquare,
+  Brain,
   Settings,
   LogOut,
   ChevronRight,
@@ -21,7 +22,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { cn } from './lib/utils';
 import { supabase } from './lib/supabase';
 
-type View = 'dashboard' | 'staff' | 'patients' | 'matchmaker' | 'finance' | 'ocr' | 'attendance';
+type View = 'dashboard' | 'staff' | 'patients' | 'matchmaker' | 'finance' | 'ocr' | 'attendance' | 'memory';
 
 import StaffView from './components/StaffView';
 import OCRView from './components/OCRView';
@@ -31,6 +32,7 @@ import LedgerView from './components/LedgerView';
 import DashboardView from './components/DashboardView';
 import CalendarView from './components/CalendarView';
 import FinanceView from './components/FinanceView';
+import MemoryView from './components/MemoryView';
 
 export default function App() {
   const [activeView, setActiveView] = useState<View>('dashboard');
@@ -42,6 +44,7 @@ export default function App() {
     { id: 'ocr', label: 'Registrar', icon: UserPlus },
     { id: 'patients', label: 'Patients', icon: ClipboardList },
     { id: 'attendance', label: 'Calendar', icon: ClipboardList },
+    { id: 'memory', label: 'AI Memory', icon: Brain },
     { id: 'finance', label: 'Payouts', icon: Wallet },
   ];
 
@@ -173,6 +176,7 @@ export default function App() {
             {activeView === 'patients' && <PatientView />}
             {activeView === 'matchmaker' && <MatchmakerView />}
             {activeView === 'attendance' && <CalendarView />}
+            {activeView === 'memory' && <MemoryView />}
             {activeView === 'finance' && <FinanceView />}
 
             {activeView === 'whatsapp' && (
