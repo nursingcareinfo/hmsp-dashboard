@@ -94,7 +94,7 @@ export const staffService = {
 
     const { data, error } = await supabase
       .from('employees')
-      .insert([staffData])
+      .upsert(staffData, { onConflict: 'cnic_number' })
       .select()
       .single();
 
