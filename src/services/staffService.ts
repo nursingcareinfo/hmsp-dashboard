@@ -72,7 +72,36 @@ export const staffService = {
   },
 
   async createStaff(staffData: Partial<Staff>) {
-    // Generate emp_no if not present
+    const cnic = staffData.cnic_number;
+
+    // Check if staff with this CNIC already exists
+    if (cnic) {
+      const { data: existing, error: fetchErr } = await supabase
+        .from('employees')
+        .select('id, emp_no')
+        .eq('cnic_number', cnic)
+        .maybeSingle();
+
+      if (fetchErr) throw fetchErr;
+
+      if (existing) {
+        // Update existing record, preserve emp_no and timestamps
+        const { data, error } = await supabase
+          .from('employees')
+          .update({
+            ...staffData,
+            // emp_no stays as-is; updated_at handled by DB trigger or default
+          })
+          .eq('id', existing.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data as Staff;
+      }
+    }
+
+    // New staff: generate emp_no
     if (!staffData.emp_no) {
       const { data: staffBatch } = await supabase
         .from('employees')
@@ -94,7 +123,7 @@ export const staffService = {
 
     const { data, error } = await supabase
       .from('employees')
-      .upsert(staffData, { onConflict: 'cnic_number' })
+      .insert([staffData])
       .select()
       .single();
 
