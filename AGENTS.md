@@ -1,77 +1,107 @@
-# AGENTS.md - HMSP Dashboard
+# AGENTS.md — HMSP Dashboard
 
-Compact instructions for agents working in this repository.
+## Project
 
-## Project Overview
+HMSP (Home Medical Services Provider) — React 19 + Vite + Supabase dashboard for healthcare staff management in Karachi.
 
-HMSP Dashboard (Home Medical Services Provider) – A React + Vite + Supabase dashboard for healthcare staff management in Karachi, Pakistan. Features staff CRUD, patient records, document OCR via Gemini AI, finance ledger, and calendar/attendance.
+## Quick Start
+
+```bash
+npm install && npm run dev    # localhost:3000
+npm run build                 # production build → dist/
+npm run lint                  # TypeScript type check
+```
+
+**Dev server**: Port 3000, binds to `0.0.0.0` (local network accessible).
+
+**Build output**: `dist/` with base path `/hmsp-dashboard/`.
 
 ## Tech Stack
 
-- **Frontend**: React 19, TypeScript, Vite 6, TailwindCSS 4
-- **Backend**: Supabase (PostgreSQL)
-- **AI**: Google Gemini API (gemini-flash-latest) for document OCR
-- **Deployment**: AI Studio
+- **Frontend**: React 19, TypeScript 5.8, Vite 6, TailwindCSS 4
+- **AI**: Google Gemini API via `@google/genai` (gemini-flash-latest)
+- **Backend**: Supabase (PostgreSQL) at `https://zumysyuenxrylauzvokl.supabase.co`
+- **Deployment**: GitHub Pages — auto-deploys on push to main
+- **Live URL**: https://nursingcareinfo.github.io/hmsp-dashboard/
 
-## Developer Commands
+### Key Packages
 
-```bash
-npm install          # Install dependencies
-npm run dev         # Start dev server at localhost:3000
-npm run build       # Production build to dist/
-npm run lint        # TypeScript check (tsc --noEmit)
-```
-
-**Dev server**: Runs on port 3000, binds to `0.0.0.0` for local network access.
+| Package | Purpose |
+|---|---|
+| `@google/genai` | Gemini API client (NOT google-generativeai) |
+| `motion` + `motion/react` | Animations (import from `motion/react`) |
+| `recharts` | Charts |
+| `date-fns` | Date utilities |
+| `react-dropzone` | File uploads (CNIC, CV, Bill) |
+| `lucide-react` | Icons |
+| `clsx` + `tailwind-merge` | Class name utility (`cn()`) |
 
 ## Environment Variables
 
-Copy `.env.example` to `.env.local` and configure:
+Copy `.env.example` → `.env.local`:
 
 | Variable | Required | Notes |
-|----------|----------|-------|
-| `GEMINI_API_KEY` | Yes | For OCR/document extraction |
-| `VITE_SUPABASE_URL` | Yes | Supabase project URL |
-| `VITE_SUPABASE_ANON_KEY` | Yes | Supabase anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | No | Supabase service role key (keep secret) |
-| `DATABASE_URL` | No | PostgreSQL connection string |
-| `SUPABASE_ACCESS_TOKEN` | No | Supabase management access token |
+|---|---|---|
+| `GEMINI_API_KEY` | Yes | Injected at runtime from AI Studio Secrets |
+| `VITE_SUPABASE_URL` | Yes | Must have `VITE_` prefix for browser access |
+| `VITE_SUPABASE_ANON_KEY` | Yes | Must have `VITE_` prefix |
+| `SUPABASE_SERVICE_ROLE_KEY` | No | Keep secret — server-side only |
 
 ## Architecture
 
-- **Entry**: `src/main.tsx` → `src/App.tsx`
-- **Components**: `src/components/*.tsx` (Dashboard, Staff, Patient, OCR, Finance, Calendar, Matchmaker, Ledger)
-- **Services**: `src/services/*.ts` (staff, patient, shift, advance, gemini)
-- **Lib**: `src/lib/supabase.ts` (Supabase client), `src/lib/utils.ts` (cn utilities)
-- **Supabase tables**: `employees`, `patients`, `manual_shifts`, `salary_advances`
-- **Supabase views**: `real_time_margin_view`, `staff_accrual_view`
+```
+src/main.tsx → src/App.tsx (state-based routing)
+src/components/  — 9 view components (Dashboard, Staff, OCR, etc.)
+src/services/    — staffService, patientService, shiftService, advanceService, geminiService
+src/lib/         — supabase.ts (client), utils.ts (cn, formatPKR, formatCNIC, formatPhone)
+```
 
-## Key Patterns
+### View Types (setActiveView in App.tsx)
 
-- **Supabase queries**: Direct from components via `supabase.from('table').select()`
-- **Gemini OCR**: `src/services/geminiService.ts` extracts structured JSON from staff documents (Form, CNIC, CV, Electricity Bill)
-- **View routing**: `src/App.tsx` uses simple state-based view switching (`setActiveView`)
-- **Styling**: TailwindCSS 4 with CSS variables in `src/index.css` (dark theme, emerald accents)
-- **Animations**: Motion (framer-motion compatible) for transitions
+```
+'dashboard' | 'staff' | 'patients' | 'matchmaker' | 'finance' | 'ocr' | 'attendance' | 'memory'
+```
 
-## HMR Note
+### Key Database Tables/Views
 
-HMR is disabled in AI Studio via `DISABLE_HMR` env var. Do not modify this in `vite.config.ts` — it's intentional to prevent flickering during agent edits.
+- **`employees`** — Staff records with OCR-extracted data, `emp_no` format `NC-KHI-XXXX`
+- **`patients`** — Patient records
+- **`manual_shifts`** — Staff shift assignments (Morning/Night, Scheduled/Completed/Abandoned)
+- **`salary_advances`** — Salary advance requests (Pending/Settled)
+- **`real_time_margin_view`** — MTD margin calculated as `daily_margin × 30`
 
-## Database
+### Supabase Query Pattern
 
-Supabase project: `https://zumysyuenxrylauzvokl.supabase.co`
+Direct from components/services — no service layer abstraction:
 
-Key tables and views (verify in Supabase dashboard):
-- `staff` – Employee records with extracted OCR data
-- `patients` – Patient records
-- `shifts` – Staff shift assignments
-- `advances` – Salary advances
-- `real_time_margin_view` – MTD margin calculations
+```typescript
+import { supabase } from '../lib/supabase';
+const { data } = await supabase.from('employees').select('*').eq('is_active', true);
+```
+
+## TailwindCSS 4
+
+No `tailwind.config.js` — uses CSS-first config via `@theme {}` in `src/index.css`. Import: `@import "tailwindcss"`. Class shortcuts: `.glass-card`, `.input-field`, `.btn-primary`, `.btn-secondary`.
+
+## Pre-commit Hooks
+
+```bash
+pre-commit run --all-files
+```
+
+Checks: trailing-whitespace, end-of-file-fixer, check-yaml, check-merge-conflict, check-added-large-files (2MB max), TypeScript type-check (`npm run lint`).
+
+## CI/CD
+
+- **Deploy**: `.github/workflows/deploy.yml` — builds on push to main, sets `TAILWIND_USE_BINARY=0`
+- **Pre-commit CI**: `.github/workflows/pre-commit.yml` — runs on PRs and main pushes
 
 ## Gotchas
 
-- `console.log` in production code will trigger warnings (project hooks configured)
-- Pre-commit hooks configured — run locally with `pre-commit run --all-files`
-- Supabase keys must start with `VITE_` to be accessible in browser code
-- Gemini API key is injected at runtime in AI Studio via Secrets panel
+- `console.log` is used throughout codebase — not blocked but discouraged
+- Supabase keys **must** have `VITE_` prefix in browser code
+- Build base path is `/hmsp-dashboard/` — affects relative asset paths in production
+- HMR disabled via `DISABLE_HMR` env var in AI Studio — don't re-enable in vite.config.ts
+- CSS variables in `src/index.css` use `--color-*` naming (bg, card, border, ink, brand, etc.)
+- `react-dropzone` used for document uploads (CNIC front/back, CV, Electricity Bill) → Gemini OCR
+- App.tsx imports `recharts` BarChart at bottom (dead import or partial split) — don't remove without checking

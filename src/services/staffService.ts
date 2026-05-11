@@ -72,17 +72,24 @@ export const staffService = {
   },
 
   async createStaff(staffData: Partial<Staff>) {
+    console.log('StaffService: createStaff called with data:', staffData);
     const cnic = staffData.cnic_number;
+    console.log('StaffService: CNIC to check:', cnic);
 
     // Check if staff with this CNIC already exists
     if (cnic) {
+      console.log('StaffService: Checking for existing staff with CNIC:', cnic);
       const { data: existing, error: fetchErr } = await supabase
         .from('employees')
         .select('id, emp_no')
         .eq('cnic_number', cnic)
         .maybeSingle();
 
-      if (fetchErr) throw fetchErr;
+      if (fetchErr) {
+        console.error('StaffService: Error checking existing staff:', fetchErr);
+        throw fetchErr;
+      }
+      console.log('StaffService: Existing staff check result:', existing);
 
       if (existing) {
         // Update existing record, preserve emp_no and timestamps
@@ -121,13 +128,18 @@ export const staffService = {
       staffData.emp_no = `NC-KHI-${nextNum.toString().padStart(4, '0')}`;
     }
 
+    console.log('StaffService: Inserting new staff data:', staffData);
     const { data, error } = await supabase
       .from('employees')
       .insert([staffData])
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('StaffService: Insert error:', error);
+      throw error;
+    }
+    console.log('StaffService: Insert successful, returning:', data);
     return data as Staff;
   },
 

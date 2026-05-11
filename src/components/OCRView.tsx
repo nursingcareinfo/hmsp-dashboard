@@ -48,20 +48,29 @@ export default function OCRView() {
     setError(null);
 
     try {
+      console.log('OCR: Starting extraction with', files.length, 'files');
       const base64Promises = files.map(file => {
+        console.log('OCR: Processing file:', file.name, file.size, 'bytes');
         return new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
-          reader.onload = () => resolve((reader.result as string).split(',')[1]);
+          reader.onload = () => {
+            const base64 = (reader.result as string).split(',')[1];
+            console.log('OCR: Base64 conversion successful for', file.name);
+            resolve(base64);
+          };
           reader.onerror = reject;
           reader.readAsDataURL(file);
         });
       });
 
       const base64s = await Promise.all(base64Promises);
+      console.log('OCR: All files converted to base64, calling extractStaffData');
+
       const data = await extractStaffData(base64s);
+      console.log('OCR: Extraction successful, data:', data);
       setExtractedData(data);
     } catch (err) {
-      console.error(err);
+      console.error('OCR: Extraction failed:', err);
       setError("Failed to extract data. Please ensure documents are clear and in frame.");
     } finally {
       setIsExtracting(false);
@@ -80,6 +89,7 @@ export default function OCRView() {
     setIsSaving(true);
     setError(null);
 
+    console.log('OCR: Starting commit process');
     const { identity, professional_profile, geographic_data, financial_reference, audit_metadata } = extractedData;
 
     try {
@@ -128,65 +138,98 @@ export default function OCRView() {
         }
       };
 
-      const getCategory = (position: string) => {
-        const p = (position || '').toLowerCase();
-        if (p.includes('nurse') || p.includes('rn') || p.includes('bsn')) return 'Nurse';
-        if (p.includes('attendant')) return 'Attendant';
-        if (p.includes('baby') || p.includes('child')) return 'Babysitter';
-        if (p.includes('doctor')) return 'Doctor';
-        if (p.includes('physio') || p.includes('dpt')) return 'Physiotherapist';
-        return 'Nurse'; // Default
-      };
+       const getCategory = (position: string) => {
+         const p = (position || '').toLowerCase();
+         if (p.includes('nurse') || p.includes('rn') || p.includes('bsn')) return 'Nurse';
+         if (p.includes('attendant')) return 'Attendant';
+         if (p.includes('baby') || p.includes('child')) return 'Babysitter';
+         if (p.includes('doctor')) return 'Doctor';
+         if (p.includes('physio') || p.includes('dpt')) return 'Physiotherapist';
+         return 'Nurse'; // Default
+       };
 
-      const staffPayload = {
-        full_name: identity.fullName,
-        father_husband_name: identity.fatherHusbandName,
-        cnic_number: cleanCNIC(identity.cnicNumber),
-        dob: cleanDate(identity.dateOfBirth),
-        gender: identity.gender,
-        marital_status: identity.maritalStatus,
-        religion: identity.religion,
-        relative_info: identity.emergencyContact ? {
-          name: identity.emergencyContact.name,
-          relationship: identity.emergencyContact.relationship,
-          phone: cleanPhone(identity.emergencyContact.phone)
-        } : null,
-        phone_primary: cleanPhone(identity.mobileNumber),
-        whatsapp_number: cleanPhone(identity.whatsappNumber || identity.mobileNumber),
-        district: geographic_data.district?.split('(')[0]?.trim() || geographic_data.district,
-        complete_address: geographic_data.completeAddress,
-        position_applied: professional_profile.positionApplied || 'Nurse',
-        category: getCategory(professional_profile.positionApplied),
-        experience_years: parseFloat(professional_profile.experienceYears as any) || 0,
-        shift_preference: professional_profile.shiftPreference,
-        expected_salary_pkr: parseFloat(financial_reference.expectedSalaryPKR as any) || 0,
-        preferred_payment_method: financial_reference.preferredPayment,
-        bank_info: financial_reference.bankDetails,
-        is_active: true,
-        is_available: true,
-        is_acknowledgment_signed: audit_metadata.acknowledgmentSigned,
-        data_confidence: audit_metadata.dataConfidence,
-        critical_missing_info: !!audit_metadata.criticalMissingInfo,
-        missing_fields_list: audit_metadata.missingFieldsList || [],
-        rating: 5.0
-      };
+       // Map extracted district to allowed enum values in database
+       const mapDistrict = (extractedDistrict: string | null | undefined): string | null => {
+         if (!extractedDistrict) return null;
 
-      console.debug('HMSP Commit Payload:', staffPayload);
-      await staffService.createStaff(staffPayload);
+         // Clean the district string - remove parenthetical parts like "(Central)"
+         const cleaned = extractedDistrict.split('(')[0]?.trim() || extractedDistrict.trim();
+
+         // Allowed district values from database schema
+         const allowedDistricts = [
+           "Nazimabad",
+           "Gulshan",
+           "Karachi South",
+           "Orangi",
+           "Keamari",
+           "Korangi",
+           "Malir"
+         ];
+
+         // Check if cleaned value matches any allowed district (case insensitive)
+         const match = allowedDistricts.find(district =>
+           district.toLowerCase() === cleaned.toLowerCase()
+         );
+
+         return match || null; // Return null if no match found, letting DB handle validation
+       };
+
+       const staffPayload = {
+         full_name: identity.fullName,
+         father_husband_name: identity.fatherHusbandName,
+         cnic_number: cleanCNIC(identity.cnicNumber),
+         dob: cleanDate(identity.dateOfBirth),
+         gender: identity.gender,
+         marital_status: identity.maritalStatus,
+         religion: identity.religion,
+         relative_info: identity.emergencyContact ? {
+           name: identity.emergencyContact.name,
+           relationship: identity.emergencyContact.relationship,
+           phone: cleanPhone(identity.emergencyContact.phone)
+         } : null,
+         phone_primary: cleanPhone(identity.mobileNumber),
+         whatsapp_number: cleanPhone(identity.whatsappNumber || identity.mobileNumber),
+         district: mapDistrict(geographic_data.district),
+         complete_address: geographic_data.completeAddress,
+         position_applied: professional_profile.positionApplied || 'Nurse',
+         category: getCategory(professional_profile.positionApplied),
+         experience_years: parseFloat(professional_profile.experienceYears as any) || 0,
+         shift_preference: professional_profile.shiftPreference,
+         expected_salary_pkr: parseFloat(financial_reference.expectedSalaryPKR as any) || 0,
+         preferred_payment_method: financial_reference.preferredPayment,
+         bank_info: financial_reference.bankDetails,
+         is_active: true,
+         is_available: true,
+         is_acknowledgment_signed: audit_metadata.acknowledgmentSigned,
+         data_confidence: audit_metadata.dataConfidence,
+         critical_missing_info: !!audit_metadata.criticalMissingInfo,
+         missing_fields_list: audit_metadata.missingFieldsList || [],
+         rating: 5.0
+       };
+
+       // Remove null/undefined values to prevent database constraint violations
+       const cleanPayload = Object.fromEntries(
+         Object.entries(staffPayload).filter(([, value]) => value !== null && value !== undefined)
+       );
+
+       console.debug('HMSP Commit Payload (cleaned):', cleanPayload);
+       await staffService.createStaff(cleanPayload);
 
       alert('Staff successfully committed to Karachi HQ Ledger.');
       setExtractedData(null);
       setFiles([]);
-    } catch (err: any) {
-      console.error('HMSP Commit error:', err);
-      // Detailed error for common Supabase failures
-      let msg = err.message || 'Check database connection or data format';
-      if (err.code === '23505') msg = 'Duplicate CNIC or Employee ID found in HQ Ledger.';
-      if (err.code === '23514') msg = 'Data failed Karachi HQ validation (CNIC or Phone format error).';
-      setError(`Failed to commit data: ${msg}`);
-    } finally {
-      setIsSaving(false);
-    }
+     } catch (err: any) {
+       console.error('HMSP Commit error:', err);
+       // Detailed error for common Supabase failures
+       let msg = err.message || 'Check database connection or data format';
+       if (err.code === '23505') msg = 'Duplicate CNIC or Employee ID found in HQ Ledger.';
+       if (err.code === '23514') msg = 'Data failed Karachi HQ validation (CNIC or Phone format error).';
+       // Log the full error object for debugging
+       console.error('Full commit error object:', JSON.stringify(err, null, 2));
+       setError(`Failed to commit data: ${msg}`);
+     } finally {
+       setIsSaving(false);
+     }
   };
 
   return (

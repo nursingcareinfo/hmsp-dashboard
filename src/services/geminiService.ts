@@ -77,8 +77,9 @@ export const extractionSchema = {
   required: ["identity", "professional_profile", "geographic_data", "financial_reference", "audit_metadata"]
 };
 
-export async function extractStaffData(imageBase64s: string[]) {
+export async function extractStaffData(imageBase64s: string[], overrideKey?: string) {
   const model = "gemini-flash-latest";
+  const client = overrideKey ? new GoogleGenAI({ apiKey: overrideKey }) : ai;
 
   const prompt = `
     Role: High-Precision Registrar for HMSP Dashboard Karachi (Home Medical Services Provider).
@@ -122,7 +123,7 @@ export async function extractStaffData(imageBase64s: string[]) {
       inlineData: { data: base64, mimeType: "image/jpeg" }
     }));
 
-    const response = await ai.models.generateContent({
+    const response = await client.models.generateContent({
       model,
       contents: [
         {
