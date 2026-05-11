@@ -350,6 +350,16 @@ export default function StaffView() {
                             Age: {calculateAge(staff.dob)}
                           </span>
                         )}
+                        {staff.father_husband_name && (
+                          <span className="text-[10px] bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 font-bold uppercase tracking-widest text-blue-400" title="Father / Husband">
+                            {staff.father_husband_name.length > 15 ? staff.father_husband_name.slice(0, 15) + '…' : staff.father_husband_name}
+                          </span>
+                        )}
+                        {staff.marital_status && (
+                          <span className="text-[10px] bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20 font-bold uppercase tracking-widest text-purple-400">
+                            {staff.marital_status}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
