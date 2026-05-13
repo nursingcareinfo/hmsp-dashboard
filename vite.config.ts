@@ -8,9 +8,7 @@ export default defineConfig(({mode}) => {
   return {
     plugins: [react(), tailwindcss()],
     base: '/hmsp-dashboard/',
-    define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-    },
+    // Environment variables with VITE_ prefix are automatically available
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
