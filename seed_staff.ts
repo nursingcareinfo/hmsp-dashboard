@@ -1,27 +1,26 @@
-
-import postgres from 'postgres';
-import * as dotenv from 'dotenv';
-import * as fs from 'fs';
+import postgres from 'postgres'
+import * as dotenv from 'dotenv'
+import * as fs from 'fs'
 
 // Load .env manually
 if (fs.existsSync('.env')) {
-  const envConfig = dotenv.parse(fs.readFileSync('.env'));
+  const envConfig = dotenv.parse(fs.readFileSync('.env'))
   for (const k in envConfig) {
-    process.env[k] = envConfig[k];
+    process.env[k] = envConfig[k]
   }
 }
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL
 
 if (!connectionString) {
-  console.error('❌ DATABASE_URL missing');
-  process.exit(1);
+  console.error('❌ DATABASE_URL missing')
+  process.exit(1)
 }
 
-const sql = postgres(connectionString);
+const sql = postgres(connectionString)
 
 async function seed() {
-  console.log('🌱 Re-seeding Staff Ledger with Correct Categories...');
+  console.log('🌱 Re-seeding Staff Ledger with Correct Categories...')
 
   const mockStaff = [
     {
@@ -38,7 +37,7 @@ async function seed() {
       is_active: true,
       is_available: true,
       rating: 4.8,
-      critical_missing_info: false
+      critical_missing_info: false,
     },
     {
       emp_no: 'NC-KHI-0002',
@@ -54,7 +53,7 @@ async function seed() {
       is_active: true,
       is_available: true,
       rating: 4.5,
-      critical_missing_info: false
+      critical_missing_info: false,
     },
     {
       emp_no: 'NC-KHI-0003',
@@ -70,7 +69,7 @@ async function seed() {
       is_active: true,
       is_available: false,
       rating: 4.2,
-      critical_missing_info: false
+      critical_missing_info: false,
     },
     {
       emp_no: 'NC-KHI-0004',
@@ -86,7 +85,7 @@ async function seed() {
       is_active: true,
       is_available: true,
       rating: 4.7,
-      critical_missing_info: false
+      critical_missing_info: false,
     },
     {
       emp_no: 'NC-KHI-0005',
@@ -101,34 +100,33 @@ async function seed() {
       is_active: true,
       is_available: true,
       rating: 4.9,
-      critical_missing_info: false
-    }
-  ];
+      critical_missing_info: false,
+    },
+  ]
 
   try {
-    console.log('Cleaning old records...');
-    await sql`DELETE FROM employees`;
+    console.log('Cleaning old records...')
+    await sql`DELETE FROM employees`
 
-    console.log('Inserting new mock staff...');
+    console.log('Inserting new mock staff...')
 
     // Ensure all objects have exactly the same keys to avoid UNDEFINED_VALUE
-    const keys = [...new Set(mockStaff.flatMap(obj => Object.keys(obj)))];
-    const normalizedStaff = mockStaff.map(s => {
-      const entry: any = {};
-      keys.forEach(k => {
-        entry[k] = (s as any)[k] === undefined ? null : (s as any)[k];
-      });
-      return entry;
-    });
+    const keys = [...new Set(mockStaff.flatMap((obj) => Object.keys(obj)))]
+    const normalizedStaff = mockStaff.map((s) => {
+      const entry: any = {}
+      keys.forEach((k) => {
+        entry[k] = (s as any)[k] === undefined ? null : (s as any)[k]
+      })
+      return entry
+    })
 
-    await sql`INSERT INTO employees ${sql(normalizedStaff)}`;
-    console.log('✅ 5 Staff members seeded successfully');
-
+    await sql`INSERT INTO employees ${sql(normalizedStaff)}`
+    console.log('✅ 5 Staff members seeded successfully')
   } catch (err) {
-    console.error('❌ Seeding failed:', err);
+    console.error('❌ Seeding failed:', err)
   } finally {
-    await sql.end();
+    await sql.end()
   }
 }
 
-seed();
+seed()

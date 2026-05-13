@@ -1,42 +1,42 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase'
 
 export interface Staff {
-  id: string;
-  emp_no?: string;
-  full_name?: string;
-  father_husband_name?: string;
-  cnic_number?: string;
-  dob?: string;
-  gender?: string;
-  marital_status?: string;
-  religion?: string;
+  id: string
+  emp_no?: string
+  full_name?: string
+  father_husband_name?: string
+  cnic_number?: string
+  dob?: string
+  gender?: string
+  marital_status?: string
+  religion?: string
   relative_info?: {
-    name: string;
-    relationship: string;
-    phone: string;
-  };
-  phone_primary?: string;
-  whatsapp_number?: string;
-  district: string;
-  complete_address?: string;
-  position_applied: string;
-  experience_years?: number;
-  shift_preference?: string;
-  expected_salary_pkr?: number;
-  preferred_payment_method?: string;
-  bank_info?: any;
-  is_active: boolean;
-  is_available: boolean;
-  is_verified?: boolean;
-  is_acknowledgment_signed?: boolean;
-  data_confidence?: string;
-  critical_missing_info?: boolean;
-  missing_fields_list?: string[];
-  document_urls?: any;
-  rating: number;
-  category?: string;
-  created_at?: string;
-  updated_at?: string;
+    name: string
+    relationship: string
+    phone: string
+  }
+  phone_primary?: string
+  whatsapp_number?: string
+  district: string
+  complete_address?: string
+  position_applied: string
+  experience_years?: number
+  shift_preference?: string
+  expected_salary_pkr?: number
+  preferred_payment_method?: string
+  bank_info?: any
+  is_active: boolean
+  is_available: boolean
+  is_verified?: boolean
+  is_acknowledgment_signed?: boolean
+  data_confidence?: string
+  critical_missing_info?: boolean
+  missing_fields_list?: string[]
+  document_urls?: any
+  rating: number
+  category?: string
+  created_at?: string
+  updated_at?: string
 }
 
 export const staffService = {
@@ -44,20 +44,20 @@ export const staffService = {
     const { data, error } = await supabase
       .from('employees')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
-    if (error) throw error;
-    return data as Staff[];
+    if (error) throw error
+    return data as Staff[]
   },
 
   async getActiveStaffCount() {
     const { count, error } = await supabase
       .from('employees')
       .select('*', { count: 'exact', head: true })
-      .eq('is_active', true);
+      .eq('is_active', true)
 
-    if (error) throw error;
-    return count || 0;
+    if (error) throw error
+    return count || 0
   },
 
   async getAvailableStaffCount() {
@@ -65,31 +65,31 @@ export const staffService = {
       .from('employees')
       .select('*', { count: 'exact', head: true })
       .eq('is_available', true)
-      .eq('is_active', true);
+      .eq('is_active', true)
 
-    if (error) throw error;
-    return count || 0;
+    if (error) throw error
+    return count || 0
   },
 
   async createStaff(staffData: Partial<Staff>) {
-    console.log('StaffService: createStaff called with data:', staffData);
-    const cnic = staffData.cnic_number;
-    console.log('StaffService: CNIC to check:', cnic);
+    console.log('StaffService: createStaff called with data:', staffData)
+    const cnic = staffData.cnic_number
+    console.log('StaffService: CNIC to check:', cnic)
 
     // Check if staff with this CNIC already exists
     if (cnic) {
-      console.log('StaffService: Checking for existing staff with CNIC:', cnic);
+      console.log('StaffService: Checking for existing staff with CNIC:', cnic)
       const { data: existing, error: fetchErr } = await supabase
         .from('employees')
         .select('id, emp_no')
         .eq('cnic_number', cnic)
-        .maybeSingle();
+        .maybeSingle()
 
       if (fetchErr) {
-        console.error('StaffService: Error checking existing staff:', fetchErr);
-        throw fetchErr;
+        console.error('StaffService: Error checking existing staff:', fetchErr)
+        throw fetchErr
       }
-      console.log('StaffService: Existing staff check result:', existing);
+      console.log('StaffService: Existing staff check result:', existing)
 
       if (existing) {
         // Update existing record, preserve emp_no and timestamps
@@ -101,10 +101,10 @@ export const staffService = {
           })
           .eq('id', existing.id)
           .select()
-          .single();
+          .single()
 
-        if (error) throw error;
-        return data as Staff;
+        if (error) throw error
+        return data as Staff
       }
     }
 
@@ -114,33 +114,29 @@ export const staffService = {
         .from('employees')
         .select('emp_no')
         .order('created_at', { ascending: false })
-        .limit(1);
+        .limit(1)
 
-      const lastStaff = staffBatch && staffBatch.length > 0 ? staffBatch[0] : null;
+      const lastStaff = staffBatch && staffBatch.length > 0 ? staffBatch[0] : null
 
-      let nextNum = 1;
+      let nextNum = 1
       if (lastStaff?.emp_no) {
-        const match = lastStaff.emp_no.match(/(\d+)$/);
+        const match = lastStaff.emp_no.match(/(\d+)$/)
         if (match) {
-          nextNum = parseInt(match[1]) + 1;
+          nextNum = parseInt(match[1]) + 1
         }
       }
-      staffData.emp_no = `NC-KHI-${nextNum.toString().padStart(4, '0')}`;
+      staffData.emp_no = `NC-KHI-${nextNum.toString().padStart(4, '0')}`
     }
 
-    console.log('StaffService: Inserting new staff data:', staffData);
-    const { data, error } = await supabase
-      .from('employees')
-      .insert([staffData])
-      .select()
-      .single();
+    console.log('StaffService: Inserting new staff data:', staffData)
+    const { data, error } = await supabase.from('employees').insert([staffData]).select().single()
 
     if (error) {
-      console.error('StaffService: Insert error:', error);
-      throw error;
+      console.error('StaffService: Insert error:', error)
+      throw error
     }
-    console.log('StaffService: Insert successful, returning:', data);
-    return data as Staff;
+    console.log('StaffService: Insert successful, returning:', data)
+    return data as Staff
   },
 
   async updateStaff(id: string, updates: Partial<Staff>) {
@@ -149,9 +145,9 @@ export const staffService = {
       .update(updates)
       .eq('id', id)
       .select()
-      .single();
+      .single()
 
-    if (error) throw error;
-    return data as Staff;
-  }
-};
+    if (error) throw error
+    return data as Staff
+  },
+}

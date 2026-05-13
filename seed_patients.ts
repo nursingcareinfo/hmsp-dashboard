@@ -1,27 +1,26 @@
-
-import postgres from 'postgres';
-import * as dotenv from 'dotenv';
-import * as fs from 'fs';
+import postgres from 'postgres'
+import * as dotenv from 'dotenv'
+import * as fs from 'fs'
 
 if (fs.existsSync('.env')) {
-  const envConfig = dotenv.parse(fs.readFileSync('.env'));
+  const envConfig = dotenv.parse(fs.readFileSync('.env'))
   for (const k in envConfig) {
-    process.env[k] = envConfig[k];
+    process.env[k] = envConfig[k]
   }
 }
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL
 if (!connectionString) {
-  process.exit(1);
+  process.exit(1)
 }
 
-const sql = postgres(connectionString);
+const sql = postgres(connectionString)
 
 async function seedPatients() {
-  console.log('🌱 Seeding Patients...');
+  console.log('🌱 Seeding Patients...')
   try {
     // Get some staff IDs to assign
-    const staff = await sql`SELECT id FROM employees LIMIT 3`;
+    const staff = await sql`SELECT id FROM employees LIMIT 3`
 
     const mockPatients = [
       {
@@ -31,7 +30,7 @@ async function seedPatients() {
         district: 'Clifton',
         service_type: '24hr',
         status: 'Active',
-        monthly_package_pkr: 150000
+        monthly_package_pkr: 150000,
       },
       {
         patient_name: 'Mr. Javed Iqbal',
@@ -40,7 +39,7 @@ async function seedPatients() {
         district: 'DHA',
         service_type: '12hr',
         status: 'Active',
-        monthly_package_pkr: 85000
+        monthly_package_pkr: 85000,
       },
       {
         patient_name: 'Baby Zain (Pediatric)',
@@ -49,7 +48,7 @@ async function seedPatients() {
         district: 'Gulshan',
         service_type: '8hr',
         status: 'Active',
-        monthly_package_pkr: 45000
+        monthly_package_pkr: 45000,
       },
       {
         patient_name: 'Ms. Sakina Bano',
@@ -57,34 +56,33 @@ async function seedPatients() {
         mobile_number: '+92 345 5556677',
         status: 'Pending',
         service_type: '24hr',
-        monthly_package_pkr: 150000
-      }
-    ];
+        monthly_package_pkr: 150000,
+      },
+    ]
 
-    await sql`DELETE FROM patients`;
+    await sql`DELETE FROM patients`
 
     // Ensure all objects have same keys
-    const keys = [...new Set(mockPatients.flatMap(obj => Object.keys(obj)))];
-    const normalized = mockPatients.map(p => {
-      const entry: any = {};
-      keys.forEach(k => {
-        entry[k] = (p as any)[k] === undefined ? null : (p as any)[k];
-      });
-      return entry;
-    });
+    const keys = [...new Set(mockPatients.flatMap((obj) => Object.keys(obj)))]
+    const normalized = mockPatients.map((p) => {
+      const entry: any = {}
+      keys.forEach((k) => {
+        entry[k] = (p as any)[k] === undefined ? null : (p as any)[k]
+      })
+      return entry
+    })
 
-    await sql`INSERT INTO patients ${sql(normalized)}`;
-    console.log('✅ 4 Patients seeded');
+    await sql`INSERT INTO patients ${sql(normalized)}`
+    console.log('✅ 4 Patients seeded')
 
     // Also disable RLS for patients
-    await sql`ALTER TABLE patients DISABLE ROW LEVEL SECURITY`;
-    console.log('🔓 RLS disabled for patients');
-
+    await sql`ALTER TABLE patients DISABLE ROW LEVEL SECURITY`
+    console.log('🔓 RLS disabled for patients')
   } catch (err) {
-    console.error('❌ Patient seeding failed:', err);
+    console.error('❌ Patient seeding failed:', err)
   } finally {
-    await sql.end();
+    await sql.end()
   }
 }
 
-seedPatients();
+seedPatients()

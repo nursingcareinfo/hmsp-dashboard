@@ -24,8 +24,8 @@ export const KARACHI_AREAS = [
   'Nazimabad',
   'FB Area',
   'Garden',
-  'Lyari'
-].sort();
+  'Lyari',
+].sort()
 
 export const STAFF_CATEGORIES = [
   'Nurse',
@@ -38,9 +38,9 @@ export const STAFF_CATEGORIES = [
   'ICU/Anes',
   'Doctor',
   'Attendant',
-  'Babysitter'
-];
+  'Babysitter',
+]
 
-export const SERVICE_TYPES = ['24hr', '12hr', '8hr'];
-export const SHIFT_TYPES = ['Day', 'Night', 'Full'];
-export const PATIENT_STATUSES = ['Active', 'Pending', 'Completed', 'Cancelled'];
+export const SERVICE_TYPES = ['24hr', '12hr', '8hr']
+export const SHIFT_TYPES = ['Day', 'Night', 'Full']
+export const PATIENT_STATUSES = ['Active', 'Pending', 'Completed', 'Cancelled']

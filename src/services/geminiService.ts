@@ -1,6 +1,6 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI, Type } from '@google/genai'
 
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY as string });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY as string })
 
 export const extractionSchema = {
   type: Type.OBJECT,
@@ -8,78 +8,140 @@ export const extractionSchema = {
     identity: {
       type: Type.OBJECT,
       properties: {
-        fullName: { type: Type.STRING, description: "Full legal name. Mandatory." },
+        fullName: { type: Type.STRING, description: 'Full legal name. Mandatory.' },
         fatherHusbandName: { type: Type.STRING },
-        cnicNumber: { type: Type.STRING, description: "CNIC XXXXX-XXXXXXX-X format. Mandatory." },
-        dateOfBirth: { type: Type.STRING, description: "YYYY-MM-DD" },
-        gender: { type: Type.STRING, enum: ["Male", "Female", "Other"] },
-        maritalStatus: { type: Type.STRING, enum: ["Single", "Married", "Divorced"] },
-        mobileNumber: { type: Type.STRING, description: "+92 XXX XXXXXXX. Mandatory." },
-        whatsappNumber: { type: Type.STRING, description: "+92 XXX XXXXXXX" },
-        religion: { type: Type.STRING, description: "Extract Muslim/Christian/Other from Form 49 checkboxes" },
+        cnicNumber: { type: Type.STRING, description: 'CNIC XXXXX-XXXXXXX-X format. Mandatory.' },
+        dateOfBirth: { type: Type.STRING, description: 'YYYY-MM-DD' },
+        gender: { type: Type.STRING, enum: ['Male', 'Female', 'Other'] },
+        maritalStatus: { type: Type.STRING, enum: ['Single', 'Married', 'Divorced'] },
+        mobileNumber: { type: Type.STRING, description: '+92 XXX XXXXXXX. Mandatory.' },
+        whatsappNumber: { type: Type.STRING, description: '+92 XXX XXXXXXX' },
+        religion: {
+          type: Type.STRING,
+          description: 'Extract Muslim/Christian/Other from Form 49 checkboxes',
+        },
         emergencyContact: {
           type: Type.OBJECT,
           properties: {
             name: { type: Type.STRING },
             relationship: { type: Type.STRING },
-            phone: { type: Type.STRING }
-          }
-        }
-      }
+            phone: { type: Type.STRING },
+          },
+        },
+      },
     },
     professional_profile: {
       type: Type.OBJECT,
       properties: {
-        positionApplied: { type: Type.STRING, enum: ["R/N", "BSN", "Aid Nurse", "Midwife", "DPT", "ICU/Anes", "Doctor", "Attendant", "Babysitter"] },
+        positionApplied: {
+          type: Type.STRING,
+          enum: [
+            'R/N',
+            'BSN',
+            'Aid Nurse',
+            'Midwife',
+            'DPT',
+            'ICU/Anes',
+            'Doctor',
+            'Attendant',
+            'Babysitter',
+          ],
+        },
         experienceYears: { type: Type.NUMBER },
-        shiftPreference: { type: Type.STRING, enum: ["Day", "Night", "24 hrs"] },
-        topSkills: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Top 3 clinical skills from CV" }
-      }
+        shiftPreference: { type: Type.STRING, enum: ['Day', 'Night', '24 hrs'] },
+        topSkills: {
+          type: Type.ARRAY,
+          items: { type: Type.STRING },
+          description: 'Top 3 clinical skills from CV',
+        },
+      },
     },
     geographic_data: {
       type: Type.OBJECT,
       properties: {
         areaTown: { type: Type.STRING },
-        district: { type: Type.STRING, enum: ["Nazimabad (Central)", "Gulshan (East)", "Karachi South", "Orangi (West)", "Keamari", "Korangi", "Malir"] },
+        district: {
+          type: Type.STRING,
+          enum: [
+            'Nazimabad (Central)',
+            'Gulshan (East)',
+            'Karachi South',
+            'Orangi (West)',
+            'Keamari',
+            'Korangi',
+            'Malir',
+          ],
+        },
         completeAddress: { type: Type.STRING },
-        addressFromBill: { type: Type.STRING, description: "Address extracted from Electricity Bill" },
-        reconciliationAlert: { type: Type.BOOLEAN, description: "True if document addresses or names mismatch" }
-      }
+        addressFromBill: {
+          type: Type.STRING,
+          description: 'Address extracted from Electricity Bill',
+        },
+        reconciliationAlert: {
+          type: Type.BOOLEAN,
+          description: 'True if document addresses or names mismatch',
+        },
+      },
     },
     financial_reference: {
       type: Type.OBJECT,
       properties: {
         expectedSalaryPKR: { type: Type.NUMBER },
-        preferredPayment: { type: Type.STRING, enum: ["Cash", "JazzCash", "EasyPesa", "Bank"] },
+        preferredPayment: { type: Type.STRING, enum: ['Cash', 'JazzCash', 'EasyPesa', 'Bank'] },
         bankDetails: {
           type: Type.OBJECT,
           properties: {
             bankName: { type: Type.STRING },
             accountNo: { type: Type.STRING },
             accountTitle: { type: Type.STRING },
-            iban: { type: Type.STRING }
-          }
-        }
-      }
+            iban: { type: Type.STRING },
+          },
+        },
+      },
     },
     audit_metadata: {
       type: Type.OBJECT,
       properties: {
-        acknowledgmentSigned: { type: Type.BOOLEAN, description: "Signed 'Employee Acknowledgment' regarding duty abandonment" },
-        policyCheck: { type: Type.STRING, enum: ["Pass", "Fail"], description: "Overall policy compliance status" },
-        criticalMissingInfo: { type: Type.BOOLEAN, description: "True if Full Name, CNIC, or Mobile is missing/illegible" },
-        missingFieldsList: { type: Type.ARRAY, items: { type: Type.STRING }, description: "List of missing mandatory fields (e.g., ['fullName', 'cnicNumber', 'mobileNumber'])" },
-        reconciliationDetails: { type: Type.STRING, description: "Brief explanation of any name/address mismatches found across the 4 documents" },
-        dataConfidence: { type: Type.STRING, enum: ["High", "Low"] }
-      }
-    }
+        acknowledgmentSigned: {
+          type: Type.BOOLEAN,
+          description: "Signed 'Employee Acknowledgment' regarding duty abandonment",
+        },
+        policyCheck: {
+          type: Type.STRING,
+          enum: ['Pass', 'Fail'],
+          description: 'Overall policy compliance status',
+        },
+        criticalMissingInfo: {
+          type: Type.BOOLEAN,
+          description: 'True if Full Name, CNIC, or Mobile is missing/illegible',
+        },
+        missingFieldsList: {
+          type: Type.ARRAY,
+          items: { type: Type.STRING },
+          description:
+            "List of missing mandatory fields (e.g., ['fullName', 'cnicNumber', 'mobileNumber'])",
+        },
+        reconciliationDetails: {
+          type: Type.STRING,
+          description:
+            'Brief explanation of any name/address mismatches found across the 4 documents',
+        },
+        dataConfidence: { type: Type.STRING, enum: ['High', 'Low'] },
+      },
+    },
   },
-  required: ["identity", "professional_profile", "geographic_data", "financial_reference", "audit_metadata"]
-};
+  required: [
+    'identity',
+    'professional_profile',
+    'geographic_data',
+    'financial_reference',
+    'audit_metadata',
+  ],
+}
 
 export async function extractStaffData(imageBase64s: string[], overrideKey?: string) {
-  const model = "gemini-flash-latest";
-  const client = overrideKey ? new GoogleGenAI({ apiKey: overrideKey }) : ai;
+  const model = 'gemini-flash-latest'
+  const client = overrideKey ? new GoogleGenAI({ apiKey: overrideKey }) : ai
 
   const prompt = `
     Role: High-Precision Registrar for HMSP Dashboard Karachi (Home Medical Services Provider).
@@ -116,47 +178,47 @@ export async function extractStaffData(imageBase64s: string[], overrideKey?: str
        - Example: "CV provided. CNIC and Bill missing. Extracted basic profile."
 
     Return the data as valid JSON matching the responseSchema. No preamble.
-  `;
+  `
 
   try {
-    const inlineData = imageBase64s.map(base64 => ({
-      inlineData: { data: base64, mimeType: "image/jpeg" }
-    }));
+    const inlineData = imageBase64s.map((base64) => ({
+      inlineData: { data: base64, mimeType: 'image/jpeg' },
+    }))
 
     const response = await client.models.generateContent({
       model,
       contents: [
         {
-          parts: [
-            { text: prompt },
-            ...inlineData
-          ]
-        }
+          parts: [{ text: prompt }, ...inlineData],
+        },
       ],
       config: {
-        responseMimeType: "application/json",
-        responseSchema: extractionSchema
-      }
-    });
+        responseMimeType: 'application/json',
+        responseSchema: extractionSchema,
+      },
+    })
 
     if (!response.text) {
-      throw new Error("No response text received from AI");
+      throw new Error('No response text received from AI')
     }
 
-    let cleanedText = response.text.trim();
+    let cleanedText = response.text.trim()
     // Remove potential markdown blocks
-    if (cleanedText.startsWith("```")) {
-      cleanedText = cleanedText.replace(/^```json\s*/, "").replace(/```$/, "").trim();
+    if (cleanedText.startsWith('```')) {
+      cleanedText = cleanedText
+        .replace(/^```json\s*/, '')
+        .replace(/```$/, '')
+        .trim()
     }
 
     try {
-      return JSON.parse(cleanedText);
+      return JSON.parse(cleanedText)
     } catch (parseError) {
-      console.error("JSON Parse Error. Cleaned text:", cleanedText);
-      throw new Error("AI returned invalid JSON format. Please try again.");
+      console.error('JSON Parse Error. Cleaned text:', cleanedText)
+      throw new Error('AI returned invalid JSON format. Please try again.')
     }
   } catch (error) {
-    console.error("Extraction error:", error);
-    throw error;
+    console.error('Extraction error:', error)
+    throw error
   }
 }
