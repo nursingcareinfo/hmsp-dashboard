@@ -41,6 +41,7 @@ import DashboardView from './components/DashboardView'
 import CalendarView from './components/CalendarView'
 import FinanceView from './components/FinanceView'
 import MemoryView from './components/MemoryView'
+import AttendanceView from './components/AttendanceView'
 
 export default function App() {
   const [activeView, setActiveView] = useState<View>('dashboard')
@@ -51,7 +52,7 @@ export default function App() {
     { id: 'staff', label: 'Staff Tool', icon: Users },
     { id: 'ocr', label: 'Registrar', icon: UserPlus },
     { id: 'patients', label: 'Patients', icon: ClipboardList },
-    { id: 'attendance', label: 'Calendar', icon: ClipboardList },
+    { id: 'attendance', label: 'Attendance', icon: ClipboardList },
     { id: 'memory', label: 'AI Memory', icon: Brain },
     { id: 'finance', label: 'Payouts', icon: Wallet },
   ]
@@ -186,7 +187,7 @@ export default function App() {
             {activeView === 'ocr' && <OCRView />}
             {activeView === 'patients' && <PatientView />}
             {activeView === 'matchmaker' && <MatchmakerView />}
-            {activeView === 'attendance' && <CalendarView />}
+            {activeView === 'attendance' && <AttendanceView />}
             {activeView === 'memory' && <MemoryView />}
             {activeView === 'finance' && <FinanceView />}
 
