@@ -16,23 +16,28 @@ import {
 import { supabase } from '../lib/supabase'
 import { formatPKR, cn } from '../lib/utils'
 import { motion } from 'motion/react'
+import { attendanceService } from '../services/attendanceService'
 
 export default function FinanceView() {
   const [margins, setMargins] = useState<any[]>([])
   const [accruals, setAccruals] = useState<any[]>([])
+  const [attendance, setAttendance] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function loadFinanceData() {
       setLoading(true)
       try {
-        const [marginsRes, accrualsRes] = await Promise.all([
+        const now = new Date()
+        const [marginsRes, accrualsRes, attendanceRes] = await Promise.all([
           supabase.from('real_time_margin_view').select('*'),
           supabase.from('staff_accrual_view').select('*'),
+          attendanceService.getMonthAttendance(now.getFullYear(), now.getMonth()),
         ])
 
         if (marginsRes.data) setMargins(marginsRes.data)
         if (accrualsRes.data) setAccruals(accrualsRes.data)
+        if (attendanceRes) setAttendance(attendanceRes)
       } catch (error) {
         console.error('Error fetching finance data:', error)
       } finally {
@@ -55,6 +60,14 @@ export default function FinanceView() {
 
   const totalDailyMargin = margins.reduce((acc, m) => acc + Number(m.daily_margin), 0)
   const activeCases = margins.length
+
+  const totalPresent = attendance.filter((a) => a.status === 'Present').length
+  const totalAbsent = attendance.filter((a) => a.status === 'Absent').length
+  const totalPayroll = attendance.reduce((acc, a) => {
+    if (a.status === 'Present') return acc + 1
+    if (a.status === 'Half-Day') return acc + 0.5
+    return acc
+  }, 0)
 
   return (
     <div className="space-y-8 pb-12">
@@ -96,6 +109,29 @@ export default function FinanceView() {
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-2">
             Mean monthly value per patient
           </p>
+        </div>
+      </div>
+
+      {/* Attendance Summary */}
+      <div className="bg-slate-900/40 border border-white/5 rounded-xl p-6">
+        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-4">
+          Attendance Summary
+        </h3>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="text-center">
+            <div className="text-2xl font-mono font-bold text-emerald-400">{totalPresent}</div>
+            <div className="text-[9px] text-slate-500 uppercase">Total Present Days</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-mono font-bold text-red-400">{totalAbsent}</div>
+            <div className="text-[9px] text-slate-500 uppercase">Total Absent Days</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-mono font-bold text-blue-400">
+              {totalPayroll.toFixed(1)}
+            </div>
+            <div className="text-[9px] text-slate-500 uppercase">Est. Payroll Days</div>
+          </div>
         </div>
       </div>
 
