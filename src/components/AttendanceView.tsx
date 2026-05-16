@@ -9,6 +9,7 @@ export default function AttendanceView() {
   const [staff, setStaff] = useState<any[]>([])
   const [attendance, setAttendance] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [showSalaryModal, setShowSalaryModal] = useState(false)
 
   const year = currentDate.getFullYear()
   const month = currentDate.getMonth()
@@ -80,6 +81,21 @@ export default function AttendanceView() {
     }
   }
 
+  const calculateSalary = (staffMember: any) => {
+    const dailyRate = staffMember.expected_salary_pkr / 30
+    const staffAttendance = attendance.filter((a) => a.employee_id === staffMember.id)
+
+    const present = staffAttendance.filter((a) => a.status === 'Present').length
+    const halfDay = staffAttendance.filter((a) => a.status === 'Half-Day').length
+    const late = staffAttendance.filter((a) => a.status === 'Late').length
+
+    const presentDays = present + halfDay * 0.5
+    const lateDeduction = late * (dailyRate * 0.1)
+    const totalSalary = presentDays * dailyRate - lateDeduction
+
+    return { present, halfDay, late, dailyRate, lateDeduction, totalSalary }
+  }
+
   return (
     <div className="space-y-6 h-full flex flex-col">
       {/* Header */}
@@ -93,6 +109,12 @@ export default function AttendanceView() {
           </p>
         </div>
         <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowSalaryModal(true)}
+            className="btn-primary flex items-center gap-2"
+          >
+            <DollarSign size={14} /> Calculate Salary
+          </button>
           <button
             onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
             className="p-2 hover:bg-white/5 rounded-lg border border-white/5"
@@ -160,6 +182,80 @@ export default function AttendanceView() {
           </div>
         )}
       </div>
+
+      {/* Salary Modal */}
+      {showSalaryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-4xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-white/5">
+              <h3 className="text-sm font-black text-emerald-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                <DollarSign size={16} /> Monthly Salary Breakdown
+              </h3>
+              <button
+                onClick={() => setShowSalaryModal(false)}
+                className="text-slate-500 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 overflow-auto max-h-[60vh]">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-white/5">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                      Staff
+                    </th>
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                      Present
+                    </th>
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                      Daily Rate
+                    </th>
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                      Deductions
+                    </th>
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">
+                      Net Pay
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {staff.map((s) => {
+                    const calc = calculateSalary(s)
+                    return (
+                      <tr key={s.id} className="hover:bg-white/[0.02]">
+                        <td className="px-4 py-3 text-[11px] font-bold text-white">
+                          {s.full_name}
+                        </td>
+                        <td className="px-4 py-3 text-[10px] text-emerald-400">
+                          {calc.present} days
+                        </td>
+                        <td className="px-4 py-3 text-[10px] text-slate-400">
+                          PKR {calc.dailyRate.toFixed(0)}
+                        </td>
+                        <td className="px-4 py-3 text-[10px] text-red-400">
+                          -{calc.lateDeduction.toFixed(0)}
+                        </td>
+                        <td className="px-4 py-3 text-[11px] font-mono font-bold text-emerald-400 text-right">
+                          PKR {calc.totalSalary.toFixed(0)}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="p-6 border-t border-white/5 flex justify-end gap-3">
+              <button className="btn-secondary flex items-center gap-2">
+                <Download size={14} /> Export CSV
+              </button>
+              <button onClick={() => setShowSalaryModal(false)} className="btn-primary">
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
