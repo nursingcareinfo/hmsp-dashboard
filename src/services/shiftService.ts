@@ -49,4 +49,17 @@ export const shiftService = {
     if (error) throw error
     return data
   },
+
+  async getActiveShiftsForStaff(employeeId: string) {
+    const today = new Date().toISOString().split('T')[0]
+    const { data, error } = await supabase
+      .from('manual_shifts')
+      .select('*, patient:patient_id(patient_name, district, service_type)')
+      .eq('employee_id', employeeId)
+      .eq('shift_date', today)
+      .in('attendance_status', ['Scheduled', 'Completed'])
+
+    if (error) throw error
+    return data || []
+  },
 }

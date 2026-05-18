@@ -150,4 +150,10 @@ export const staffService = {
     if (error) throw error
     return data as Staff
   },
+
+  async deleteStaff(id: string) {
+    const { error } = await supabase.from('employees').delete().eq('id', id)
+
+    if (error) throw error
+  },
 }

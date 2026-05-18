@@ -8,9 +8,6 @@ import {
   Search,
   Filter,
   MoreVertical,
-  Phone,
-  MapPin,
-  Star,
   Plus,
   Users,
   CheckCircle2,
@@ -18,12 +15,18 @@ import {
   Loader2,
   Banknote,
   DollarSign,
+  Edit,
+  MapPin,
+  Star,
+  Phone,
+  Trash2,
 } from 'lucide-react'
 import { Staff } from '../types'
 import { cn, formatPKR } from '../lib/utils'
 import { STAFF_CATEGORIES, KARACHI_AREAS } from '../constants'
 import { staffService } from '../services/staffService'
 import { advanceService } from '../services/advanceService'
+import { shiftService } from '../services/shiftService'
 
 export default function StaffView() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -47,6 +50,23 @@ export default function StaffView() {
   const [selectedStaffForAdvance, setSelectedStaffForAdvance] = useState<any | null>(null)
   const [advanceAmount, setAdvanceAmount] = useState('')
   const [isSubmittingAdvance, setIsSubmittingAdvance] = useState(false)
+  const [selectedStaffForEdit, setSelectedStaffForEdit] = useState<any | null>(null)
+  const [isSubmittingEdit, setIsSubmittingEdit] = useState(false)
+  const [editFormData, setEditFormData] = useState({
+    full_name: '',
+    cnic_number: '',
+    phone_primary: '',
+    district: '',
+    category: 'Nurse',
+    position_applied: '',
+    experience_years: 0,
+    expected_salary_pkr: 0,
+    is_active: true,
+    is_available: true,
+  })
+  const [selectedStaffForDelete, setSelectedStaffForDelete] = useState<any | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [staffAssignments, setStaffAssignments] = useState<Record<string, string>>({})
 
   const calculateAge = (dob: string | undefined) => {
     if (!dob) return null
@@ -79,6 +99,25 @@ export default function StaffView() {
     try {
       const data = await staffService.getAllStaff()
       setStaffList(data)
+
+      // Fetch today's active shifts for each staff member
+      const assignments: Record<string, string> = {}
+      await Promise.all(
+        data.map(async (staff) => {
+          if (!staff.is_available) {
+            try {
+              const shifts = await shiftService.getActiveShiftsForStaff(staff.id)
+              if (shifts.length > 0) {
+                const patient = shifts[0].patient
+                assignments[staff.id] = patient?.patient_name || 'Unknown Patient'
+              }
+            } catch {
+              // Silently fail — assignment info is optional
+            }
+          }
+        })
+      )
+      setStaffAssignments(assignments)
     } catch (error) {
       console.error('Error fetching staff:', error)
     } finally {
@@ -143,6 +182,57 @@ export default function StaffView() {
     } finally {
       setIsSubmittingAdvance(false)
     }
+  }
+
+  const handleEditStaff = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedStaffForEdit) return
+
+    setIsSubmittingEdit(true)
+    try {
+      await staffService.updateStaff(selectedStaffForEdit.id, editFormData)
+      alert('Staff updated successfully!')
+      setSelectedStaffForEdit(null)
+      loadStaff() // Refresh the list
+    } catch (error: any) {
+      console.error('Error updating staff:', error)
+      alert(`Update failed: ${error.message || 'Unknown error'}`)
+    } finally {
+      setIsSubmittingEdit(false)
+    }
+  }
+
+  const handleDeleteStaff = async () => {
+    if (!selectedStaffForDelete) return
+
+    setIsDeleting(true)
+    try {
+      await staffService.deleteStaff(selectedStaffForDelete.id)
+      alert('Staff deleted successfully!')
+      setSelectedStaffForDelete(null)
+      loadStaff() // Refresh the list
+    } catch (error: any) {
+      console.error('Error deleting staff:', error)
+      alert(`Delete failed: ${error.message || 'Unknown error'}`)
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  const handleStartEdit = (staff: any) => {
+    setSelectedStaffForEdit(staff)
+    setEditFormData({
+      full_name: staff.full_name || '',
+      cnic_number: staff.cnic_number || '',
+      phone_primary: staff.phone_primary || '',
+      district: staff.district || '',
+      category: staff.category || 'Nurse',
+      position_applied: staff.position_applied || '',
+      experience_years: staff.experience_years || 0,
+      expected_salary_pkr: staff.expected_salary_pkr || 0,
+      is_active: staff.is_active ?? true,
+      is_available: staff.is_available ?? true,
+    })
   }
 
   const filteredStaff = staffList.filter((s) => {
@@ -365,141 +455,179 @@ export default function StaffView() {
 
       {/* Staff Grid */}
       {filteredStaff.length > 0 ? (
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {filteredStaff.map((staff) => (
             <div
               key={staff.id}
               className={cn(
-                'glass-card hover:border-white/20 transition-all group relative overflow-hidden',
-                staff.critical_missing_info &&
-                  'border-red-500/50 shadow-[0_0_20px_rgba(239,68,68,0.15)] ring-1 ring-red-500/20'
+                'bg-slate-900/60 border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all group',
+                staff.critical_missing_info && 'border-red-500/30 ring-1 ring-red-500/20'
               )}
             >
-              {staff.critical_missing_info && (
-                <div className="absolute top-0 right-0 px-2 py-1 bg-red-500 text-white text-[8px] font-black uppercase tracking-widest rounded-bl-lg z-10 animate-pulse">
-                  Action Required: Missing Info
+              {/* Header - Avatar + Name + Quick Actions */}
+              <div className="p-4 flex items-start gap-4 border-b border-white/5">
+                {/* Avatar */}
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center text-lg font-bold text-emerald-400 shrink-0">
+                  {(staff.full_name || '?')[0]}
                 </div>
-              )}
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex gap-4">
-                    <div className="w-16 h-16 rounded-2xl bg-[var(--color-border)] flex items-center justify-center text-2xl font-bold text-[var(--color-brand)] uppercase">
-                      {(staff.full_name || staff.fullName || '?')[0]}
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold flex items-center gap-2 text-white">
-                        {staff.full_name}
-                        {staff.is_verified && <CheckCircle2 size={16} className="text-blue-400" />}
-                      </h3>
-                      <div className="flex items-center gap-4 text-sm text-[var(--color-ink-dim)] mt-1">
-                        <span className="text-emerald-500 text-[10px] font-mono font-black uppercase tracking-widest">
-                          {staff.emp_no}
-                        </span>
-                        <span className="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">
-                          {staff.position_applied}
-                        </span>
-                        <span className="flex items-center gap-1 font-bold text-[10px] uppercase tracking-widest">
-                          <MapPin size={14} className="text-blue-500" /> {staff.district}
-                        </span>
-                        <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded border border-white/10 font-bold uppercase tracking-widest text-slate-400">
-                          {staff.religion || 'Muslim'}
-                        </span>
-                        {calculateAge(staff.dob) && (
-                          <span className="text-[10px] bg-white/5 px-2 py-0.5 rounded border border-white/10 font-bold uppercase tracking-widest">
-                            Age: {calculateAge(staff.dob)}
-                          </span>
-                        )}
-                        {staff.father_husband_name && (
-                          <span
-                            className="text-[10px] bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 font-bold uppercase tracking-widest text-blue-400"
-                            title="Father / Husband"
-                          >
-                            {staff.father_husband_name.length > 15
-                              ? staff.father_husband_name.slice(0, 15) + '…'
-                              : staff.father_husband_name}
-                          </span>
-                        )}
-                        {staff.marital_status && (
-                          <span className="text-[10px] bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20 font-bold uppercase tracking-widest text-purple-400">
-                            {staff.marital_status}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <button className="p-2 hover:bg-[var(--color-border)] rounded-lg transition-colors">
-                    <MoreVertical size={20} className="text-slate-500" />
+
+                {/* Name + ID */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-bold text-white truncate flex items-center gap-2">
+                    {staff.full_name}
+                    {staff.is_verified && (
+                      <CheckCircle2 size={14} className="text-blue-400 shrink-0" />
+                    )}
+                  </h3>
+                  <p className="text-[10px] font-mono text-emerald-500/80 uppercase tracking-wider">
+                    {staff.emp_no}
+                  </p>
+                </div>
+
+                {/* Action buttons */}
+                <div className="flex gap-1 shrink-0">
+                  <button
+                    onClick={() => handleStartEdit(staff)}
+                    className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-blue-400"
+                    title="Edit"
+                  >
+                    <Edit size={14} />
+                  </button>
+                  <button
+                    onClick={() => setSelectedStaffForDelete(staff)}
+                    className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-red-400"
+                    title="Delete"
+                  >
+                    <Trash2 size={14} />
                   </button>
                 </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-slate-900/50 p-3 rounded-xl border border-white/5">
-                    <p className="text-slate-500 text-[10px] uppercase font-black tracking-widest mb-1">
-                      Rating
-                    </p>
-                    <div className="flex items-center gap-1 text-emerald-400 font-mono font-bold">
-                      <Star size={14} fill="currentColor" /> {(staff.rating || 0).toFixed(1)}
-                    </div>
+              {/* Position + Location */}
+              <div className="px-4 py-3 flex flex-wrap gap-2">
+                <span className="text-[10px] font-medium px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  {staff.position_applied}
+                </span>
+                <span className="text-[10px] font-medium px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center gap-1">
+                  <MapPin size={10} /> {staff.district}
+                </span>
+                {staff.category && staff.category !== staff.position_applied && (
+                  <span className="text-[10px] font-medium px-2 py-1 rounded-md bg-white/5 text-slate-400 border border-white/10">
+                    {staff.category}
+                  </span>
+                )}
+              </div>
+
+              {/* Details Row */}
+              <div className="px-4 py-2 flex flex-wrap gap-1.5 text-[9px]">
+                {staff.religion && <span className="text-slate-500">{staff.religion}</span>}
+                {calculateAge(staff.dob) && (
+                  <span className="text-slate-500">Age {calculateAge(staff.dob)}</span>
+                )}
+                {staff.father_husband_name && (
+                  <span
+                    className="text-blue-400/80 truncate max-w-[100px]"
+                    title={staff.father_husband_name}
+                  >
+                    • {staff.father_husband_name}
+                  </span>
+                )}
+                {staff.marital_status && (
+                  <span className="text-purple-400/80">• {staff.marital_status}</span>
+                )}
+              </div>
+
+              {/* Stats Row */}
+              <div className="px-4 py-3 flex items-center justify-between border-t border-white/5 bg-black/20">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    <Star size={12} className="text-amber-400" fill="currentColor" />
+                    <span className="text-[11px] font-mono font-bold text-amber-400">
+                      {(staff.rating || 0).toFixed(1)}
+                    </span>
                   </div>
-                  <div className="bg-slate-900/50 p-3 rounded-xl border border-white/5 relative group/info">
-                    <p className="text-slate-500 text-[10px] uppercase font-black tracking-widest mb-1">
-                      Expected Salary
-                    </p>
-                    <div className="font-mono font-bold text-emerald-400 text-sm">
-                      PKR {staff.expected_salary_pkr?.toLocaleString() || '-'}
-                    </div>
-
-                    {staff.relative_info && (
-                      <div className="absolute inset-0 bg-slate-900 border border-red-500/20 rounded-xl opacity-0 group-hover/info:opacity-100 transition-opacity flex flex-col justify-center px-4 pointer-events-none">
-                        <p className="text-[8px] text-red-400 uppercase font-black tracking-widest mb-0.5">
-                          Emergency Contact ({staff.relative_info.relationship})
-                        </p>
-                        <p className="text-[10px] text-white font-bold truncate">
-                          {staff.relative_info.name}
-                        </p>
-                        <p className="text-[9px] text-slate-400 font-mono">
-                          {staff.relative_info.phone}
-                        </p>
-                      </div>
-                    )}
+                  <div className="w-px h-4 bg-white/10" />
+                  <div className="text-[11px] font-mono font-bold text-emerald-400">
+                    Rs.{(staff.expected_salary_pkr || 0).toLocaleString()}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                  <div className="flex gap-2">
-                    {(staff.skills || []).slice(0, 3).map((skill: string) => (
-                      <span
-                        key={skill}
-                        className="text-[9px] uppercase tracking-wider font-black px-2 py-1 bg-white/5 border border-white/10 rounded text-slate-400"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => setSelectedStaffForAdvance(staff)}
-                      className="flex items-center gap-1.5 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-emerald-400 bg-emerald-500/5 hover:bg-emerald-500/10 border border-emerald-500/10 rounded-lg transition-all"
-                    >
-                      <Banknote size={14} /> Gift Advance
-                    </button>
-                    <button className="text-blue-400 hover:scale-110 transition-transform">
-                      <Phone size={20} />
-                    </button>
-                    <button
-                      onClick={() => handleToggleAvailability(staff.id, staff.is_available)}
-                      className={cn(
-                        'px-3 py-1 rounded text-[10px] font-black uppercase tracking-widest border transition-all active:scale-95',
-                        staff.is_available
-                          ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20'
-                          : 'bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20'
-                      )}
-                    >
-                      {staff.is_available ? 'Available' : 'On Duty'}
-                    </button>
-                  </div>
+                {/* Availability Toggle */}
+                <div className="flex flex-col items-end gap-1">
+                  <button
+                    onClick={() => handleToggleAvailability(staff.id, staff.is_available)}
+                    className={cn(
+                      'px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all',
+                      staff.is_available
+                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                        : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                    )}
+                  >
+                    {staff.is_available ? 'Available' : 'On Duty'}
+                  </button>
+                  {!staff.is_available && staffAssignments[staff.id] && (
+                    <span className="text-[8px] text-slate-500 font-medium truncate max-w-[120px]">
+                      {staffAssignments[staff.id]}
+                    </span>
+                  )}
                 </div>
               </div>
+
+              {/* Footer - Skills + Actions */}
+              <div className="px-4 py-3 border-t border-white/5 flex items-center justify-between gap-3">
+                {/* Skills */}
+                <div className="flex items-center gap-1.5 overflow-hidden">
+                  {(staff.skills || []).slice(0, 2).map((skill: string) => (
+                    <span
+                      key={skill}
+                      className="text-[8px] font-medium px-1.5 py-0.5 bg-white/5 rounded text-slate-500 whitespace-nowrap"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                  {(staff.skills || []).length > 2 && (
+                    <span className="text-[8px] text-slate-600">+{staff.skills.length - 2}</span>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2 shrink-0">
+                  {staff.relative_info && (
+                    <div className="group/contact relative">
+                      <button className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-red-400">
+                        <Phone size={14} />
+                      </button>
+                      {/* Tooltip */}
+                      <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-slate-800 border border-white/10 rounded-lg opacity-0 group-hover/contact:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap">
+                        <p className="text-[10px] text-white font-bold">
+                          {staff.relative_info.name}
+                        </p>
+                        <p className="text-[9px] text-slate-400">{staff.relative_info.phone}</p>
+                        <p className="text-[8px] text-slate-500">
+                          {staff.relative_info.relationship}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  <button
+                    onClick={() => setSelectedStaffForAdvance(staff)}
+                    className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-md transition-all"
+                  >
+                    <Banknote size={12} />
+                    <span>Advance</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Critical Info Alert */}
+              {staff.critical_missing_info && (
+                <div className="px-4 py-2 bg-red-500/10 border-t border-red-500/20 flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
+                  <span className="text-[9px] font-medium text-red-400">
+                    Missing critical info - needs review
+                  </span>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -591,6 +719,278 @@ export default function StaffView() {
                   <>Confirm Disbursement</>
                 )}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Staff Modal */}
+      {selectedStaffForEdit && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-2xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-white/5">
+              <h3 className="text-sm font-black text-blue-400 uppercase tracking-[0.2em]">
+                Edit Staff Profile
+              </h3>
+              <button
+                onClick={() => setSelectedStaffForEdit(null)}
+                className="text-slate-500 hover:text-white"
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditStaff} className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                    Full Name
+                  </label>
+                  <input
+                    required
+                    value={editFormData.full_name}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, full_name: e.target.value })
+                    }
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500/40"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                    CNIC (XXXXX-XXXXXXX-X)
+                  </label>
+                  <input
+                    required
+                    placeholder="42101-1234567-1"
+                    value={editFormData.cnic_number}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, cnic_number: e.target.value })
+                    }
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-blue-500/40"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                    Mobile Number
+                  </label>
+                  <input
+                    required
+                    value={editFormData.phone_primary}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, phone_primary: e.target.value })
+                    }
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-blue-500/40"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                    District
+                  </label>
+                  <select
+                    required
+                    value={editFormData.district}
+                    onChange={(e) => setEditFormData({ ...editFormData, district: e.target.value })}
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500/40"
+                  >
+                    <option value="">Select District</option>
+                    {KARACHI_AREAS.map((area) => (
+                      <option key={area} value={area}>
+                        {area}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                    Category
+                  </label>
+                  <select
+                    required
+                    value={editFormData.category}
+                    onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500/40"
+                  >
+                    {STAFF_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                    Position Applied
+                  </label>
+                  <input
+                    required
+                    value={editFormData.position_applied}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, position_applied: e.target.value })
+                    }
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500/40"
+                    placeholder="e.g. ICU Nurse"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                    Experience Years
+                  </label>
+                  <input
+                    type="number"
+                    value={editFormData.experience_years}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        experience_years: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-blue-500/40"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                    Expected Salary (PKR)
+                  </label>
+                  <input
+                    type="number"
+                    value={editFormData.expected_salary_pkr}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        expected_salary_pkr: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-blue-500/40"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 mt-8 pt-6 border-t border-white/5">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editFormData.is_active}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, is_active: e.target.checked })
+                    }
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span className="text-[10px] text-slate-400 uppercase font-black tracking-widest">
+                    Active Staff Member
+                  </span>
+                </label>
+
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editFormData.is_available}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, is_available: e.target.checked })
+                    }
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span className="text-[10px] text-slate-400 uppercase font-black tracking-widest">
+                    Currently Available
+                  </span>
+                </label>
+              </div>
+
+              <div className="flex gap-4 mt-8">
+                <button
+                  type="button"
+                  onClick={() => setSelectedStaffForEdit(null)}
+                  className="flex-1 py-4 bg-slate-700 hover:bg-slate-600 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmittingEdit}
+                  className="flex-1 py-4 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-slate-950 text-[10px] uppercase tracking-widest rounded-xl shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2"
+                >
+                  {isSubmittingEdit ? (
+                    <Loader2 className="animate-spin" size={16} />
+                  ) : (
+                    'Update Profile'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {selectedStaffForDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-sm font-black text-red-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                <Trash2 size={20} /> Delete Staff Member
+              </h3>
+              <button
+                onClick={() => setSelectedStaffForDelete(null)}
+                className="text-slate-500 hover:text-white"
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                <p className="text-red-400 font-bold text-sm mb-2">
+                  ⚠️ This action cannot be undone
+                </p>
+                <p className="text-slate-300 text-sm leading-relaxed">
+                  You are about to permanently delete{' '}
+                  <strong>{selectedStaffForDelete.full_name}</strong> (ID:{' '}
+                  {selectedStaffForDelete.emp_no}) from the system. This will remove all associated
+                  data including shifts, advances, and attendance records.
+                </p>
+              </div>
+
+              <div className="bg-slate-800 border border-white/5 rounded-xl p-4">
+                <h4 className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2">
+                  Staff Details
+                </h4>
+                <div className="space-y-1 text-sm">
+                  <p className="text-white">
+                    <strong>Name:</strong> {selectedStaffForDelete.full_name}
+                  </p>
+                  <p className="text-slate-300">
+                    <strong>ID:</strong> {selectedStaffForDelete.emp_no}
+                  </p>
+                  <p className="text-slate-300">
+                    <strong>Position:</strong> {selectedStaffForDelete.position_applied}
+                  </p>
+                  <p className="text-slate-300">
+                    <strong>District:</strong> {selectedStaffForDelete.district}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 mt-8">
+                <button
+                  onClick={() => setSelectedStaffForDelete(null)}
+                  className="flex-1 py-4 bg-slate-700 hover:bg-slate-600 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteStaff}
+                  disabled={isDeleting}
+                  className="flex-1 py-4 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white text-[10px] uppercase tracking-widest rounded-xl shadow-lg shadow-red-500/20 flex items-center justify-center gap-2"
+                >
+                  {isDeleting ? (
+                    <Loader2 className="animate-spin" size={16} />
+                  ) : (
+                    <>
+                      <Trash2 size={14} />
+                      Delete Staff
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
