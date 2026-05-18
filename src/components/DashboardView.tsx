@@ -11,7 +11,7 @@ import { staffService } from '../services/staffService'
 import { patientService } from '../services/patientService'
 import { supabase } from '../lib/supabase'
 
-export default function DashboardView() {
+export default function DashboardView({ setActiveView }: { setActiveView: (view: any) => void }) {
   const [stats, setStats] = useState([
     { label: 'Active Staff', value: '...', trend: '+0%', color: 'blue' },
     { label: 'Available Now', value: '...', trend: '+0%', color: 'green' },
@@ -299,7 +299,16 @@ export default function DashboardView() {
                   District
                 </th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
-                  Status
+                  Relative
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  Address
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  WhatsApp
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -330,30 +339,40 @@ export default function DashboardView() {
                   <td className="px-6 py-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
                     {staff.district}
                   </td>
+                  <td className="px-6 py-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                    {staff.father_husband_name || 'N/A'}
+                  </td>
+                  <td className="px-6 py-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest max-w-[200px] truncate">
+                    {staff.complete_address || 'N/A'}
+                  </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-1.5">
-                      <div
-                        className={cn(
-                          'w-1.5 h-1.5 rounded-full animate-pulse',
-                          staff.is_available ? 'bg-emerald-500' : 'bg-red-500'
-                        )}
-                      ></div>
-                      <span
-                        className={cn(
-                          'text-[9px] font-black uppercase tracking-widest',
-                          staff.is_available ? 'text-emerald-500' : 'text-red-500'
-                        )}
+                    {staff.whatsapp_number ? (
+                      <a
+                        href={`https://wa.me/${staff.whatsapp_number.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] text-emerald-400 hover:underline font-bold"
                       >
-                        {staff.is_available ? 'Ready' : 'Assigned'}
-                      </span>
-                    </div>
+                        {staff.whatsapp_number}
+                      </a>
+                    ) : (
+                      <span className="text-[10px] text-slate-600">N/A</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => setActiveView('staff')}
+                      className="px-3 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-[10px] font-black text-white uppercase transition-colors"
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))}
               {recentStaff.length === 0 && (
                 <tr>
                   <td
-                    colSpan={5}
+                    colSpan={8}
                     className="px-6 py-12 text-center text-slate-600 text-[10px] font-black uppercase tracking-widest"
                   >
                     No recent registrations detected in ledger

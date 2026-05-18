@@ -182,7 +182,7 @@ export default function App() {
             transition={{ duration: 0.2 }}
             className="h-full"
           >
-            {activeView === 'dashboard' && <DashboardView />}
+            {activeView === 'dashboard' && <DashboardView setActiveView={setActiveView} />}
             {activeView === 'staff' && <StaffView />}
             {activeView === 'ocr' && <OCRView />}
             {activeView === 'patients' && <PatientView />}
