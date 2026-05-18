@@ -23,6 +23,8 @@ export interface Staff {
   experience_years?: number
   shift_preference?: string
   expected_salary_pkr?: number
+  day_shift_rate?: number
+  night_shift_rate?: number
   preferred_payment_method?: string
   bank_info?: any
   is_active: boolean

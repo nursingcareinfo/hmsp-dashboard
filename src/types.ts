@@ -30,6 +30,8 @@ export interface Staff {
   isVerified: boolean
   preferredPayment: PaymentMethod
   expectedSalary?: number
+  dayShiftRate?: number
+  nightShiftRate?: number
   acknowledgmentSigned: boolean
   createdAt: any
   updatedAt: any

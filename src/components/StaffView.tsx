@@ -44,6 +44,8 @@ export default function StaffView() {
     position_applied: '',
     experience_years: 0,
     expected_salary_pkr: 0,
+    day_shift_rate: 0,
+    night_shift_rate: 0,
     is_active: true,
     is_available: true,
   })
@@ -61,6 +63,8 @@ export default function StaffView() {
     position_applied: '',
     experience_years: 0,
     expected_salary_pkr: 0,
+    day_shift_rate: 0,
+    night_shift_rate: 0,
     is_active: true,
     is_available: true,
   })
@@ -396,6 +400,32 @@ export default function StaffView() {
                 value={formData.expected_salary_pkr}
                 onChange={(e) =>
                   setFormData({ ...formData, expected_salary_pkr: parseInt(e.target.value) || 0 })
+                }
+                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-emerald-500/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                Day Shift Rate (PKR)
+              </label>
+              <input
+                type="number"
+                value={formData.day_shift_rate}
+                onChange={(e) =>
+                  setFormData({ ...formData, day_shift_rate: parseInt(e.target.value) || 0 })
+                }
+                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-emerald-500/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                Night Shift Rate (PKR)
+              </label>
+              <input
+                type="number"
+                value={formData.night_shift_rate}
+                onChange={(e) =>
+                  setFormData({ ...formData, night_shift_rate: parseInt(e.target.value) || 0 })
                 }
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
@@ -858,6 +888,38 @@ export default function StaffView() {
                       setEditFormData({
                         ...editFormData,
                         expected_salary_pkr: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-blue-500/40"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                    Day Shift Rate (PKR)
+                  </label>
+                  <input
+                    type="number"
+                    value={editFormData.day_shift_rate}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        day_shift_rate: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-blue-500/40"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                    Night Shift Rate (PKR)
+                  </label>
+                  <input
+                    type="number"
+                    value={editFormData.night_shift_rate}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        night_shift_rate: parseInt(e.target.value) || 0,
                       })
                     }
                     className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-blue-500/40"
