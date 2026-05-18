@@ -123,6 +123,22 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
 
   const [recentStaff, setRecentStaff] = useState<any[]>([])
 
+  const calculateAge = (dob: string | undefined) => {
+    if (!dob) return null
+    try {
+      const birthDate = new Date(dob)
+      const today = new Date()
+      let age = today.getFullYear() - birthDate.getFullYear()
+      const m = today.getMonth() - birthDate.getMonth()
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--
+      }
+      return age
+    } catch {
+      return null
+    }
+  }
+
   return (
     <div className="space-y-8 h-full pb-12">
       <div className="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5">
@@ -278,7 +294,10 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
             <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
             Recent Registered Professionals
           </h3>
-          <button className="text-[10px] font-black text-blue-400 uppercase tracking-widest hover:underline">
+          <button
+            onClick={() => setActiveView('staff')}
+            className="text-[10px] font-black text-blue-400 uppercase tracking-widest hover:underline"
+          >
             View All Staff
           </button>
         </div>
@@ -294,6 +313,15 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
                 </th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
                   Category
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  Age
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  Religion
+                </th>
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  Marital
                 </th>
                 <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
                   District
@@ -336,6 +364,30 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
                       {staff.category || 'N/A'}
                     </span>
                   </td>
+                  <td className="px-6 py-4 text-[10px] font-mono">
+                    {(() => {
+                      const age = calculateAge(staff.dob)
+                      return age ? (
+                        <span className="text-emerald-400 font-bold">{age}</span>
+                      ) : (
+                        <span className="text-red-400 font-black">—</span>
+                      )
+                    })()}
+                  </td>
+                  <td className="px-6 py-4 text-[10px]">
+                    {staff.religion ? (
+                      <span className="text-purple-400 font-bold">{staff.religion}</span>
+                    ) : (
+                      <span className="text-red-400 font-black">—</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-[10px]">
+                    {staff.marital_status ? (
+                      <span className="text-amber-400 font-bold">{staff.marital_status}</span>
+                    ) : (
+                      <span className="text-red-400 font-black">—</span>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
                     {staff.district}
                   </td>
@@ -372,7 +424,7 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
               {recentStaff.length === 0 && (
                 <tr>
                   <td
-                    colSpan={8}
+                    colSpan={11}
                     className="px-6 py-12 text-center text-slate-600 text-[10px] font-black uppercase tracking-widest"
                   >
                     No recent registrations detected in ledger

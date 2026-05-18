@@ -404,32 +404,6 @@ export default function StaffView() {
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
-                Day Shift Rate (PKR)
-              </label>
-              <input
-                type="number"
-                value={formData.day_shift_rate}
-                onChange={(e) =>
-                  setFormData({ ...formData, day_shift_rate: parseInt(e.target.value) || 0 })
-                }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-emerald-500/40"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
-                Night Shift Rate (PKR)
-              </label>
-              <input
-                type="number"
-                value={formData.night_shift_rate}
-                onChange={(e) =>
-                  setFormData({ ...formData, night_shift_rate: parseInt(e.target.value) || 0 })
-                }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-emerald-500/40"
-              />
-            </div>
             <div className="space-y-2 text-right md:col-span-2 mt-4">
               <button
                 type="submit"
@@ -442,7 +416,7 @@ export default function StaffView() {
                   'Register Professional'
                 )}
               </button>
-            </div>
+            </div>{' '}
           </form>
         </div>
       )}
@@ -893,40 +867,9 @@ export default function StaffView() {
                     className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-blue-500/40"
                   />
                 </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
-                    Day Shift Rate (PKR)
-                  </label>
-                  <input
-                    type="number"
-                    value={editFormData.day_shift_rate}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        day_shift_rate: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-blue-500/40"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
-                    Night Shift Rate (PKR)
-                  </label>
-                  <input
-                    type="number"
-                    value={editFormData.night_shift_rate}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        night_shift_rate: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-blue-500/40"
-                  />
-                </div>
               </div>
 
+              {/* Checkboxes and actions are outside the 2-column grid */}
               <div className="flex items-center gap-4 mt-8 pt-6 border-t border-white/5">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
