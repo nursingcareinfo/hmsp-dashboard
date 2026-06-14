@@ -5,6 +5,18 @@ const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY as stri
 export const extractionSchema = {
   type: Type.OBJECT,
   properties: {
+    pncRegistrationNumber: {
+      type: Type.STRING,
+      description: 'PNC/PN&MC registration or license number (e.g., PK-K-22-A-290169). Mandatory.',
+    },
+    pncLicenseExpiryDate: {
+      type: Type.STRING,
+      description: 'Expiry date of the PNC license card in YYYY-MM-DD format. Mandatory.',
+    },
+    pncLicenseIssueDate: {
+      type: Type.STRING,
+      description: 'Issue/renewal date of the PNC license card in YYYY-MM-DD format, if visible.',
+    },
     identity: {
       type: Type.OBJECT,
       properties: {
@@ -113,13 +125,14 @@ export const extractionSchema = {
         },
         criticalMissingInfo: {
           type: Type.BOOLEAN,
-          description: 'True if Full Name, CNIC, or Mobile is missing/illegible',
+          description:
+            'True if Full Name, CNIC, Mobile, or PNC Registration Number is missing/illegible',
         },
         missingFieldsList: {
           type: Type.ARRAY,
           items: { type: Type.STRING },
           description:
-            "List of missing mandatory fields (e.g., ['fullName', 'cnicNumber', 'mobileNumber'])",
+            "List of missing mandatory fields (e.g., ['fullName', 'cnicNumber', 'mobileNumber', 'pncRegistrationNumber'])",
         },
         reconciliationDetails: {
           type: Type.STRING,
@@ -131,6 +144,8 @@ export const extractionSchema = {
     },
   },
   required: [
+    'pncRegistrationNumber',
+    'pncLicenseExpiryDate',
     'identity',
     'professional_profile',
     'geographic_data',
@@ -145,13 +160,21 @@ export async function extractStaffData(imageBase64s: string[], overrideKey?: str
 
   const prompt = `
     Role: High-Precision Registrar for HMSP Dashboard Karachi (Home Medical Services Provider).
-    Task: Analyze the provided images (Employee Form, CNIC, CV, and/or Electricity Bill) for a medical staffing ledger.
-    Extract as much information as possible even if only one document (like a CV) is provided.
+    Task: Analyze the provided images (Employee Form, CNIC, CV, Electricity Bill, and/or PNC License Card) for a medical staffing ledger.
+    Extract as much information as possible even if only one document is provided.
 
-    The "Big Three" Mandatory Fields:
+    The "Big Four" Mandatory Fields:
     1. fullName
     2. cnicNumber (format: XXXXX-XXXXXXX-X)
     3. mobileNumber (format: +92 XXX XXXXXXX)
+    4. pncRegistrationNumber (PNC/PN&MC license number visible on the card front and back)
+
+    SPECIAL DOCUMENT — PNC LICENSE CARD:
+    - When a PNC (Pakistan Nursing & Midwifery Council) license card is uploaded, it may appear as the front and/or back of a card.
+    - Extract the license/registration number (usually formatted like PK-K-22-A-XXXXXX) from BOTH front and back.
+    - Extract the "VALID UPTO" or "Expiry" date from the back of the card.
+    - Extract the "INITIAL REG. DATE" or "Issue Date" if visible.
+    - Cross-reference both sides of the card to ensure the registration number matches on both sides.
 
     Processing Guidelines:
     1. Document Availability:
@@ -160,18 +183,18 @@ export async function extractStaffData(imageBase64s: string[], overrideKey?: str
        - If a document type is missing, do not complain in reconciliationDetails unless there is a conflict.
 
     2. Mandatory Field Gatekeeper:
-       - Prioritize extracting the "Big Three".
-       - If any of the Big Three are missing or unreadable, return null for that field.
-       - Set audit_metadata.criticalMissingInfo to true only if one of the "Big Three" is missing.
-       - Populate audit_metadata.missingFieldsList with the names of the missing Big Three fields.
+        - Prioritize extracting the "Big Four".
+        - If any of the Big Four are missing or unreadable, return null for that field.
+        - Set audit_metadata.criticalMissingInfo to true only if one of the "Big Four" is missing.
+        - Populate audit_metadata.missingFieldsList with the names of the missing Big Four fields.
 
     3. Cross-Verification:
        - Identity Sync: Use available documents (CNIC/CV/Form) to verify details.
        - Address Anchor: Extract address from Bill if present, or CV/Form.
 
     4. Compliance:
-       - acknowledgmentSigned: Check if any form or CV mentions acceptance of terms or has a signature.
-       - policyCheck: Pass if Big Three are found.
+        - acknowledgmentSigned: Check if any form or CV mentions acceptance of terms or has a signature.
+        - policyCheck: Pass only if at least 3 out of 4 of the Big Four are found.
 
     5. Reconciliation Details:
        - Use this field to note WHICH documents were found and if any data conflicts (e.g., "Name on CNIC vs CV").

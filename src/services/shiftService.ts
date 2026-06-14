@@ -18,7 +18,7 @@ export const shiftService = {
 
     const { data, error } = await supabase
       .from('manual_shifts')
-      .select('*, employee:employee_id(full_name), patient:patient_id(patient_name)')
+      .select('*, employee:employee_id(full_name), patient:patient_id(full_name)')
       .gte('shift_date', startDate)
       .lte('shift_date', endDate)
       .order('shift_date', { ascending: true })
@@ -54,7 +54,7 @@ export const shiftService = {
     const today = new Date().toISOString().split('T')[0]
     const { data, error } = await supabase
       .from('manual_shifts')
-      .select('*, patient:patient_id(patient_name, district, service_type)')
+      .select('*, patient:patient_id(full_name, district, service_type)')
       .eq('employee_id', employeeId)
       .eq('shift_date', today)
       .in('attendance_status', ['Scheduled', 'Completed'])

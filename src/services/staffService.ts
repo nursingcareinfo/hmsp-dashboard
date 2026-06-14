@@ -34,6 +34,8 @@ export interface Staff {
   data_confidence?: string
   critical_missing_info?: boolean
   missing_fields_list?: string[]
+  pnc_registration_number?: string
+  pnc_license_expiry_date?: string
   document_urls?: any
   rating: number
   category?: string

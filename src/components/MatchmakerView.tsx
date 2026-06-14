@@ -41,7 +41,7 @@ export default function MatchmakerView() {
       const selectedStaff = staff.find((s) => s.id === selectedStaffId)
       const selectedPatient = patients.find((p) => p.id === selectedPatientId)
 
-      alert(`Assigned ${selectedStaff?.full_name} to ${selectedPatient?.patient_name}`)
+      alert(`Assigned ${selectedStaff?.full_name} to ${selectedPatient?.full_name}`)
       setSelectedStaffId(null)
       setSelectedPatientId(null)
     }
@@ -153,9 +153,7 @@ export default function MatchmakerView() {
                 >
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="font-bold text-white uppercase tracking-tight">
-                        {p.patient_name}
-                      </p>
+                      <p className="font-bold text-white uppercase tracking-tight">{p.full_name}</p>
                       <div className="flex items-center gap-3 text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1.5">
                         <span className="text-emerald-400 font-mono">{p.service_type}</span>
                         <span className="flex items-center gap-1 font-sans">

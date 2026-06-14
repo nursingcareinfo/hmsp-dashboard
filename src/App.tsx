@@ -42,8 +42,11 @@ import CalendarView from './components/CalendarView'
 import FinanceView from './components/FinanceView'
 import MemoryView from './components/MemoryView'
 import AttendanceView from './components/AttendanceView'
+import LoginView from './components/LoginView'
+import { AuthProvider, useAuth } from './context/AuthContext'
 
-export default function App() {
+function AppContent() {
+  const { user, loading, signOut } = useAuth()
   const [activeView, setActiveView] = useState<View>('dashboard')
   const [isSidebarOpen, setSidebarOpen] = useState(true)
 
@@ -76,6 +79,20 @@ export default function App() {
     const interval = setInterval(loadMtdMargin, 5 * 60 * 1000)
     return () => clearInterval(interval)
   }, [])
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="h-screen bg-black flex items-center justify-center">
+        <div className="w-6 h-6 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  // Not authenticated
+  if (!user) {
+    return <LoginView />
+  }
 
   return (
     <div className="flex h-screen bg-[var(--color-bg)] text-[var(--color-ink)] overflow-hidden font-sans">
@@ -128,7 +145,10 @@ export default function App() {
         </nav>
 
         <div className="p-4 mt-auto border-t border-white/5">
-          <button className="w-full flex items-center gap-3 p-3 text-slate-600 hover:text-red-400 transition-colors uppercase text-[9px] font-black tracking-[0.2em] px-6">
+          <button
+            onClick={signOut}
+            className="w-full flex items-center gap-3 p-3 text-slate-600 hover:text-red-400 transition-colors uppercase text-[9px] font-black tracking-[0.2em] px-6"
+          >
             <LogOut size={14} />
             {isSidebarOpen && <span>Secure Logout</span>}
           </button>
@@ -222,4 +242,10 @@ export default function App() {
   )
 }
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  )
+}
