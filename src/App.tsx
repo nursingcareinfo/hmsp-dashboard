@@ -31,6 +31,7 @@ type View =
   | 'ocr'
   | 'attendance'
   | 'memory'
+  | 'intakes'
 
 import StaffView from './components/StaffView'
 import OCRView from './components/OCRView'
@@ -42,6 +43,7 @@ import CalendarView from './components/CalendarView'
 import FinanceView from './components/FinanceView'
 import MemoryView from './components/MemoryView'
 import AttendanceView from './components/AttendanceView'
+import PatientIntakesView from './components/PatientIntakesView'
 import LoginView from './components/LoginView'
 import { AuthProvider, useAuth } from './context/AuthContext'
 
@@ -57,6 +59,7 @@ function AppContent() {
     { id: 'patients', label: 'Patients', icon: ClipboardList },
     { id: 'attendance', label: 'Attendance', icon: ClipboardList },
     { id: 'memory', label: 'AI Memory', icon: Brain },
+    { id: 'intakes', label: 'Intakes', icon: ClipboardList },
     { id: 'finance', label: 'Payouts', icon: Wallet },
   ]
 
@@ -209,6 +212,7 @@ function AppContent() {
             {activeView === 'matchmaker' && <MatchmakerView />}
             {activeView === 'attendance' && <AttendanceView />}
             {activeView === 'memory' && <MemoryView />}
+            {activeView === 'intakes' && <PatientIntakesView />}
             {activeView === 'finance' && <FinanceView />}
 
             {activeView === 'whatsapp' && (
