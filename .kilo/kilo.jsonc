@@ -34,6 +34,16 @@
       },
     },
   },
+  "mcp": {
+    "agentmemory": {
+      "type": "local",
+      "command": ["npx", "-y", "@agentmemory/mcp"],
+      "enabled": true,
+      "environment": {
+        "AGENTMEMORY_URL": "http://localhost:49134",
+      },
+    },
+  },
   "skills": {
     "paths": [".kilo/skills", ".kilocode/skills", ".opencode/skills"],
   },

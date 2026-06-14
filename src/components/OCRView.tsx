@@ -201,6 +201,8 @@ export default function OCRView() {
         expected_salary_pkr: parseFloat(financial_reference.expectedSalaryPKR as any) || 0,
         preferred_payment_method: financial_reference.preferredPayment,
         bank_info: financial_reference.bankDetails,
+        pnc_registration_number: extractedData.pncRegistrationNumber || null,
+        pnc_license_expiry_date: cleanDate(extractedData.pncLicenseExpiryDate || ''),
         is_active: true,
         is_available: true,
         is_acknowledgment_signed: audit_metadata.acknowledgmentSigned,
@@ -380,6 +382,16 @@ export default function OCRView() {
                   <DataRow label="Marital Status" value={extractedData.identity.maritalStatus} />
                   <DataRow label="Gender" value={extractedData.identity.gender} />
                   <DataRow label="Religion" value={extractedData.identity.religion} />
+                  <DataRow
+                    label="PNC Reg. No."
+                    value={extractedData.pncRegistrationNumber}
+                    mono
+                    error={extractedData.audit_metadata.missingFieldsList?.includes(
+                      'pncRegistrationNumber'
+                    )}
+                  />
+                  <DataRow label="PNC Expiry" value={extractedData.pncLicenseExpiryDate} mono />
+                  <DataRow label="PNC Issue Date" value={extractedData.pncLicenseIssueDate} mono />
                   <DataRow
                     label="Mobile"
                     value={extractedData.identity.mobileNumber}

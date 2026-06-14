@@ -113,7 +113,7 @@ export default function StaffView() {
               const shifts = await shiftService.getActiveShiftsForStaff(staff.id)
               if (shifts.length > 0) {
                 const patient = shifts[0].patient
-                assignments[staff.id] = patient?.patient_name || 'Unknown Patient'
+                assignments[staff.id] = patient?.full_name || 'Unknown Patient'
               }
             } catch {
               // Silently fail — assignment info is optional

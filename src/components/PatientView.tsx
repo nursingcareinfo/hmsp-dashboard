@@ -25,13 +25,13 @@ export default function PatientView() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [formData, setFormData] = useState({
-    patient_name: '',
+    full_name: '',
     cnic: '',
-    mobile_number: '',
+    contact: '',
     district: '',
     complete_address: '',
     service_type: '12h_day',
-    monthly_package_pkr: '',
+    billing_rate: '',
     status: 'Pending' as 'Active' | 'Pending' | 'Completed' | 'Cancelled',
     start_date: new Date().toISOString().split('T')[0],
   })
@@ -57,18 +57,18 @@ export default function PatientView() {
     try {
       await patientService.createPatient({
         ...formData,
-        monthly_package_pkr: parseFloat(formData.monthly_package_pkr) || 0,
+        billing_rate: parseFloat(formData.billing_rate) || 0,
       })
       alert('Patient registered successfully!')
       setShowForm(false)
       setFormData({
-        patient_name: '',
+        full_name: '',
         cnic: '',
-        mobile_number: '',
+        contact: '',
         district: '',
         complete_address: '',
         service_type: '12h_day',
-        monthly_package_pkr: '',
+        billing_rate: '',
         status: 'Pending',
         start_date: new Date().toISOString().split('T')[0],
       })
@@ -129,8 +129,8 @@ export default function PatientView() {
               </label>
               <input
                 required
-                value={formData.patient_name}
-                onChange={(e) => setFormData({ ...formData, patient_name: e.target.value })}
+                value={formData.full_name}
+                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -151,8 +151,8 @@ export default function PatientView() {
               </label>
               <input
                 required
-                value={formData.mobile_number}
-                onChange={(e) => setFormData({ ...formData, mobile_number: e.target.value })}
+                value={formData.contact}
+                onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -207,8 +207,8 @@ export default function PatientView() {
               <input
                 type="number"
                 required
-                value={formData.monthly_package_pkr}
-                onChange={(e) => setFormData({ ...formData, monthly_package_pkr: e.target.value })}
+                value={formData.billing_rate}
+                onChange={(e) => setFormData({ ...formData, billing_rate: e.target.value })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -250,7 +250,7 @@ export default function PatientView() {
                   </div>
                   <div>
                     <h3 className="font-black text-white uppercase tracking-tighter text-xl">
-                      {patient.patient_name}
+                      {patient.full_name}
                     </h3>
                     <div className="flex flex-wrap items-center gap-2 mt-1">
                       <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold flex items-center gap-1">
@@ -285,7 +285,7 @@ export default function PatientView() {
                       Monthly Package
                     </p>
                     <p className="text-lg font-mono font-bold text-emerald-400 tracking-tighter">
-                      PKR {(patient.monthly_package_pkr || 0).toLocaleString()}
+                      PKR {(patient.billing_rate || 0).toLocaleString()}
                     </p>
                   </div>
                   <div className="h-8 w-px bg-white/5 hidden md:block"></div>

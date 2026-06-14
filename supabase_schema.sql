@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS employees (
   data_confidence TEXT DEFAULT 'High',
   critical_missing_info BOOLEAN DEFAULT false,
   missing_fields_list TEXT[],
+  pnc_registration_number TEXT,      -- PNC / PN&MC license registration number
+  pnc_license_expiry_date DATE,      -- Expiry date of PNC license card
   document_urls JSONB,
   rating NUMERIC(3, 2) DEFAULT 5.00,
   category TEXT, -- Nurse, Attendant, etc.

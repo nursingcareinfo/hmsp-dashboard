@@ -2,14 +2,14 @@ import { supabase } from '../lib/supabase'
 
 export interface Patient {
   id?: string
-  patient_name: string
+  full_name: string
   cnic?: string
-  mobile_number: string
+  contact: string
   district: string
   complete_address?: string
   service_type: string
   service_duration?: string
-  monthly_package_pkr: number
+  billing_rate: number
   status: 'Active' | 'Pending' | 'Completed' | 'Cancelled'
   start_date?: string
   end_date?: string

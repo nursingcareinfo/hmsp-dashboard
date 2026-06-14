@@ -38,7 +38,7 @@ export default function MemoryView() {
     try {
       // Try to connect to deployed Supabase Edge Function
       const response = await fetch(
-        'https://zumysyuenxrylauzvokl.supabase.co/functions/v1/memory-api/memory/stats',
+        'https://euxzitqllnltlteckeyq.supabase.co/functions/v1/memory-api/memory/stats',
         {
           headers: {
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
@@ -82,7 +82,7 @@ export default function MemoryView() {
     setIsLoading(true)
     try {
       const response = await fetch(
-        'https://zumysyuenxrylauzvokl.supabase.co/functions/v1/memory-api/memory/search',
+        'https://euxzitqllnltlteckeyq.supabase.co/functions/v1/memory-api/memory/search',
         {
           method: 'POST',
           headers: {
@@ -132,7 +132,7 @@ export default function MemoryView() {
     setIsLoading(true)
     try {
       const response = await fetch(
-        'https://zumysyuenxrylauzvokl.supabase.co/functions/v1/memory-api/memory/add',
+        'https://euxzitqllnltlteckeyq.supabase.co/functions/v1/memory-api/memory/add',
         {
           method: 'POST',
           headers: {
@@ -204,7 +204,7 @@ export default function MemoryView() {
     setIsLoading(true)
     try {
       const response = await fetch(
-        'https://zumysyuenxrylauzvokl.supabase.co/functions/v1/memory-api/memory/system-info',
+        'https://euxzitqllnltlteckeyq.supabase.co/functions/v1/memory-api/memory/system-info',
         {
           method: 'POST',
           headers: {
