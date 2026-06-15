@@ -21,9 +21,11 @@ import {
   Clock,
   MessageSquare,
   Loader2,
+  Share2,
 } from 'lucide-react'
 import { cn, formatPKR } from '../lib/utils'
 import { supabase } from '../lib/supabase'
+import ShareIntakeModal from './ShareIntakeModal'
 
 interface PatientIntake {
   id: string
@@ -95,6 +97,7 @@ export default function PatientIntakesView() {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [updatingId, setUpdatingId] = useState<string | null>(null)
+  const [showShare, setShowShare] = useState(false)
 
   useEffect(() => {
     loadIntakes()
@@ -192,12 +195,21 @@ export default function PatientIntakesView() {
             Review &amp; Manage Incoming Referrals
           </p>
         </div>
-        <button
-          onClick={loadIntakes}
-          className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-slate-400"
-        >
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowShare(true)}
+            className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-slate-400 flex items-center gap-1.5"
+          >
+            <Share2 size={12} />
+            Share Link
+          </button>
+          <button
+            onClick={loadIntakes}
+            className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-slate-400"
+          >
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -477,6 +489,7 @@ export default function PatientIntakesView() {
           })}
         </div>
       )}
+      <ShareIntakeModal open={showShare} onClose={() => setShowShare(false)} />
     </div>
   )
 }

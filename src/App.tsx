@@ -17,6 +17,7 @@ import {
   ChevronRight,
   Menu,
   X,
+  Share2,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { cn } from './lib/utils'
@@ -46,11 +47,13 @@ import AttendanceView from './components/AttendanceView'
 import PatientIntakesView from './components/PatientIntakesView'
 import LoginView from './components/LoginView'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import ShareIntakeModal from './components/ShareIntakeModal'
 
 function AppContent() {
   const { user, loading, signOut } = useAuth()
   const [activeView, setActiveView] = useState<View>('dashboard')
   const [isSidebarOpen, setSidebarOpen] = useState(true)
+  const [showShare, setShowShare] = useState(false)
 
   const menuItems = [
     { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
@@ -242,6 +245,16 @@ function AppContent() {
           ))}
         </div>
       </main>
+
+      {/* Share Intake FAB */}
+      <button
+        onClick={() => setShowShare(true)}
+        className="fixed bottom-24 md:bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black shadow-lg shadow-emerald-500/20 flex items-center justify-center transition-all hover:scale-105"
+        aria-label="Share intake form link"
+      >
+        <Share2 size={20} />
+      </button>
+      <ShareIntakeModal open={showShare} onClose={() => setShowShare(false)} />
     </div>
   )
 }
