@@ -729,7 +729,6 @@
               'Content-Type': 'application/json',
               apikey: ANON_KEY,
               Authorization: 'Bearer ' + ANON_KEY,
-              Prefer: 'return=representation',
             },
             body: JSON.stringify(payload),
           })
@@ -739,13 +738,18 @@
             throw new Error(errBody || 'Server error: ' + resp.status)
           }
 
-          const result = await resp.json()
-          const refId = result[0]?.id || 'N/A'
+          // anon role cannot use return=representation, so response body is empty
+          // Extract the created ID from the Location header if available
+          const location = resp.headers.get('Location') || ''
+          const refId = location.includes('id=eq.')
+            ? location.split('id=eq.')[1] || 'submitted'
+            : 'submitted'
 
           // Show success
           document.getElementById('formContainer').style.display = 'none'
           document.getElementById('successBox').classList.add('show')
-          document.getElementById('refId').textContent = refId.slice(0, 8) + '...'
+          document.getElementById('refId').textContent =
+            refId.length > 8 ? refId.slice(0, 8) + '...' : refId
         } catch (err) {
           btn.disabled = false
           btn.textContent = 'Submit Intake Form'
