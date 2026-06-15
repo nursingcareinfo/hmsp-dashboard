@@ -71,6 +71,20 @@ export interface ShiftRow {
   createdAt: any
 }
 
+export type InvoiceStatus = 'Unpaid' | 'Paid' | 'Cancelled'
+
+export interface PatientInvoice {
+  id: string
+  patient_id: string
+  period_start: string
+  period_end: string
+  amount: number
+  status: InvoiceStatus
+  paid_at: string | null
+  notes: string | null
+  created_at: string
+}
+
 export interface FinancialRecord {
   id: string
   patientId: string

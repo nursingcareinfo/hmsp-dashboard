@@ -20,7 +20,7 @@ npm run lint                  # TypeScript type check
 
 - **Frontend**: React 19, TypeScript 5.8, Vite 6, TailwindCSS 4
 - **AI**: Google Gemini API via `@google/genai` (gemini-flash-latest)
-- **Backend**: Supabase (PostgreSQL) at `https://zumysyuenxrylauzvokl.supabase.co`
+- **Backend**: Supabase (PostgreSQL) at `https://euxzitqllnltlteckeyq.supabase.co`
 - **Deployment**: GitHub Pages — auto-deploys on push to main
 - **Live URL**: https://nursingcareinfo.github.io/hmsp-dashboard/
 

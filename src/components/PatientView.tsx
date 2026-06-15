@@ -13,16 +13,24 @@ import {
   Plus,
   AlertCircle,
   Loader2,
+  CheckCircle2,
+  Circle,
+  ChevronDown,
+  ChevronRight,
+  Receipt,
 } from 'lucide-react'
-import { Patient } from '../types'
-import { cn, formatPKR } from '../lib/utils'
-import { patientService } from '../services/patientService'
+import type { Patient, PatientInvoice } from '../types'
+import { cn } from '../lib/utils'
+import { patientService, patientInvoiceService, getCurrentPeriod } from '../services/patientService'
 
 export default function PatientView() {
   const [patients, setPatients] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const [invoices, setInvoices] = useState<Record<string, PatientInvoice[]>>({})
+  const [expandedPatients, setExpandedPatients] = useState<Set<string>>(new Set())
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -40,11 +48,36 @@ export default function PatientView() {
     try {
       const data = await patientService.getAllPatients()
       setPatients(data)
+      await autoGenerateInvoices(data)
     } catch (error) {
       console.error('Error fetching patients:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  async function autoGenerateInvoices(patientsList: any[]) {
+    const activePatients = patientsList.filter((p) => p.status === 'Active')
+    if (activePatients.length === 0) return
+
+    const { periodStart } = getCurrentPeriod()
+
+    for (const patient of activePatients) {
+      const existing = await patientInvoiceService.getInvoicesForPatient(patient.id)
+      const hasInvoice = existing.some((inv) => inv.period_start === periodStart)
+      if (!hasInvoice) {
+        await patientInvoiceService.generateInvoice(patient.id, patient.billing_rate)
+      }
+    }
+
+    const allIds = patientsList.map((p) => p.id)
+    const allInvoices = await patientInvoiceService.getInvoicesForPatients(allIds)
+    const grouped: Record<string, PatientInvoice[]> = {}
+    for (const inv of allInvoices) {
+      if (!grouped[inv.patient_id]) grouped[inv.patient_id] = []
+      grouped[inv.patient_id].push(inv)
+    }
+    setInvoices(grouped)
   }
 
   useEffect(() => {
@@ -377,6 +410,105 @@ export default function PatientView() {
                 )}
               </div>
 
+              {/* Invoices Section */}
+              <div className="border-t border-white/5 pt-4 mt-4">
+                <button
+                  onClick={() => {
+                    const next = new Set(expandedPatients)
+                    if (next.has(patient.id)) next.delete(patient.id)
+                    else next.add(patient.id)
+                    setExpandedPatients(next)
+                  }}
+                  className="w-full flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
+                >
+                  <div className="flex items-center gap-2">
+                    {expandedPatients.has(patient.id) ? (
+                      <ChevronDown size={14} />
+                    ) : (
+                      <ChevronRight size={14} />
+                    )}
+                    <Receipt size={14} />
+                    Invoices ({(invoices[patient.id] || []).length})
+                    {(() => {
+                      const patientInvs = invoices[patient.id] || []
+                      const unpaid = patientInvs.find((i) => i.status === 'Unpaid')
+                      return unpaid ? (
+                        <span className="text-amber-400 ml-2">
+                          — PKR {unpaid.amount.toLocaleString()} • Unpaid
+                        </span>
+                      ) : null
+                    })()}
+                  </div>
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation()
+                      await patientInvoiceService.generateInvoice(patient.id, patient.billing_rate)
+                      const refreshed = await patientInvoiceService.getInvoicesForPatient(
+                        patient.id
+                      )
+                      setInvoices((prev) => ({ ...prev, [patient.id]: refreshed }))
+                    }}
+                    className="text-[9px] px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-colors"
+                  >
+                    + Generate Invoice
+                  </button>
+                </button>
+
+                {expandedPatients.has(patient.id) && (
+                  <div className="mt-3 space-y-1">
+                    {(invoices[patient.id] || []).length === 0 ? (
+                      <p className="text-[10px] text-slate-600 italic py-2 text-center">
+                        No invoices yet
+                      </p>
+                    ) : (
+                      (invoices[patient.id] || []).map((inv) => (
+                        <div
+                          key={inv.id}
+                          className="flex items-center justify-between py-2 px-3 rounded-lg bg-white/5 border border-white/5 text-[11px]"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-slate-400 font-mono">
+                              {formatPeriod(inv.period_start, inv.period_end)}
+                            </span>
+                            <span className="font-mono font-bold text-emerald-400">
+                              PKR {inv.amount.toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            {inv.status === 'Paid' ? (
+                              <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-emerald-400">
+                                <CheckCircle2 size={12} /> Paid
+                              </span>
+                            ) : inv.status === 'Cancelled' ? (
+                              <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                                Cancelled
+                              </span>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-amber-400">
+                                  <Circle size={12} className="fill-amber-400/20" /> Unpaid
+                                </span>
+                                <button
+                                  onClick={async () => {
+                                    await patientInvoiceService.markAsPaid(inv.id)
+                                    const refreshed =
+                                      await patientInvoiceService.getInvoicesForPatient(patient.id)
+                                    setInvoices((prev) => ({ ...prev, [patient.id]: refreshed }))
+                                  }}
+                                  className="text-[8px] px-2 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg transition-colors font-black uppercase tracking-widest"
+                                >
+                                  Mark Paid
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="mt-6 flex justify-end gap-3">
                 <button
                   title="Financial Ledger"
@@ -397,4 +529,24 @@ export default function PatientView() {
       </div>
     </div>
   )
+}
+
+function formatPeriod(start: string, end: string) {
+  const s = new Date(start)
+  const e = new Date(end)
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+  return `${months[s.getMonth()]} ${s.getDate()}-${e.getDate()}, ${s.getFullYear()}`
 }

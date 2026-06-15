@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase'
+import type { PatientInvoice } from '../types'
 
 export interface Patient {
   id?: string
@@ -51,5 +52,82 @@ export const patientService = {
 
     if (error) throw error
     return count || 0
+  },
+}
+
+export function getCurrentPeriod() {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth()
+  const day = now.getDate()
+
+  if (day <= 15) {
+    return {
+      periodStart: `${year}-${String(month + 1).padStart(2, '0')}-01`,
+      periodEnd: `${year}-${String(month + 1).padStart(2, '0')}-15`,
+    }
+  } else {
+    const lastDay = new Date(year, month + 1, 0).getDate()
+    return {
+      periodStart: `${year}-${String(month + 1).padStart(2, '0')}-16`,
+      periodEnd: `${year}-${String(month + 1).padStart(2, '0')}-${lastDay}`,
+    }
+  }
+}
+
+export const patientInvoiceService = {
+  async getInvoicesForPatient(patientId: string) {
+    const { data, error } = await supabase
+      .from('patient_invoices')
+      .select('*')
+      .eq('patient_id', patientId)
+      .order('period_start', { ascending: false })
+
+    if (error) throw error
+    return data as PatientInvoice[]
+  },
+
+  async getInvoicesForPatients(patientIds: string[]) {
+    const { data, error } = await supabase
+      .from('patient_invoices')
+      .select('*')
+      .in('patient_id', patientIds)
+      .order('period_start', { ascending: false })
+
+    if (error) throw error
+    return data as PatientInvoice[]
+  },
+
+  async generateInvoice(patientId: string, patientBillingRate: number) {
+    const { periodStart, periodEnd } = getCurrentPeriod()
+    const amount = patientBillingRate / 2
+
+    const { data, error } = await supabase
+      .from('patient_invoices')
+      .insert([
+        {
+          patient_id: patientId,
+          period_start: periodStart,
+          period_end: periodEnd,
+          amount,
+        },
+      ])
+      .select()
+      .single()
+
+    if (error) throw error
+    return data as PatientInvoice
+  },
+
+  async markAsPaid(invoiceId: string) {
+    const { data, error } = await supabase
+      .from('patient_invoices')
+      .update({ status: 'Paid', paid_at: new Date().toISOString() })
+      .eq('id', invoiceId)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data as PatientInvoice
   },
 }
