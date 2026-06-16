@@ -62,4 +62,33 @@ export const shiftService = {
     if (error) throw error
     return data || []
   },
+
+  async getPatientAssignments(patientIds: string[]) {
+    if (patientIds.length === 0) return []
+    const today = new Date().toISOString().split('T')[0]
+    const { data, error } = await supabase
+      .from('manual_shifts')
+      .select(
+        `employee_id, patient_id, shift_type, decided_rate_pkr,
+         employee:employee_id(full_name, expected_salary_pkr)`
+      )
+      .in('patient_id', patientIds)
+      .gte('shift_date', today)
+      .in('attendance_status', ['Scheduled', 'Completed'])
+      .order('shift_date', { ascending: true })
+
+    if (error) throw error
+
+    // Deduplicate: keep only the earliest upcoming shift per patient + shift_type
+    const seen = new Set<string>()
+    const unique: any[] = []
+    for (const row of data || []) {
+      const key = `${row.patient_id}:${row.shift_type}`
+      if (!seen.has(key)) {
+        seen.add(key)
+        unique.push(row)
+      }
+    }
+    return unique
+  },
 }

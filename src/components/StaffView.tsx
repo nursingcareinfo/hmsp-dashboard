@@ -23,7 +23,7 @@ import {
   Calendar,
 } from 'lucide-react'
 import { Staff } from '../types'
-import { cn, formatPKR } from '../lib/utils'
+import { cn, formatPKR, formatNameInput, formatCNICInput, formatPhoneInput } from '../lib/utils'
 import { STAFF_CATEGORIES, KARACHI_AREAS } from '../constants'
 import { staffService } from '../services/staffService'
 import { advanceService } from '../services/advanceService'
@@ -31,7 +31,13 @@ import { patientService, type Patient } from '../services/patientService'
 import { shiftService } from '../services/shiftService'
 import StaffAttendanceCalendarModal from './StaffAttendanceCalendarModal'
 
-export default function StaffView() {
+export default function StaffView({
+  setActiveView,
+  onSelectPatient,
+}: {
+  setActiveView: (view: string) => void
+  onSelectPatient: (patientId: string) => void
+}) {
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [staffList, setStaffList] = useState<any[]>([])
@@ -73,7 +79,7 @@ export default function StaffView() {
   })
   const [selectedStaffForDelete, setSelectedStaffForDelete] = useState<any | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [staffAssignments, setStaffAssignments] = useState<Record<string, string>>({})
+  const [staffAssignments, setStaffAssignments] = useState<Record<string, { name: string; id: string }>>({})
   const [selectedStaffForAttendance, setSelectedStaffForAttendance] = useState<any | null>(null)
   const [patients, setPatients] = useState<Patient[]>([])
   const [assigningStaffId, setAssigningStaffId] = useState<string | null>(null)
@@ -114,15 +120,18 @@ export default function StaffView() {
       setStaffList(data)
 
       // Fetch today's active shifts for each staff member
-      const assignments: Record<string, string> = {}
+      const assignments: Record<string, { name: string; id: string }> = {}
       await Promise.all(
         data.map(async (staff) => {
           if (!staff.is_available) {
             try {
               const shifts = await shiftService.getActiveShiftsForStaff(staff.id)
               if (shifts.length > 0) {
-                const patient = shifts[0].patient
-                assignments[staff.id] = patient?.full_name || 'Unknown Patient'
+                const shift = shifts[0]
+                assignments[staff.id] = {
+                  name: shift.patient?.full_name || 'Unknown Patient',
+                  id: shift.patient_id,
+                }
               }
             } catch {
               // Silently fail — assignment info is optional
@@ -345,7 +354,7 @@ export default function StaffView() {
               <input
                 required
                 value={formData.full_name}
-                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, full_name: formatNameInput(e.target.value) })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -357,7 +366,7 @@ export default function StaffView() {
                 required
                 placeholder="42101-1234567-1"
                 value={formData.cnic_number}
-                onChange={(e) => setFormData({ ...formData, cnic_number: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, cnic_number: formatCNICInput(e.target.value) })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -368,7 +377,7 @@ export default function StaffView() {
               <input
                 required
                 value={formData.phone_primary}
-                onChange={(e) => setFormData({ ...formData, phone_primary: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, phone_primary: formatPhoneInput(e.target.value) })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -622,9 +631,16 @@ export default function StaffView() {
                     {staff.is_available ? 'Available' : 'On Duty'}
                   </button>
                   {!staff.is_available && staffAssignments[staff.id] && (
-                    <span className="text-[8px] text-slate-500 font-medium truncate max-w-[120px]">
-                      {staffAssignments[staff.id]}
-                    </span>
+                    <button
+                      onClick={() => {
+                        onSelectPatient(staffAssignments[staff.id].id)
+                        setActiveView('patients')
+                      }}
+                      className="text-[11px] text-blue-400 font-bold truncate max-w-[140px] hover:text-blue-300 hover:underline transition-all"
+                      title="View patient details"
+                    >
+                      {staffAssignments[staff.id].name}
+                    </button>
                   )}
                 </div>
               </div>
@@ -889,7 +905,7 @@ export default function StaffView() {
                     required
                     value={editFormData.full_name}
                     onChange={(e) =>
-                      setEditFormData({ ...editFormData, full_name: e.target.value })
+                      setEditFormData({ ...editFormData, full_name: formatNameInput(e.target.value) })
                     }
                     className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500/40"
                   />
@@ -903,7 +919,7 @@ export default function StaffView() {
                     placeholder="42101-1234567-1"
                     value={editFormData.cnic_number}
                     onChange={(e) =>
-                      setEditFormData({ ...editFormData, cnic_number: e.target.value })
+                      setEditFormData({ ...editFormData, cnic_number: formatCNICInput(e.target.value) })
                     }
                     className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-blue-500/40"
                   />
@@ -916,7 +932,7 @@ export default function StaffView() {
                     required
                     value={editFormData.phone_primary}
                     onChange={(e) =>
-                      setEditFormData({ ...editFormData, phone_primary: e.target.value })
+                      setEditFormData({ ...editFormData, phone_primary: formatPhoneInput(e.target.value) })
                     }
                     className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-blue-500/40"
                   />

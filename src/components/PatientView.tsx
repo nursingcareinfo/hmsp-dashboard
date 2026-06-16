@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   ClipboardList,
   Clock,
@@ -18,12 +18,21 @@ import {
   ChevronDown,
   ChevronRight,
   Receipt,
+  FileText,
+  MessageSquare,
 } from 'lucide-react'
 import type { Patient, PatientInvoice } from '../types'
-import { cn } from '../lib/utils'
-import { patientService, patientInvoiceService, getCurrentPeriod } from '../services/patientService'
+import { cn, formatPKR, formatNameInput, formatCNICInput, formatPhoneInput } from '../lib/utils'
+import { patientService, patientInvoiceService, patientIntakeService, getCurrentPeriod } from '../services/patientService'
+import { shiftService } from '../services/shiftService'
 
-export default function PatientView() {
+export default function PatientView({
+  highlightedPatientId,
+  onClearHighlight,
+}: {
+  highlightedPatientId?: string | null
+  onClearHighlight?: () => void
+}) {
   const [patients, setPatients] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -31,6 +40,8 @@ export default function PatientView() {
 
   const [invoices, setInvoices] = useState<Record<string, PatientInvoice[]>>({})
   const [expandedPatients, setExpandedPatients] = useState<Set<string>>(new Set())
+  const [assignments, setAssignments] = useState<Record<string, any[]>>({})
+  const [intakeStatus, setIntakeStatus] = useState<Record<string, boolean>>({})
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -49,10 +60,50 @@ export default function PatientView() {
       const data = await patientService.getAllPatients()
       setPatients(data)
       await autoGenerateInvoices(data)
+      await Promise.all([
+        loadAssignments(data.map((p: any) => p.id)),
+        loadIntakeStatus(data),
+      ])
     } catch (error) {
       console.error('Error fetching patients:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  async function loadIntakeStatus(patientsList: any[]) {
+    try {
+      const phones = patientsList.map((p: any) => p.contact).filter(Boolean)
+      const cnics = patientsList.map((p: any) => p.cnic).filter(Boolean)
+      const intakes = await patientIntakeService.getIntakeStatusByPhone(phones, cnics)
+      const status: Record<string, boolean> = {}
+      for (const intake of intakes) {
+        const match = patientsList.find(
+          (p: any) =>
+            (p.contact && intake.mobile === p.contact) ||
+            (p.cnic && intake.cnic === p.cnic)
+        )
+        if (match && intake.terms_accepted) {
+          status[match.id] = true
+        }
+      }
+      setIntakeStatus(status)
+    } catch (error) {
+      console.error('Error loading intake status:', error)
+    }
+  }
+
+  async function loadAssignments(patientIds: string[]) {
+    try {
+      const data = await shiftService.getPatientAssignments(patientIds)
+      const grouped: Record<string, any[]> = {}
+      for (const row of data) {
+        if (!grouped[row.patient_id]) grouped[row.patient_id] = []
+        grouped[row.patient_id].push(row)
+      }
+      setAssignments(grouped)
+    } catch (error) {
+      console.error('Error loading assignments:', error)
     }
   }
 
@@ -83,6 +134,22 @@ export default function PatientView() {
   useEffect(() => {
     loadPatients()
   }, [])
+
+  // Scroll to highlighted patient when navigating from staff card
+  useEffect(() => {
+    if (!highlightedPatientId || patients.length === 0) return
+
+    const el = document.getElementById(`patient-card-${highlightedPatientId}`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      el.classList.add('ring-2', 'ring-emerald-400', 'ring-offset-2', 'ring-offset-black')
+      const timer = setTimeout(() => {
+        el.classList.remove('ring-2', 'ring-emerald-400', 'ring-offset-2', 'ring-offset-black')
+      }, 3000)
+      onClearHighlight?.()
+      return () => clearTimeout(timer)
+    }
+  }, [highlightedPatientId, patients, onClearHighlight])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -163,7 +230,7 @@ export default function PatientView() {
               <input
                 required
                 value={formData.full_name}
-                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, full_name: formatNameInput(e.target.value) })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -174,7 +241,7 @@ export default function PatientView() {
               <input
                 placeholder="42101-1234567-1"
                 value={formData.cnic}
-                onChange={(e) => setFormData({ ...formData, cnic: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, cnic: formatCNICInput(e.target.value) })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -185,7 +252,7 @@ export default function PatientView() {
               <input
                 required
                 value={formData.contact}
-                onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, contact: formatPhoneInput(e.target.value) })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -274,7 +341,8 @@ export default function PatientView() {
           patients.map((patient: any) => (
             <div
               key={patient.id}
-              className="bg-slate-900/40 border border-white/5 rounded-2xl p-6 shadow-2xl group hover:border-white/10 transition-all"
+              id={`patient-card-${patient.id}`}
+              className="bg-slate-900/40 border border-white/5 rounded-2xl p-6 shadow-2xl group hover:border-white/10 transition-all scroll-mt-8"
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-6 border-b border-white/5">
                 <div className="flex items-center gap-4">
@@ -345,6 +413,53 @@ export default function PatientView() {
                 </div>
               )}
 
+              {/* Intake Form Status */}
+              <div className="mb-6 flex items-center justify-between bg-white/5 rounded-xl p-4 border border-white/10">
+                <div className="flex items-center gap-3">
+                  {intakeStatus[patient.id] ? (
+                    <>
+                      <CheckCircle2 size={18} className="text-emerald-400" />
+                      <div>
+                        <p className="text-sm font-bold text-emerald-400">Terms & Conditions Agreed</p>
+                        <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
+                          Digital intake form completed
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <FileText size={16} className="text-slate-500" />
+                      <div>
+                        <p className="text-sm font-bold text-white">Intake Form Pending</p>
+                        <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
+                          Send form to patient via WhatsApp
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+                <button
+                  onClick={() => {
+                    const phone = patient.contact?.replace(/[^0-9]/g, '')
+                    if (!phone) {
+                      alert('Patient has no contact number on file.')
+                      return
+                    }
+                    const msg = encodeURIComponent(
+                      'HMSP Patient Intake Form\n\n' +
+                        'Dear Patient, please fill this digital form to register for our home medical services. ' +
+                        'The form includes our service agreement and terms & conditions.\n\n' +
+                        'Link: https://nursingcareinfo.github.io/hmsp-dashboard/intake.html'
+                    )
+                    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank', 'noopener,noreferrer')
+                  }}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shrink-0"
+                >
+                  <MessageSquare size={14} />
+                  Send to WhatsApp
+                </button>
+              </div>
+
               {/* Assignments & Manual Salary Slots */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="bg-white/5 rounded-xl p-4 border border-white/10 relative overflow-hidden">
@@ -354,30 +469,47 @@ export default function PatientView() {
                   <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-3">
                     Assigned Staff
                   </p>
-                  {patient.assigned_staff_id ? (
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-500/5 flex items-center justify-center text-emerald-500">
-                          <User size={14} />
+                  {(() => {
+                    const dayAssignment = (assignments[patient.id] || []).find(
+                      (a: any) => a.shift_type === 'Morning'
+                    )
+                    if (dayAssignment) {
+                      const emp = dayAssignment.employee
+                      const rate = dayAssignment.decided_rate_pkr || Math.round((emp?.expected_salary_pkr || 0) / 30)
+                      return (
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-8 h-8 rounded-lg bg-emerald-500/5 flex items-center justify-center text-emerald-500 shrink-0">
+                              <User size={14} />
+                            </div>
+                            <p className="text-sm font-bold text-white truncate">
+                              {emp?.full_name || 'Staff Assigned'}
+                            </p>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest mb-1">
+                              Rate/Shift
+                            </p>
+                            <p className="text-xs font-mono font-bold text-emerald-400">
+                              {formatPKR(rate)}
+                            </p>
+                          </div>
                         </div>
-                        <p className="text-sm font-bold text-white">Staff Assigned</p>
+                      )
+                    }
+                    if (patient.assigned_staff_id) {
+                      return (
+                        <div className="flex items-center gap-2 text-emerald-400/50 text-[10px] uppercase font-bold italic py-2">
+                          <User size={14} /> Staff Record Linked
+                        </div>
+                      )
+                    }
+                    return (
+                      <div className="flex items-center gap-2 text-amber-400/50 text-[10px] uppercase font-bold italic py-2">
+                        <AlertCircle size={14} /> Slot Unassigned
                       </div>
-                      <div className="max-w-[100px]">
-                        <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest text-right mb-1">
-                          Decided Rate
-                        </p>
-                        <input
-                          type="number"
-                          placeholder="PKR"
-                          className="w-full bg-slate-900 border border-white/5 rounded px-2 py-1 text-xs font-mono font-bold text-emerald-400 outline-none focus:border-emerald-500/40 text-right"
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 text-amber-400/50 text-[10px] uppercase font-bold italic py-2">
-                      <AlertCircle size={14} /> Slot Unassigned
-                    </div>
-                  )}
+                    )
+                  })()}
                 </div>
 
                 {patient.service_type === '24hr' && (
@@ -388,24 +520,40 @@ export default function PatientView() {
                     <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-3">
                       Assigned Staff
                     </p>
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-purple-500/5 flex items-center justify-center text-purple-400">
-                          <User size={14} />
+                    {(() => {
+                      const nightAssignment = (assignments[patient.id] || []).find(
+                        (a: any) => a.shift_type === 'Night'
+                      )
+                      if (nightAssignment) {
+                        const emp = nightAssignment.employee
+                        const rate = nightAssignment.decided_rate_pkr || Math.round((emp?.expected_salary_pkr || 0) / 30)
+                        return (
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-8 h-8 rounded-lg bg-purple-500/5 flex items-center justify-center text-purple-400 shrink-0">
+                                <User size={14} />
+                              </div>
+                              <p className="text-sm font-bold text-white truncate">
+                                {emp?.full_name || 'Staff Assigned'}
+                              </p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest mb-1">
+                                Rate/Shift
+                              </p>
+                              <p className="text-xs font-mono font-bold text-purple-400">
+                                {formatPKR(rate)}
+                              </p>
+                            </div>
+                          </div>
+                        )
+                      }
+                      return (
+                        <div className="flex items-center gap-2 text-amber-400/50 text-[10px] uppercase font-bold italic py-2">
+                          <AlertCircle size={14} /> Pending Match
                         </div>
-                        <p className="text-sm font-bold text-white">Pending Match</p>
-                      </div>
-                      <div className="max-w-[100px]">
-                        <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest text-right mb-1">
-                          Decided Rate
-                        </p>
-                        <input
-                          type="number"
-                          placeholder="PKR"
-                          className="w-full bg-slate-900 border border-white/5 rounded px-2 py-1 text-xs font-mono font-bold text-emerald-400 outline-none focus:border-emerald-500/40 text-right"
-                        />
-                      </div>
-                    </div>
+                      )
+                    })()}
                   </div>
                 )}
               </div>

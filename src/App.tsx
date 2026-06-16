@@ -54,6 +54,7 @@ function AppContent() {
   const [activeView, setActiveView] = useState<View>('dashboard')
   const [isSidebarOpen, setSidebarOpen] = useState(true)
   const [showShare, setShowShare] = useState(false)
+  const [highlightedPatientId, setHighlightedPatientId] = useState<string | null>(null)
 
   const menuItems = [
     { id: 'dashboard', label: 'Home', icon: LayoutDashboard },
@@ -209,9 +210,9 @@ function AppContent() {
             className="h-full"
           >
             {activeView === 'dashboard' && <DashboardView setActiveView={setActiveView} />}
-            {activeView === 'staff' && <StaffView />}
+            {activeView === 'staff' && <StaffView setActiveView={setActiveView} onSelectPatient={setHighlightedPatientId} />}
             {activeView === 'ocr' && <OCRView />}
-            {activeView === 'patients' && <PatientView />}
+            {activeView === 'patients' && <PatientView highlightedPatientId={highlightedPatientId} onClearHighlight={() => setHighlightedPatientId(null)} />}
             {activeView === 'matchmaker' && <MatchmakerView />}
             {activeView === 'attendance' && <AttendanceView />}
             {activeView === 'memory' && <MemoryView />}

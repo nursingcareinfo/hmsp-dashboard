@@ -75,6 +75,40 @@ export function getCurrentPeriod() {
   }
 }
 
+export const patientIntakeService = {
+  async getIntakeStatusByPhone(phones: string[], cnics: string[]) {
+    if (phones.length === 0 && cnics.length === 0) return []
+    const filters: any[] = []
+    if (phones.length > 0) filters.push({ field: 'mobile', values: phones })
+    if (cnics.length > 0) filters.push({ field: 'cnic', values: cnics })
+
+    // Collect all values to query
+    const allValues = [...new Set([...phones, ...cnics])]
+    const { data, error } = await supabase
+      .from('patient_intakes')
+      .select('id, full_name, cnic, mobile, terms_accepted, created_at')
+      .in('mobile', allValues)
+
+    if (error) throw error
+
+    // Also try matching by CNIC for any that weren't found by phone
+    const foundMobiles = new Set((data || []).map((d: any) => d.mobile))
+    const phoneOnlyCnics = [...new Set(cnics.filter((c) => c && !foundMobiles.has(c)))]
+
+    if (phoneOnlyCnics.length > 0) {
+      const { data: cnicData, error: cnicErr } = await supabase
+        .from('patient_intakes')
+        .select('id, full_name, cnic, mobile, terms_accepted, created_at')
+        .in('cnic', phoneOnlyCnics)
+
+      if (cnicErr) throw cnicErr
+      return [...(data || []), ...(cnicData || [])]
+    }
+
+    return data || []
+  },
+}
+
 export const patientInvoiceService = {
   async getInvoicesForPatient(patientId: string) {
     const { data, error } = await supabase
