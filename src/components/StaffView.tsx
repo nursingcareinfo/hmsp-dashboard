@@ -181,10 +181,7 @@ export default function StaffView() {
 
     setIsAssigningShift(true)
     try {
-      const rate =
-        assignShiftType === 'Morning'
-          ? staff.day_shift_rate || Math.round((staff.expected_salary_pkr || 0) / 30)
-          : staff.night_shift_rate || Math.round((staff.expected_salary_pkr || 0) / 30)
+      const rate = Math.round((staff.expected_salary_pkr || 0) / 30)
 
       await shiftService.logShift({
         employee_id: staff.id,
@@ -437,16 +434,22 @@ export default function StaffView() {
             </div>
             <div className="space-y-2">
               <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
-                Expected Salary (PKR)
+                Decided Salary (per shift)
               </label>
               <input
                 type="number"
-                value={formData.expected_salary_pkr}
+                value={formData.expected_salary_pkr / 30 || 0}
                 onChange={(e) =>
-                  setFormData({ ...formData, expected_salary_pkr: parseInt(e.target.value) || 0 })
+                  setFormData({
+                    ...formData,
+                    expected_salary_pkr: (parseInt(e.target.value) || 0) * 30,
+                  })
                 }
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
+              <p className="text-[8px] text-slate-500 font-mono">
+                = Rs {(formData.expected_salary_pkr || 0).toLocaleString()}/month
+              </p>
             </div>
             <div className="space-y-2 text-right md:col-span-2 mt-4">
               <button
@@ -596,7 +599,8 @@ export default function StaffView() {
                   </div>
                   <div className="w-px h-4 bg-white/10" />
                   <div className="text-[11px] font-mono font-bold text-emerald-400">
-                    Rs.{(staff.expected_salary_pkr || 0).toLocaleString()}
+                    Rs.{Math.round((staff.expected_salary_pkr || 0) / 30).toLocaleString()}
+                    <span className="text-[8px] text-slate-500 ml-0.5">/shift</span>
                   </div>
                 </div>
 
@@ -673,12 +677,7 @@ export default function StaffView() {
                     {assignPatientId && (
                       <p className="text-[8px] text-slate-500 font-mono">
                         Rate: Rs{' '}
-                        {(assignShiftType === 'Morning'
-                          ? staff.day_shift_rate ||
-                            Math.round((staff.expected_salary_pkr || 0) / 30)
-                          : staff.night_shift_rate ||
-                            Math.round((staff.expected_salary_pkr || 0) / 30)
-                        ).toLocaleString()}
+                        {Math.round((staff.expected_salary_pkr || 0) / 30).toLocaleString()}
                         /shift
                       </p>
                     )}
@@ -989,19 +988,22 @@ export default function StaffView() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
-                    Expected Salary (PKR)
+                    Decided Salary (per shift)
                   </label>
                   <input
                     type="number"
-                    value={editFormData.expected_salary_pkr}
+                    value={editFormData.expected_salary_pkr / 30 || 0}
                     onChange={(e) =>
                       setEditFormData({
                         ...editFormData,
-                        expected_salary_pkr: parseInt(e.target.value) || 0,
+                        expected_salary_pkr: (parseInt(e.target.value) || 0) * 30,
                       })
                     }
                     className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-blue-500/40"
                   />
+                  <p className="text-[8px] text-slate-500 font-mono">
+                    = Rs {(editFormData.expected_salary_pkr || 0).toLocaleString()}/month
+                  </p>
                 </div>
               </div>
 

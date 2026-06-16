@@ -224,20 +224,15 @@ export default function StaffAttendanceCalendarModal({
             <p className="text-[10px] text-slate-500 mt-1">
               {staffName} <span className="text-emerald-500 font-mono">({empNo})</span>
             </p>
-            {(dayRate || nightRate) && (
-              <div className="flex items-center gap-3 mt-1.5">
-                {dayRate && (
-                  <span className="text-[9px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded">
-                    ☀ Day: Rs.{dayRate.toLocaleString()}/shift
-                  </span>
-                )}
-                {nightRate && (
-                  <span className="text-[9px] font-mono text-blue-400 bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.5 rounded">
-                    🌙 Night: Rs.{nightRate.toLocaleString()}/shift
-                  </span>
-                )}
-              </div>
-            )}
+            {expectedSalary ? (
+              <span className="text-[9px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded mt-1.5 inline-block">
+                Rs.{Math.round(expectedSalary / 30).toLocaleString()}/shift
+              </span>
+            ) : dayRate || nightRate ? (
+              <span className="text-[9px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded mt-1.5 inline-block">
+                Rs.{(dayRate || nightRate || 0).toLocaleString()}/shift
+              </span>
+            ) : null}
           </div>
           <button onClick={onClose} className="text-slate-500 hover:text-white">
             <X size={20} />
@@ -291,11 +286,11 @@ export default function StaffAttendanceCalendarModal({
                   const day = i + 1
                   const active = isInActivePeriod(day)
                   const status = getStatusForDay(day)
+                  const singleRate = expectedSalary
+                    ? Math.round(expectedSalary / 30)
+                    : dayRate || nightRate || 0
                   const showRate =
-                    active &&
-                    (status === 'Day' || status === 'Night') &&
-                    ((status === 'Day' && dayRate) || (status === 'Night' && nightRate))
-                  const rateValue = status === 'Day' ? dayRate : nightRate
+                    active && (status === 'Day' || status === 'Night') && singleRate > 0
                   return (
                     <button
                       key={day}
@@ -308,13 +303,13 @@ export default function StaffAttendanceCalendarModal({
                           ? getStatusColor(status)
                           : 'opacity-30 cursor-default bg-white/[0.02] border-white/5'
                       )}
-                      title={`${day} - ${active ? status || 'Not marked' : 'Outside period'}${showRate ? ` (Rs ${rateValue}/shift)` : ''}`}
+                      title={`${day} - ${active ? status || 'Not marked' : 'Outside period'}${showRate ? ` (Rs ${singleRate}/shift)` : ''}`}
                     >
                       <span>{day}</span>
                       {showRate && (
                         <span className="text-[7px] font-medium leading-none mt-px opacity-80">
                           {status === 'Day' ? '☀' : '🌙'}
-                          {formatRate(rateValue!)}
+                          {formatRate(singleRate)}
                         </span>
                       )}
                     </button>
