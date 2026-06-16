@@ -32,6 +32,11 @@ function getPaidDaysCount(
   }).length
 }
 
+function formatRate(rate: number): string {
+  if (rate >= 1000) return `${(rate / 1000).toFixed(1)}k`
+  return String(rate)
+}
+
 function getPeriodLabel(year: number, month: number, period: 1 | 2): string {
   const m = new Date(year, month).toLocaleString('default', {
     month: 'long',
@@ -286,20 +291,32 @@ export default function StaffAttendanceCalendarModal({
                   const day = i + 1
                   const active = isInActivePeriod(day)
                   const status = getStatusForDay(day)
+                  const showRate =
+                    active &&
+                    (status === 'Day' || status === 'Night') &&
+                    ((status === 'Day' && dayRate) || (status === 'Night' && nightRate))
+                  const rateValue = status === 'Day' ? dayRate : nightRate
                   return (
                     <button
                       key={day}
                       onClick={() => active && cycleStatus(day)}
                       className={cn(
-                        'h-8 rounded border text-[10px] font-bold transition-all flex items-center justify-center',
+                        'rounded border text-[10px] font-bold transition-all flex flex-col items-center justify-center',
+                        showRate ? 'h-10' : 'h-8',
                         active && 'hover:scale-105',
                         active
                           ? getStatusColor(status)
                           : 'opacity-30 cursor-default bg-white/[0.02] border-white/5'
                       )}
-                      title={`${day} - ${active ? status || 'Not marked' : 'Outside period'}`}
+                      title={`${day} - ${active ? status || 'Not marked' : 'Outside period'}${showRate ? ` (Rs ${rateValue}/shift)` : ''}`}
                     >
-                      {day}
+                      <span>{day}</span>
+                      {showRate && (
+                        <span className="text-[7px] font-medium leading-none mt-px opacity-80">
+                          {status === 'Day' ? '☀' : '🌙'}
+                          {formatRate(rateValue!)}
+                        </span>
+                      )}
                     </button>
                   )
                 })

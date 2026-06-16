@@ -27,6 +27,7 @@ import { cn, formatPKR } from '../lib/utils'
 import { STAFF_CATEGORIES, KARACHI_AREAS } from '../constants'
 import { staffService } from '../services/staffService'
 import { advanceService } from '../services/advanceService'
+import { patientService, type Patient } from '../services/patientService'
 import { shiftService } from '../services/shiftService'
 import StaffAttendanceCalendarModal from './StaffAttendanceCalendarModal'
 
@@ -74,6 +75,11 @@ export default function StaffView() {
   const [isDeleting, setIsDeleting] = useState(false)
   const [staffAssignments, setStaffAssignments] = useState<Record<string, string>>({})
   const [selectedStaffForAttendance, setSelectedStaffForAttendance] = useState<any | null>(null)
+  const [patients, setPatients] = useState<Patient[]>([])
+  const [assigningStaffId, setAssigningStaffId] = useState<string | null>(null)
+  const [assignPatientId, setAssignPatientId] = useState('')
+  const [assignShiftType, setAssignShiftType] = useState<'Morning' | 'Night'>('Morning')
+  const [isAssigningShift, setIsAssigningShift] = useState(false)
 
   const calculateAge = (dob: string | undefined) => {
     if (!dob) return null
@@ -134,6 +140,7 @@ export default function StaffView() {
 
   useEffect(() => {
     loadStaff()
+    patientService.getAllPatients().then(setPatients).catch(console.error)
   }, [])
 
   const handleRegisterStaff = async (e: React.FormEvent) => {
@@ -166,6 +173,40 @@ export default function StaffView() {
       alert(`Registration failed: ${error.message || 'Unknown error'}`)
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  const handleAssignShift = async (staff: any) => {
+    if (!assignPatientId || !assigningStaffId) return
+
+    setIsAssigningShift(true)
+    try {
+      const rate =
+        assignShiftType === 'Morning'
+          ? staff.day_shift_rate || Math.round((staff.expected_salary_pkr || 0) / 30)
+          : staff.night_shift_rate || Math.round((staff.expected_salary_pkr || 0) / 30)
+
+      await shiftService.logShift({
+        employee_id: staff.id,
+        patient_id: assignPatientId,
+        shift_date: new Date().toISOString().split('T')[0],
+        shift_type: assignShiftType,
+        decided_rate_pkr: rate,
+        attendance_status: 'Scheduled',
+      })
+
+      await staffService.updateStaff(staff.id, { is_available: false })
+      setStaffList((prev) =>
+        prev.map((s) => (s.id === staff.id ? { ...s, is_available: false } : s))
+      )
+
+      setAssigningStaffId(null)
+      setAssignPatientId('')
+      loadStaff()
+    } catch (error) {
+      console.error('Error assigning shift:', error)
+    } finally {
+      setIsAssigningShift(false)
     }
   }
 
@@ -562,7 +603,11 @@ export default function StaffView() {
                 {/* Availability Toggle */}
                 <div className="flex flex-col items-end gap-1">
                   <button
-                    onClick={() => handleToggleAvailability(staff.id, staff.is_available)}
+                    onClick={() =>
+                      staff.is_available
+                        ? setAssigningStaffId(assigningStaffId === staff.id ? null : staff.id)
+                        : handleToggleAvailability(staff.id, true)
+                    }
                     className={cn(
                       'px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all',
                       staff.is_available
@@ -579,6 +624,86 @@ export default function StaffView() {
                   )}
                 </div>
               </div>
+
+              {/* Inline Assignment UI */}
+              {assigningStaffId === staff.id && (
+                <div className="px-4 py-3 border-t border-white/5 bg-emerald-500/5">
+                  <div className="space-y-3">
+                    <p className="text-[9px] text-emerald-400 font-bold uppercase tracking-widest">
+                      Assign to Patient
+                    </p>
+                    <select
+                      value={assignPatientId}
+                      onChange={(e) => setAssignPatientId(e.target.value)}
+                      className="w-full bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-[10px] font-mono outline-none focus:border-emerald-500"
+                    >
+                      <option value="">Select patient...</option>
+                      {patients
+                        .filter((p) => p.status === 'Active')
+                        .map((p) => (
+                          <option key={p.id} value={p.id}>
+                            {p.full_name} — {p.district}
+                          </option>
+                        ))}
+                    </select>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setAssignShiftType('Morning')}
+                        className={cn(
+                          'flex-1 py-2 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all border',
+                          assignShiftType === 'Morning'
+                            ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                            : 'bg-slate-800 text-slate-500 border-white/10 hover:text-slate-300'
+                        )}
+                      >
+                        ☀ Day
+                      </button>
+                      <button
+                        onClick={() => setAssignShiftType('Night')}
+                        className={cn(
+                          'flex-1 py-2 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all border',
+                          assignShiftType === 'Night'
+                            ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/40'
+                            : 'bg-slate-800 text-slate-500 border-white/10 hover:text-slate-300'
+                        )}
+                      >
+                        🌙 Night
+                      </button>
+                    </div>
+                    {assignPatientId && (
+                      <p className="text-[8px] text-slate-500 font-mono">
+                        Rate: Rs{' '}
+                        {(assignShiftType === 'Morning'
+                          ? staff.day_shift_rate ||
+                            Math.round((staff.expected_salary_pkr || 0) / 30)
+                          : staff.night_shift_rate ||
+                            Math.round((staff.expected_salary_pkr || 0) / 30)
+                        ).toLocaleString()}
+                        /shift
+                      </p>
+                    )}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setAssigningStaffId(null)}
+                        className="flex-1 py-2 bg-slate-700 hover:bg-slate-600 text-white text-[9px] font-bold uppercase tracking-widest rounded-lg transition-all"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => handleAssignShift(staff)}
+                        disabled={!assignPatientId || isAssigningShift}
+                        className="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 disabled:grayscale text-slate-950 text-[9px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center gap-1"
+                      >
+                        {isAssigningShift ? (
+                          <Loader2 size={12} className="animate-spin" />
+                        ) : (
+                          'Assign'
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Footer - Skills + Actions */}
               <div className="px-4 py-3 border-t border-white/5 flex items-center justify-between gap-3">
