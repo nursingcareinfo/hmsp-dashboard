@@ -20,6 +20,7 @@ import {
   Star,
   Phone,
   Trash2,
+  Calendar,
 } from 'lucide-react'
 import { Staff } from '../types'
 import { cn, formatPKR } from '../lib/utils'
@@ -27,6 +28,7 @@ import { STAFF_CATEGORIES, KARACHI_AREAS } from '../constants'
 import { staffService } from '../services/staffService'
 import { advanceService } from '../services/advanceService'
 import { shiftService } from '../services/shiftService'
+import StaffAttendanceCalendarModal from './StaffAttendanceCalendarModal'
 
 export default function StaffView() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -71,6 +73,7 @@ export default function StaffView() {
   const [selectedStaffForDelete, setSelectedStaffForDelete] = useState<any | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
   const [staffAssignments, setStaffAssignments] = useState<Record<string, string>>({})
+  const [selectedStaffForAttendance, setSelectedStaffForAttendance] = useState<any | null>(null)
 
   const calculateAge = (dob: string | undefined) => {
     if (!dob) return null
@@ -614,6 +617,14 @@ export default function StaffView() {
                     </div>
                   )}
                   <button
+                    onClick={() => setSelectedStaffForAttendance(staff)}
+                    className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 rounded-md transition-all"
+                    title="Mark Attendance"
+                  >
+                    <Calendar size={12} />
+                    <span>Attendance</span>
+                  </button>
+                  <button
                     onClick={() => setSelectedStaffForAdvance(staff)}
                     className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-md transition-all"
                   >
@@ -999,6 +1010,19 @@ export default function StaffView() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Attendance Modal */}
+      {selectedStaffForAttendance && (
+        <StaffAttendanceCalendarModal
+          staffId={selectedStaffForAttendance.id}
+          staffName={selectedStaffForAttendance.full_name}
+          empNo={selectedStaffForAttendance.emp_no}
+          dayRate={selectedStaffForAttendance.day_shift_rate}
+          nightRate={selectedStaffForAttendance.night_shift_rate}
+          expectedSalary={selectedStaffForAttendance.expected_salary_pkr}
+          onClose={() => setSelectedStaffForAttendance(null)}
+        />
       )}
     </div>
   )

@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS employees (
   experience_years NUMERIC(4, 2),
   shift_preference TEXT, -- Day, Night, 24 hrs
   expected_salary_pkr NUMERIC(12, 2),
+  day_shift_rate NUMERIC(12, 2),    -- Per 12-hour morning shift
+  night_shift_rate NUMERIC(12, 2),  -- Per 12-hour night shift
   preferred_payment_method TEXT, -- Cash, JazzCash, EasyPesa, Bank
   bank_info JSONB, -- { "bank_name": "", "account_no": "", "iban": "" }
   is_active BOOLEAN DEFAULT true,
@@ -86,7 +88,21 @@ CREATE TABLE IF NOT EXISTS salary_advances (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 5. Financial Intelligence Views
+-- 5. Staff Attendance Table (Daily Presence Tracking)
+CREATE TABLE IF NOT EXISTS staff_attendance (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  employee_id UUID REFERENCES employees(id) ON DELETE CASCADE,
+  attendance_date DATE NOT NULL,
+  status TEXT NOT NULL CHECK (status IN ('Day', 'Night', 'Present', 'Absent', 'Late', 'Half-Day')),
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(employee_id, attendance_date)
+);
+
+ALTER TABLE staff_attendance ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow all on staff_attendance" ON staff_attendance FOR ALL USING (true) WITH CHECK (true);
+
+-- 6. Financial Intelligence Views
 -- Daily Margin View: Profit per residence
 CREATE OR REPLACE VIEW real_time_margin_view AS
 SELECT
@@ -135,7 +151,7 @@ FROM employees e
 LEFT JOIN shift_stats ss ON e.id = ss.employee_id
 LEFT JOIN advance_stats asub ON e.id = asub.employee_id;
 
--- 6. Row Level Security
+-- 7. Row Level Security
 ALTER TABLE employees ENABLE ROW LEVEL SECURITY;
 ALTER TABLE patients ENABLE ROW LEVEL SECURITY;
 ALTER TABLE manual_shifts ENABLE ROW LEVEL SECURITY;

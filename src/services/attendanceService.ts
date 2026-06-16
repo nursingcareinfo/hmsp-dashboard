@@ -34,6 +34,21 @@ export const attendanceService = {
     return data
   },
 
+  async getStaffMonthAttendance(employeeId: string, year: number, month: number) {
+    const startDate = new Date(year, month, 1).toISOString().split('T')[0]
+    const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0]
+
+    const { data, error } = await supabase
+      .from('staff_attendance')
+      .select('*')
+      .eq('employee_id', employeeId)
+      .gte('attendance_date', startDate)
+      .lte('attendance_date', endDate)
+
+    if (error) throw error
+    return data || []
+  },
+
   async deleteAttendance(employeeId: string, date: string) {
     const { error } = await supabase
       .from('staff_attendance')

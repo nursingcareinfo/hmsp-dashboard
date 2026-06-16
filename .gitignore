@@ -11,3 +11,6 @@ coverage/
 
 .gemini/
 gha-creds-*.json
+
+# Supabase CLI auto-generated metadata
+supabase/.temp/
