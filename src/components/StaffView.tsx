@@ -108,14 +108,19 @@ export default function StaffView({
   }
 
   const handleToggleBlacklist = async (staff: any) => {
+    const newStatus = !staff.is_blacklisted
+    // Optimistic update: update UI immediately, revert on failure
+    setStaffList((prev) =>
+      prev.map((s) => (s.id === staff.id ? { ...s, is_blacklisted: newStatus } : s))
+    )
     try {
-      const newStatus = !staff.is_blacklisted
       await staffService.updateStaff(staff.id, { is_blacklisted: newStatus })
-      setStaffList((prev) =>
-        prev.map((s) => (s.id === staff.id ? { ...s, is_blacklisted: newStatus } : s))
-      )
     } catch (error) {
       console.error('Error toggling blacklist:', error)
+      // Revert optimistic update on failure
+      setStaffList((prev) =>
+        prev.map((s) => (s.id === staff.id ? { ...s, is_blacklisted: !newStatus } : s))
+      )
     }
   }
 
