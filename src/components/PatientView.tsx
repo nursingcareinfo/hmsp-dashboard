@@ -23,8 +23,14 @@ import {
 } from 'lucide-react'
 import type { Patient, PatientInvoice } from '../types'
 import { cn, formatPKR, formatNameInput, formatCNICInput, formatPhoneInput } from '../lib/utils'
-import { patientService, patientInvoiceService, patientIntakeService, getCurrentPeriod } from '../services/patientService'
+import {
+  patientService,
+  patientInvoiceService,
+  patientIntakeService,
+  getCurrentPeriod,
+} from '../services/patientService'
 import { shiftService } from '../services/shiftService'
+import { staffService } from '../services/staffService'
 
 export default function PatientView({
   highlightedPatientId,
@@ -43,6 +49,11 @@ export default function PatientView({
   const [assignments, setAssignments] = useState<Record<string, any[]>>({})
   const [intakeStatus, setIntakeStatus] = useState<Record<string, boolean>>({})
 
+  const [availableStaff, setAvailableStaff] = useState<any[]>([])
+  const [assigningSlot, setAssigningSlot] = useState<string | null>(null)
+  const [assigningStaffId, setAssigningStaffId] = useState<string>('')
+  const [isAssigning, setIsAssigning] = useState(false)
+
   const [formData, setFormData] = useState({
     full_name: '',
     cnic: '',
@@ -60,10 +71,7 @@ export default function PatientView({
       const data = await patientService.getAllPatients()
       setPatients(data)
       await autoGenerateInvoices(data)
-      await Promise.all([
-        loadAssignments(data.map((p: any) => p.id)),
-        loadIntakeStatus(data),
-      ])
+      await Promise.all([loadAssignments(data.map((p: any) => p.id)), loadIntakeStatus(data)])
     } catch (error) {
       console.error('Error fetching patients:', error)
     } finally {
@@ -80,8 +88,7 @@ export default function PatientView({
       for (const intake of intakes) {
         const match = patientsList.find(
           (p: any) =>
-            (p.contact && intake.mobile === p.contact) ||
-            (p.cnic && intake.cnic === p.cnic)
+            (p.contact && intake.mobile === p.contact) || (p.cnic && intake.cnic === p.cnic)
         )
         if (match && intake.terms_accepted) {
           status[match.id] = true
@@ -133,6 +140,7 @@ export default function PatientView({
 
   useEffect(() => {
     loadPatients()
+    staffService.getAvailableStaff().then(setAvailableStaff).catch(console.error)
   }, [])
 
   // Scroll to highlighted patient when navigating from staff card
@@ -230,7 +238,9 @@ export default function PatientView({
               <input
                 required
                 value={formData.full_name}
-                onChange={(e) => setFormData({ ...formData, full_name: formatNameInput(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({ ...formData, full_name: formatNameInput(e.target.value) })
+                }
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -241,7 +251,9 @@ export default function PatientView({
               <input
                 placeholder="42101-1234567-1"
                 value={formData.cnic}
-                onChange={(e) => setFormData({ ...formData, cnic: formatCNICInput(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({ ...formData, cnic: formatCNICInput(e.target.value) })
+                }
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -252,7 +264,9 @@ export default function PatientView({
               <input
                 required
                 value={formData.contact}
-                onChange={(e) => setFormData({ ...formData, contact: formatPhoneInput(e.target.value) })}
+                onChange={(e) =>
+                  setFormData({ ...formData, contact: formatPhoneInput(e.target.value) })
+                }
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -420,7 +434,9 @@ export default function PatientView({
                     <>
                       <CheckCircle2 size={18} className="text-emerald-400" />
                       <div>
-                        <p className="text-sm font-bold text-emerald-400">Terms & Conditions Agreed</p>
+                        <p className="text-sm font-bold text-emerald-400">
+                          Terms & Conditions Agreed
+                        </p>
                         <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
                           Digital intake form completed
                         </p>
@@ -451,7 +467,11 @@ export default function PatientView({
                         'The form includes our service agreement and terms & conditions.\n\n' +
                         'Link: https://nursingcareinfo.github.io/hmsp-dashboard/intake.html'
                     )
-                    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank', 'noopener,noreferrer')
+                    window.open(
+                      `https://wa.me/${phone}?text=${msg}`,
+                      '_blank',
+                      'noopener,noreferrer'
+                    )
                   }}
                   className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-black text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shrink-0"
                 >
@@ -473,9 +493,12 @@ export default function PatientView({
                     const dayAssignment = (assignments[patient.id] || []).find(
                       (a: any) => a.shift_type === 'Morning'
                     )
+                    const assignKey = `${patient.id}:day`
                     if (dayAssignment) {
                       const emp = dayAssignment.employee
-                      const rate = dayAssignment.decided_rate_pkr || Math.round((emp?.expected_salary_pkr || 0) / 30)
+                      const rate =
+                        dayAssignment.decided_rate_pkr ||
+                        Math.round((emp?.expected_salary_pkr || 0) / 30)
                       return (
                         <div className="flex items-center justify-between gap-4">
                           <div className="flex items-center gap-3 min-w-0">
@@ -497,16 +520,84 @@ export default function PatientView({
                         </div>
                       )
                     }
-                    if (patient.assigned_staff_id) {
+                    if (assigningSlot === assignKey) {
                       return (
-                        <div className="flex items-center gap-2 text-emerald-400/50 text-[10px] uppercase font-bold italic py-2">
-                          <User size={14} /> Staff Record Linked
+                        <div className="space-y-3">
+                          <p className="text-[9px] text-blue-400 uppercase font-bold tracking-widest">
+                            Assign Day Staff
+                          </p>
+                          <select
+                            value={assigningStaffId}
+                            onChange={(e) => setAssigningStaffId(e.target.value)}
+                            className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500/40"
+                          >
+                            <option value="">Select staff...</option>
+                            {availableStaff.map((s: any) => (
+                              <option key={s.id} value={s.id}>
+                                {s.full_name} — {s.district || 'N/A'}{' '}
+                                {s.category ? `(${s.category})` : ''}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="flex gap-2">
+                            <button
+                              disabled={!assigningStaffId || isAssigning}
+                              onClick={async () => {
+                                if (!assigningStaffId) return
+                                setIsAssigning(true)
+                                try {
+                                  const emp = availableStaff.find((s) => s.id === assigningStaffId)
+                                  await shiftService.logShift({
+                                    employee_id: assigningStaffId,
+                                    patient_id: patient.id,
+                                    shift_date: new Date().toISOString().split('T')[0],
+                                    shift_type: 'Morning',
+                                    decided_rate_pkr: Math.round(
+                                      (emp?.expected_salary_pkr || 0) / 30
+                                    ),
+                                    attendance_status: 'Scheduled',
+                                  })
+                                  await loadAssignments([patient.id])
+                                  setAssigningSlot(null)
+                                  setAssigningStaffId('')
+                                } catch (err) {
+                                  console.error('Error assigning staff:', err)
+                                  alert('Failed to assign staff')
+                                } finally {
+                                  setIsAssigning(false)
+                                }
+                              }}
+                              className="flex-1 px-3 py-2 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-black text-[9px] font-black uppercase tracking-widest rounded-lg transition-all"
+                            >
+                              {isAssigning ? 'Assigning...' : 'Confirm'}
+                            </button>
+                            <button
+                              onClick={() => {
+                                setAssigningSlot(null)
+                                setAssigningStaffId('')
+                              }}
+                              className="px-3 py-2 bg-white/5 hover:bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all"
+                            >
+                              Cancel
+                            </button>
+                          </div>
                         </div>
                       )
                     }
                     return (
-                      <div className="flex items-center gap-2 text-amber-400/50 text-[10px] uppercase font-bold italic py-2">
-                        <AlertCircle size={14} /> Slot Unassigned
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-amber-400/50 text-[10px] uppercase font-bold italic py-2">
+                          <AlertCircle size={14} /> Slot Unassigned
+                        </div>
+                        <button
+                          onClick={() => {
+                            setAssigningSlot(assignKey)
+                            setAssigningStaffId('')
+                          }}
+                          className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest text-blue-400 rounded-lg border border-white/10 transition-all"
+                        >
+                          Assign Staff +
+                        </button>
                       </div>
                     )
                   })()}
@@ -524,9 +615,12 @@ export default function PatientView({
                       const nightAssignment = (assignments[patient.id] || []).find(
                         (a: any) => a.shift_type === 'Night'
                       )
+                      const nightAssignKey = `${patient.id}:night`
                       if (nightAssignment) {
                         const emp = nightAssignment.employee
-                        const rate = nightAssignment.decided_rate_pkr || Math.round((emp?.expected_salary_pkr || 0) / 30)
+                        const rate =
+                          nightAssignment.decided_rate_pkr ||
+                          Math.round((emp?.expected_salary_pkr || 0) / 30)
                         return (
                           <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-3 min-w-0">
@@ -548,9 +642,86 @@ export default function PatientView({
                           </div>
                         )
                       }
+                      if (assigningSlot === nightAssignKey) {
+                        return (
+                          <div className="space-y-3">
+                            <p className="text-[9px] text-purple-400 uppercase font-bold tracking-widest">
+                              Assign Night Staff
+                            </p>
+                            <select
+                              value={assigningStaffId}
+                              onChange={(e) => setAssigningStaffId(e.target.value)}
+                              className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-purple-500/40"
+                            >
+                              <option value="">Select staff...</option>
+                              {availableStaff.map((s: any) => (
+                                <option key={s.id} value={s.id}>
+                                  {s.full_name} — {s.district || 'N/A'}{' '}
+                                  {s.category ? `(${s.category})` : ''}
+                                </option>
+                              ))}
+                            </select>
+                            <div className="flex gap-2">
+                              <button
+                                disabled={!assigningStaffId || isAssigning}
+                                onClick={async () => {
+                                  if (!assigningStaffId) return
+                                  setIsAssigning(true)
+                                  try {
+                                    const emp = availableStaff.find(
+                                      (s) => s.id === assigningStaffId
+                                    )
+                                    await shiftService.logShift({
+                                      employee_id: assigningStaffId,
+                                      patient_id: patient.id,
+                                      shift_date: new Date().toISOString().split('T')[0],
+                                      shift_type: 'Night',
+                                      decided_rate_pkr: Math.round(
+                                        (emp?.expected_salary_pkr || 0) / 30
+                                      ),
+                                      attendance_status: 'Scheduled',
+                                    })
+                                    await loadAssignments([patient.id])
+                                    setAssigningSlot(null)
+                                    setAssigningStaffId('')
+                                  } catch (err) {
+                                    console.error('Error assigning staff:', err)
+                                    alert('Failed to assign staff')
+                                  } finally {
+                                    setIsAssigning(false)
+                                  }
+                                }}
+                                className="flex-1 px-3 py-2 bg-purple-500 hover:bg-purple-600 disabled:opacity-50 text-black text-[9px] font-black uppercase tracking-widest rounded-lg transition-all"
+                              >
+                                {isAssigning ? 'Assigning...' : 'Confirm'}
+                              </button>
+                              <button
+                                onClick={() => {
+                                  setAssigningSlot(null)
+                                  setAssigningStaffId('')
+                                }}
+                                className="px-3 py-2 bg-white/5 hover:bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        )
+                      }
                       return (
-                        <div className="flex items-center gap-2 text-amber-400/50 text-[10px] uppercase font-bold italic py-2">
-                          <AlertCircle size={14} /> Pending Match
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-amber-400/50 text-[10px] uppercase font-bold italic py-2">
+                            <AlertCircle size={14} /> Pending Match
+                          </div>
+                          <button
+                            onClick={() => {
+                              setAssigningSlot(nightAssignKey)
+                              setAssigningStaffId('')
+                            }}
+                            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest text-purple-400 rounded-lg border border-white/10 transition-all"
+                          >
+                            Assign Staff +
+                          </button>
                         </div>
                       )
                     })()}

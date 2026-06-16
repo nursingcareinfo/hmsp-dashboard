@@ -64,6 +64,18 @@ export const staffService = {
     return count || 0
   },
 
+  async getAvailableStaff() {
+    const { data, error } = await supabase
+      .from('employees')
+      .select('id, full_name, district, category, expected_salary_pkr')
+      .eq('is_available', true)
+      .eq('is_active', true)
+      .order('full_name', { ascending: true })
+
+    if (error) throw error
+    return data
+  },
+
   async getAvailableStaffCount() {
     const { count, error } = await supabase
       .from('employees')
