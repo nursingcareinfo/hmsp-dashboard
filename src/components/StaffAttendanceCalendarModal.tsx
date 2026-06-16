@@ -8,6 +8,21 @@ import { ChevronLeft, ChevronRight, X, Calendar, DollarSign } from 'lucide-react
 import { attendanceService } from '../services/attendanceService'
 import { cn, formatPKR } from '../lib/utils'
 
+function getPeriodRange(year: number, month: number, period: 1 | 2) {
+  if (period === 1) return { start: 1, end: 15 }
+  const lastDay = new Date(year, month + 1, 0).getDate()
+  return { start: 16, end: lastDay }
+}
+
+function getPeriodLabel(year: number, month: number, period: 1 | 2): string {
+  const m = new Date(year, month).toLocaleString('default', {
+    month: 'long',
+    year: 'numeric',
+  })
+  const range = getPeriodRange(year, month, period)
+  return `${m} • Day ${range.start}–${range.end}`
+}
+
 interface StaffAttendanceCalendarModalProps {
   staffId: string
   staffName: string
@@ -27,12 +42,16 @@ export default function StaffAttendanceCalendarModal({
   expectedSalary,
   onClose,
 }: StaffAttendanceCalendarModalProps) {
-  const [currentDate, setCurrentDate] = useState(new Date())
   const [attendance, setAttendance] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
 
-  const year = currentDate.getFullYear()
-  const month = currentDate.getMonth()
+  const today = new Date()
+  const [periodYear, setPeriodYear] = useState(today.getFullYear())
+  const [periodMonth, setPeriodMonth] = useState(today.getMonth())
+  const [periodNum, setPeriodNum] = useState<1 | 2>(today.getDate() <= 15 ? 1 : 2)
+
+  const year = periodYear
+  const month = periodMonth
   const daysInMonth = new Date(year, month + 1, 0).getDate()
 
   // Prefer day shift rate, fall back to night rate, then expected salary ÷ 30
@@ -40,7 +59,37 @@ export default function StaffAttendanceCalendarModal({
 
   useEffect(() => {
     loadAttendance()
-  }, [year, month, staffId])
+  }, [periodYear, periodMonth, periodNum, staffId])
+
+  const goToPrevPeriod = () => {
+    if (periodNum === 1) {
+      const prevMonth = periodMonth - 1
+      if (prevMonth < 0) {
+        setPeriodYear(periodYear - 1)
+        setPeriodMonth(11)
+      } else {
+        setPeriodMonth(prevMonth)
+      }
+      setPeriodNum(2)
+    } else {
+      setPeriodNum(1)
+    }
+  }
+
+  const goToNextPeriod = () => {
+    if (periodNum === 2) {
+      const nextMonth = periodMonth + 1
+      if (nextMonth > 11) {
+        setPeriodYear(periodYear + 1)
+        setPeriodMonth(0)
+      } else {
+        setPeriodMonth(nextMonth)
+      }
+      setPeriodNum(1)
+    } else {
+      setPeriodNum(2)
+    }
+  }
 
   const loadAttendance = async () => {
     setLoading(true)
@@ -111,7 +160,11 @@ export default function StaffAttendanceCalendarModal({
   }
 
   const calculateSummary = () => {
-    const staffAttendance = attendance.filter((a) => a.employee_id === staffId)
+    const range = getPeriodRange(year, month, periodNum)
+    const staffAttendance = attendance.filter((a) => {
+      const day = new Date(a.attendance_date).getDate()
+      return a.employee_id === staffId && day >= range.start && day <= range.end
+    })
 
     const dayCount = staffAttendance.filter((a) => a.status === 'Day').length
     const nightCount = staffAttendance.filter((a) => a.status === 'Night').length
@@ -172,16 +225,16 @@ export default function StaffAttendanceCalendarModal({
           {/* Month Navigation */}
           <div className="flex items-center justify-between mb-4">
             <button
-              onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
+              onClick={goToPrevPeriod}
               className="p-2 hover:bg-white/5 rounded-lg border border-white/5"
             >
               <ChevronLeft size={18} className="text-slate-400" />
             </button>
             <h4 className="text-xs font-mono font-bold text-white uppercase tracking-widest">
-              {new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })}
+              {getPeriodLabel(year, month, periodNum)}
             </h4>
             <button
-              onClick={() => setCurrentDate(new Date(year, month + 1, 1))}
+              onClick={goToNextPeriod}
               className="p-2 hover:bg-white/5 rounded-lg border border-white/5"
             >
               <ChevronRight size={18} className="text-slate-400" />
@@ -206,23 +259,32 @@ export default function StaffAttendanceCalendarModal({
               ))}
 
               {/* Calendar days */}
-              {Array.from({ length: daysInMonth }, (_, i) => {
-                const day = i + 1
-                const status = getStatusForDay(day)
-                return (
-                  <button
-                    key={day}
-                    onClick={() => cycleStatus(day)}
-                    className={cn(
-                      'h-8 rounded border text-[10px] font-bold transition-all hover:scale-105 flex items-center justify-center',
-                      getStatusColor(status)
-                    )}
-                    title={`${day} - ${status || 'Not marked'}`}
-                  >
-                    {day}
-                  </button>
-                )
-              })}
+              {(() => {
+                const range = getPeriodRange(year, month, periodNum)
+                const isInActivePeriod = (d: number) => d >= range.start && d <= range.end
+
+                return Array.from({ length: daysInMonth }, (_, i) => {
+                  const day = i + 1
+                  const active = isInActivePeriod(day)
+                  const status = getStatusForDay(day)
+                  return (
+                    <button
+                      key={day}
+                      onClick={() => active && cycleStatus(day)}
+                      className={cn(
+                        'h-8 rounded border text-[10px] font-bold transition-all flex items-center justify-center',
+                        active && 'hover:scale-105',
+                        active
+                          ? getStatusColor(status)
+                          : 'opacity-30 cursor-default bg-white/[0.02] border-white/5'
+                      )}
+                      title={`${day} - ${active ? status || 'Not marked' : 'Outside period'}`}
+                    >
+                      {day}
+                    </button>
+                  )
+                })
+              })()}
             </div>
           )}
         </div>
@@ -235,7 +297,7 @@ export default function StaffAttendanceCalendarModal({
                 {summary.dayCount > 0 && (
                   <div>
                     <span className="text-emerald-400 font-bold">{summary.dayCount}</span>
-                    <span className="text-slate-600 ml-1">day</span>
+                    <span className="text-slate-600 ml-1">paid</span>
                   </div>
                 )}
                 {summary.nightCount > 0 && (
@@ -252,7 +314,7 @@ export default function StaffAttendanceCalendarModal({
                 </div>
                 <div>
                   <span className="text-red-400 font-bold">{summary.absent}</span>
-                  <span className="text-slate-600 ml-1">absent</span>
+                  <span className="text-slate-600 ml-1">unpaid</span>
                 </div>
               </div>
             </div>
