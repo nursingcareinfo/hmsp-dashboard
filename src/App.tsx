@@ -62,9 +62,6 @@ function AppContent() {
     { id: 'ocr', label: 'Registrar', icon: UserPlus },
     { id: 'patients', label: 'Patients', icon: ClipboardList },
     { id: 'attendance', label: 'Attendance', icon: ClipboardList },
-    { id: 'memory', label: 'AI Memory', icon: Brain },
-    { id: 'intakes', label: 'Intakes', icon: ClipboardList },
-    { id: 'finance', label: 'Payouts', icon: Wallet },
   ]
 
   const [mtdMargin, setMtdMargin] = useState<number>(0)
@@ -210,9 +207,16 @@ function AppContent() {
             className="h-full"
           >
             {activeView === 'dashboard' && <DashboardView setActiveView={setActiveView} />}
-            {activeView === 'staff' && <StaffView setActiveView={setActiveView} onSelectPatient={setHighlightedPatientId} />}
+            {activeView === 'staff' && (
+              <StaffView setActiveView={setActiveView} onSelectPatient={setHighlightedPatientId} />
+            )}
             {activeView === 'ocr' && <OCRView />}
-            {activeView === 'patients' && <PatientView highlightedPatientId={highlightedPatientId} onClearHighlight={() => setHighlightedPatientId(null)} />}
+            {activeView === 'patients' && (
+              <PatientView
+                highlightedPatientId={highlightedPatientId}
+                onClearHighlight={() => setHighlightedPatientId(null)}
+              />
+            )}
             {activeView === 'matchmaker' && <MatchmakerView />}
             {activeView === 'attendance' && <AttendanceView />}
             {activeView === 'memory' && <MemoryView />}
