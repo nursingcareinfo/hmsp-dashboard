@@ -70,9 +70,6 @@ export default function StaffAttendanceCalendarModal({
   const month = periodMonth
   const daysInMonth = new Date(year, month + 1, 0).getDate()
 
-  // Prefer day shift rate, fall back to night rate, then expected salary ÷ 30
-  const effectiveDailyRate = dayRate || nightRate || (expectedSalary ? expectedSalary / 30 : 0)
-
   useEffect(() => {
     loadAttendance()
   }, [periodYear, periodMonth, periodNum, staffId])
@@ -182,25 +179,13 @@ export default function StaffAttendanceCalendarModal({
       return a.employee_id === staffId && day >= range.start && day <= range.end
     })
 
-    const dayCount = staffAttendance.filter((a) => a.status === 'Day').length
-    const nightCount = staffAttendance.filter((a) => a.status === 'Night').length
     const absent = staffAttendance.filter((a) => a.status === 'Absent').length
     const late = staffAttendance.filter((a) => a.status === 'Late').length
-    const halfDay = staffAttendance.filter((a) => a.status === 'Half-Day').length
     const paidDays = getPaidDaysCount(attendance, staffId, range)
+    const dailyRate = expectedSalary ? expectedSalary / 30 : 0
+    const totalSalary = paidDays * dailyRate
 
-    // Base rate for Late/Half-Day (prefer day, then night, then expected/30)
-    const baseRate = dayRate || nightRate || (expectedSalary ? expectedSalary / 30 : 0)
-
-    let totalSalary = 0
-    totalSalary += dayCount * (dayRate || baseRate)
-    totalSalary += nightCount * (nightRate || baseRate)
-    totalSalary += late * baseRate // Treat late as full shift for now
-    totalSalary += halfDay * (baseRate * 0.5)
-
-    const totalShifts = dayCount + nightCount + late + halfDay * 0.5
-
-    return { dayCount, nightCount, absent, late, halfDay, paidDays, totalShifts, totalSalary }
+    return { absent, late, paidDays, totalSalary }
   }
 
   const summary = calculateSummary()
