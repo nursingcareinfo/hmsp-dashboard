@@ -4,8 +4,10 @@
  */
 
 import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, X, Calendar, DollarSign } from 'lucide-react'
+import { ChevronLeft, ChevronRight, X, Calendar, DollarSign, Minus, Equal } from 'lucide-react'
 import { attendanceService } from '../services/attendanceService'
+import { advanceService } from '../services/advanceService'
+import type { SalaryAdvance } from '../services/advanceService'
 import { cn, formatPKR } from '../lib/utils'
 
 function getPeriodRange(year: number, month: number, period: 1 | 2) {
@@ -59,6 +61,7 @@ export default function StaffAttendanceCalendarModal({
   onClose,
 }: StaffAttendanceCalendarModalProps) {
   const [attendance, setAttendance] = useState<any[]>([])
+  const [advances, setAdvances] = useState<SalaryAdvance[]>([])
   const [loading, setLoading] = useState(true)
 
   const today = new Date()
@@ -72,6 +75,7 @@ export default function StaffAttendanceCalendarModal({
 
   useEffect(() => {
     loadAttendance()
+    loadAdvances()
   }, [periodYear, periodMonth, periodNum, staffId])
 
   const goToPrevPeriod = () => {
@@ -113,6 +117,15 @@ export default function StaffAttendanceCalendarModal({
       console.error('Error loading attendance:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const loadAdvances = async () => {
+    try {
+      const data = await advanceService.getAdvancesByEmployee(staffId)
+      setAdvances(data || [])
+    } catch (error) {
+      console.error('Error loading advances:', error)
     }
   }
 
@@ -184,8 +197,12 @@ export default function StaffAttendanceCalendarModal({
     const paidDays = getPaidDaysCount(attendance, staffId, range)
     const dailyRate = expectedSalary ? expectedSalary / 30 : 0
     const totalSalary = paidDays * dailyRate
+    const totalAdvances = advances
+      .filter((a) => a.status === 'Pending')
+      .reduce((sum, a) => sum + Number(a.amount_pkr), 0)
+    const netSalary = totalSalary - totalAdvances
 
-    return { absent, late, paidDays, totalSalary }
+    return { absent, late, paidDays, totalSalary, totalAdvances, netSalary }
   }
 
   const summary = calculateSummary()
@@ -292,7 +309,7 @@ export default function StaffAttendanceCalendarModal({
         </div>
 
         {/* Summary */}
-        <div className="p-4 bg-black/20 border-t border-white/5">
+        <div className="p-4 bg-black/20 border-t border-white/5 space-y-2">
           <div className="flex items-center justify-between text-[10px]">
             <div className="flex items-center gap-4">
               <div>
@@ -310,11 +327,36 @@ export default function StaffAttendanceCalendarModal({
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-emerald-400">
-              <DollarSign size={12} />
-              <span className="font-mono font-bold">{formatPKR(summary.totalSalary)}</span>
-            </div>
           </div>
+
+          <div className="flex items-center justify-between text-[10px] pt-1.5 border-t border-white/5">
+            <span className="text-slate-500 font-semibold">earned salary</span>
+            <span className="text-emerald-400 font-mono font-bold">
+              {formatPKR(summary.totalSalary)}
+            </span>
+          </div>
+
+          {summary.totalAdvances > 0 && (
+            <div className="flex items-center justify-between text-[10px]">
+              <span className="text-slate-500 font-semibold flex items-center gap-1">
+                <Minus size={10} /> advance taken
+              </span>
+              <span className="text-red-400 font-mono font-bold">
+                -{formatPKR(summary.totalAdvances)}
+              </span>
+            </div>
+          )}
+
+          {summary.totalAdvances > 0 && (
+            <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-white/5">
+              <span className="text-slate-300 font-bold flex items-center gap-1">
+                <Equal size={11} /> net payable
+              </span>
+              <span className="text-emerald-400 font-mono font-bold">
+                {formatPKR(Math.max(0, summary.netSalary))}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
