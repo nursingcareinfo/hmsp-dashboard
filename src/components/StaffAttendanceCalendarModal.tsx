@@ -14,6 +14,22 @@ function getPeriodRange(year: number, month: number, period: 1 | 2) {
   return { start: 16, end: lastDay }
 }
 
+function getPaidDaysCount(
+  attendance: any[],
+  staffId: string,
+  range: { start: number; end: number }
+): number {
+  return attendance.filter((a) => {
+    const day = new Date(a.attendance_date).getDate()
+    return (
+      a.employee_id === staffId &&
+      day >= range.start &&
+      day <= range.end &&
+      (a.status === 'Day' || a.status === 'Night')
+    )
+  }).length
+}
+
 function getPeriodLabel(year: number, month: number, period: 1 | 2): string {
   const m = new Date(year, month).toLocaleString('default', {
     month: 'long',
@@ -171,6 +187,7 @@ export default function StaffAttendanceCalendarModal({
     const absent = staffAttendance.filter((a) => a.status === 'Absent').length
     const late = staffAttendance.filter((a) => a.status === 'Late').length
     const halfDay = staffAttendance.filter((a) => a.status === 'Half-Day').length
+    const paidDays = getPaidDaysCount(attendance, staffId, range)
 
     // Base rate for Late/Half-Day (prefer day, then night, then expected/30)
     const baseRate = dayRate || nightRate || (expectedSalary ? expectedSalary / 30 : 0)
@@ -183,7 +200,7 @@ export default function StaffAttendanceCalendarModal({
 
     const totalShifts = dayCount + nightCount + late + halfDay * 0.5
 
-    return { dayCount, nightCount, absent, late, halfDay, totalShifts, totalSalary }
+    return { dayCount, nightCount, absent, late, halfDay, paidDays, totalShifts, totalSalary }
   }
 
   const summary = calculateSummary()
@@ -293,19 +310,9 @@ export default function StaffAttendanceCalendarModal({
         <div className="p-4 bg-black/20 border-t border-white/5">
           <div className="flex items-center justify-between text-[10px]">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-3">
-                {summary.dayCount > 0 && (
-                  <div>
-                    <span className="text-emerald-400 font-bold">{summary.dayCount}</span>
-                    <span className="text-slate-600 ml-1">paid</span>
-                  </div>
-                )}
-                {summary.nightCount > 0 && (
-                  <div>
-                    <span className="text-indigo-400 font-bold">{summary.nightCount}</span>
-                    <span className="text-slate-600 ml-1">night</span>
-                  </div>
-                )}
+              <div>
+                <span className="text-emerald-400 font-bold">{summary.paidDays}</span>
+                <span className="text-slate-600 ml-1">paid</span>
               </div>
               <div className="flex items-center gap-3">
                 <div>
