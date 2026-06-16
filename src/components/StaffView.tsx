@@ -21,6 +21,7 @@ import {
   Phone,
   Trash2,
   Calendar,
+  Ban,
 } from 'lucide-react'
 import { Staff } from '../types'
 import { cn, formatPKR, formatNameInput, formatCNICInput, formatPhoneInput } from '../lib/utils'
@@ -40,6 +41,7 @@ export default function StaffView({
 }) {
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All')
+  const [availabilityFilter, setAvailabilityFilter] = useState('All')
   const [staffList, setStaffList] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -102,6 +104,18 @@ export default function StaffView({
       return age
     } catch {
       return null
+    }
+  }
+
+  const handleToggleBlacklist = async (staff: any) => {
+    try {
+      const newStatus = !staff.is_blacklisted
+      await staffService.updateStaff(staff.id, { is_blacklisted: newStatus })
+      setStaffList((prev) =>
+        prev.map((s) => (s.id === staff.id ? { ...s, is_blacklisted: newStatus } : s))
+      )
+    } catch (error) {
+      console.error('Error toggling blacklist:', error)
     }
   }
 
@@ -305,7 +319,14 @@ export default function StaffView({
       categoryFilter === 'All' ||
       s.position_applied === categoryFilter ||
       s.category === categoryFilter
-    return matchesSearch && matchesCategory
+
+    const matchesAvailability =
+      availabilityFilter === 'All' ||
+      (availabilityFilter === 'Available' && s.is_available) ||
+      (availabilityFilter === 'On Duty' && !s.is_available) ||
+      (availabilityFilter === 'Blacklisted' && s.is_blacklisted)
+
+    return matchesSearch && matchesCategory && matchesAvailability
   })
 
   if (loading) {
@@ -502,7 +523,32 @@ export default function StaffView({
           />
         </div>
 
-        <div className="flex gap-2 mb-2 w-full overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex gap-2 w-full overflow-x-auto pb-2 scrollbar-hide">
+          {['All', 'Available', 'On Duty', 'Blacklisted'].map((filter) => (
+            <button
+              key={filter}
+              onClick={() => setAvailabilityFilter(filter)}
+              className={cn(
+                'px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all shrink-0 whitespace-nowrap',
+                availabilityFilter === filter
+                  ? filter === 'Blacklisted'
+                    ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                    : filter === 'On Duty'
+                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                      : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                  : 'bg-slate-800/50 text-slate-500 hover:text-slate-300 border border-white/5'
+              )}
+            >
+              {filter === 'Available'
+                ? '✓ Available'
+                : filter === 'Blacklisted'
+                  ? '✕ Blacklisted'
+                  : filter}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex gap-2 w-full overflow-x-auto pb-2 scrollbar-hide">
           {['All', 'Action Required', ...STAFF_CATEGORIES].map((cat) => (
             <button
               key={cat}
@@ -530,7 +576,8 @@ export default function StaffView({
               key={staff.id}
               className={cn(
                 'bg-slate-900/60 border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all group',
-                staff.critical_missing_info && 'border-red-500/30 ring-1 ring-red-500/20'
+                staff.critical_missing_info && 'border-red-500/30 ring-1 ring-red-500/20',
+                staff.is_blacklisted && 'border-rose-500/40 ring-1 ring-rose-500/20 opacity-70'
               )}
             >
               {/* Header - Avatar + Name + Quick Actions */}
@@ -546,6 +593,9 @@ export default function StaffView({
                     {staff.full_name}
                     {staff.is_verified && (
                       <CheckCircle2 size={14} className="text-blue-400 shrink-0" />
+                    )}
+                    {staff.is_blacklisted && (
+                      <XCircle size={14} className="text-rose-400 shrink-0" />
                     )}
                   </h3>
                   <p className="text-[10px] font-mono text-emerald-500/80 uppercase tracking-wider">
@@ -568,6 +618,18 @@ export default function StaffView({
                     title="Delete"
                   >
                     <Trash2 size={14} />
+                  </button>
+                  <button
+                    onClick={() => handleToggleBlacklist(staff)}
+                    className={cn(
+                      'p-1.5 rounded-lg transition-colors',
+                      staff.is_blacklisted
+                        ? 'text-rose-400 hover:text-rose-300 bg-rose-500/10'
+                        : 'text-slate-500 hover:text-rose-400'
+                    )}
+                    title={staff.is_blacklisted ? 'Unblacklist' : 'Blacklist'}
+                  >
+                    <Ban size={14} />
                   </button>
                 </div>
               </div>
@@ -641,8 +703,14 @@ export default function StaffView({
                   </button>
                   {!staff.is_available && staffAssignments[staff.id] && (
                     <div className="flex flex-col items-end gap-0.5">
-                      <span className="text-[9px] font-mono font-bold uppercase tracking-wider"
-                        style={{ color: staffAssignments[staff.id].shiftType === 'Night' ? '#818cf8' : '#f59e0b' }}
+                      <span
+                        className="text-[9px] font-mono font-bold uppercase tracking-wider"
+                        style={{
+                          color:
+                            staffAssignments[staff.id].shiftType === 'Night'
+                              ? '#818cf8'
+                              : '#f59e0b',
+                        }}
                       >
                         {staffAssignments[staff.id].shiftType === 'Night' ? '🌙 NIGHT' : '☀ DAY'}
                       </span>

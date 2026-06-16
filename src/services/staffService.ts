@@ -39,6 +39,7 @@ export interface Staff {
   document_urls?: any
   rating: number
   category?: string
+  is_blacklisted?: boolean
   created_at?: string
   updated_at?: string
 }
