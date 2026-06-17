@@ -15,6 +15,8 @@ export interface Staff {
   fullName: string
   cnic: string
   gender: 'Male' | 'Female' | 'Other'
+  maritalStatus?: 'Single' | 'Married' | 'Divorced' | 'Widowed'
+  dateOfBirth?: string
   category: StaffCategory
   designation: StaffDesignation
   phonePrimary: string
@@ -43,6 +45,7 @@ export interface Patient {
   cnic: string
   dateOfBirth: string
   gender: 'Male' | 'Female' | 'Other'
+  maritalStatus?: 'Single' | 'Married' | 'Divorced' | 'Widowed'
   mobileNumber: string
   areaTown: string
   completeAddress: string

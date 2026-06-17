@@ -6,6 +6,9 @@ export interface Patient {
   full_name: string
   cnic?: string
   contact: string
+  gender?: string
+  marital_status?: string
+  date_of_birth?: string
   district: string
   complete_address?: string
   service_type: string
