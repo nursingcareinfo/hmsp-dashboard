@@ -719,29 +719,52 @@ export default function StaffView({
                   >
                     {staff.is_available ? 'Available' : 'On Duty'}
                   </button>
-                  {!staff.is_available && staffAssignments[staff.id] && (
+                  {!staff.is_available && (
                     <div className="flex flex-col items-end gap-0.5">
-                      <span
-                        className="text-[9px] font-mono font-bold uppercase tracking-wider"
-                        style={{
-                          color:
-                            staffAssignments[staff.id].shiftType === 'Night'
-                              ? '#818cf8'
-                              : '#f59e0b',
-                        }}
-                      >
-                        {staffAssignments[staff.id].shiftType === 'Night' ? '🌙 NIGHT' : '☀ DAY'}
-                      </span>
-                      <button
-                        onClick={() => {
-                          onSelectPatient(staffAssignments[staff.id].id)
-                          setActiveView('patients')
-                        }}
-                        className="text-[11px] text-blue-400 font-bold truncate max-w-[140px] hover:text-blue-300 hover:underline transition-all"
-                        title="View patient details"
-                      >
-                        {staffAssignments[staff.id].name}
-                      </button>
+                      {staffAssignments[staff.id] ? (
+                        <>
+                          <span
+                            className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-white/5 border border-white/5"
+                            style={{
+                              color:
+                                staffAssignments[staff.id].shiftType === 'Night'
+                                  ? '#818cf8'
+                                  : '#f59e0b',
+                              borderColor:
+                                staffAssignments[staff.id].shiftType === 'Night'
+                                  ? '#818cf833'
+                                  : '#f59e0b33',
+                            }}
+                          >
+                            {staffAssignments[staff.id].shiftType === 'Night'
+                              ? '🌙 NIGHT SHIFT'
+                              : '☀ DAY SHIFT'}
+                          </span>
+                          <div className="flex flex-col items-end">
+                            <span className="text-[8px] text-slate-500 uppercase font-black tracking-tighter">
+                              Assigned to:
+                            </span>
+                            <button
+                              onClick={() => {
+                                onSelectPatient(staffAssignments[staff.id].id)
+                                setActiveView('patients')
+                              }}
+                              className="text-[10px] text-blue-400 font-black truncate max-w-[140px] hover:text-blue-300 hover:underline transition-all uppercase tracking-tight"
+                              title="View patient details"
+                            >
+                              {staffAssignments[staff.id].name}
+                            </button>
+                          </div>
+                        </>
+                      ) : loading ? (
+                        <span className="text-[8px] text-slate-600 font-bold uppercase tracking-widest animate-pulse">
+                          Syncing Shift...
+                        </span>
+                      ) : (
+                        <span className="text-[8px] text-rose-500/50 font-bold uppercase tracking-widest">
+                          No Active Shift
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
