@@ -63,6 +63,17 @@ export const shiftService = {
     return data || []
   },
 
+  async getShiftsByEmployee(employeeId: string) {
+    const { data, error } = await supabase
+      .from('manual_shifts')
+      .select('*')
+      .eq('employee_id', employeeId)
+      .order('shift_date', { ascending: false })
+
+    if (error) throw error
+    return data as ManualShift[]
+  },
+
   async getPatientAssignments(patientIds: string[]) {
     if (patientIds.length === 0) return []
     const today = new Date().toISOString().split('T')[0]
