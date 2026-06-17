@@ -987,6 +987,41 @@ export default function StaffView({
                 </p>
               </div>
 
+              {recentAdvances.length > 0 && (
+                <div>
+                  <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-2">
+                    Recent Advances
+                  </p>
+                  <div className="space-y-1.5">
+                    {recentAdvances.map((adv) => (
+                      <div
+                        key={adv.id}
+                        className="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2 border border-white/5"
+                      >
+                        <span className="text-[10px] text-slate-300 font-mono">
+                          {formatPKR(adv.amount_pkr)}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[8px] text-slate-500 font-mono">
+                            {adv.payment_method || 'Cash'}
+                          </span>
+                          <span
+                            className={
+                              'text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ' +
+                              (adv.status === 'Settled'
+                                ? 'text-emerald-400 bg-emerald-500/10'
+                                : 'text-amber-400 bg-amber-500/10')
+                            }
+                          >
+                            {adv.status}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <button
                 onClick={handleGiveAdvance}
                 disabled={!advanceAmount || isSubmittingAdvance}
