@@ -299,6 +299,22 @@
         </div>
         <div class="row">
           <div class="field">
+            <label>Marital Status</label>
+            <select id="maritalStatus">
+              <option value="">Select...</option>
+              <option value="Single">Single</option>
+              <option value="Married">Married</option>
+              <option value="Divorced">Divorced</option>
+              <option value="Widowed">Widowed</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Age</label>
+            <input type="text" id="ageDisplay" placeholder="Auto-calculated" readonly />
+          </div>
+        </div>
+        <div class="row">
+          <div class="field">
             <label>CNIC Number *</label>
             <input type="text" id="cnic" placeholder="XXXXX-XXXXXXX-X" required />
           </div>
@@ -456,6 +472,55 @@
     </div>
 
     <script>
+      // ── Auto-format helpers ──
+      function formatNameInput(val) {
+        return val.replace(/\b\w+/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      }
+      function formatCNICInput(val) {
+        const digits = val.replace(/\D/g, '').slice(0, 13)
+        if (digits.length <= 5) return digits
+        if (digits.length <= 12) return digits.slice(0, 5) + '-' + digits.slice(5)
+        return digits.slice(0, 5) + '-' + digits.slice(5, 12) + '-' + digits.slice(12)
+      }
+      function formatPhoneInput(val) {
+        const digits = val.replace(/\D/g, '').slice(0, 11)
+        if (digits.length <= 4) return digits
+        return digits.slice(0, 4) + '-' + digits.slice(4)
+      }
+      function computeAge(dobStr) {
+        if (!dobStr) return ''
+        const birth = new Date(dobStr)
+        const today = new Date()
+        let age = today.getFullYear() - birth.getFullYear()
+        const m = today.getMonth() - birth.getMonth()
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--
+        return age
+      }
+
+      // ── Wire auto-format on input ──
+      document.addEventListener('DOMContentLoaded', () => {
+        const nameFields = ['fullName', 'guardianName']
+        nameFields.forEach((id) => {
+          const el = document.getElementById(id)
+          if (el)
+            el.addEventListener('input', function () {
+              const start = this.selectionStart
+              this.value = formatNameInput(this.value)
+              this.setSelectionRange(start, start)
+            })
+        })
+        document.getElementById('cnic').addEventListener('input', function () {
+          this.value = formatCNICInput(this.value)
+        })
+        document.getElementById('mobile').addEventListener('input', function () {
+          this.value = formatPhoneInput(this.value)
+        })
+        document.getElementById('dob').addEventListener('change', function () {
+          const age = computeAge(this.value)
+          document.getElementById('ageDisplay').value = age ? age + ' years' : ''
+        })
+      })
+
       const SUPABASE_URL = 'https://euxzitqllnltlteckeyq.supabase.co'
       const ANON_KEY =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV1eHppdHFsbG5sdGx0ZWNrZXlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMzg0NjYsImV4cCI6MjA5MDgxNDQ2Nn0.E1sNIjBEDggmlv1cAOU8y5aIMU6zVW00rTYBlnsiVI4'
@@ -518,6 +583,7 @@
             full_name: values.fullName,
             father_husband_name: values.guardianName,
             gender: values.gender,
+            marital_status: document.getElementById('maritalStatus').value || null,
             cnic_number: values.cnic,
             date_of_birth: document.getElementById('dob').value || null,
             phone_primary: values.mobile,
