@@ -3,6 +3,12 @@
 -- Only patient_intakes and staff_intakes remain anon-INSERT (needed by public forms)
 -- patient_invoices retains anon-SELECT (needed by public invoice.html viewer)
 
+-- First, enable RLS on tables that had it disabled
+alter table employees enable row level security;
+alter table patients enable row level security;
+alter table manual_shifts enable row level security;
+alter table salary_advances enable row level security;
+
 -- 1. employees — restrict to authenticated only
 drop policy if exists "Allow all on employees" on employees;
 create policy "authenticated_all_employees" on employees
