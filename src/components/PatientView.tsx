@@ -809,6 +809,12 @@ export default function PatientView({
                                 </span>
                                 <button
                                   onClick={async () => {
+                                    if (
+                                      !confirm(
+                                        `Mark invoice for PKR ${inv.amount.toLocaleString()} as PAID?`
+                                      )
+                                    )
+                                      return
                                     await patientInvoiceService.markAsPaid(inv.id)
                                     const refreshed =
                                       await patientInvoiceService.getInvoicesForPatient(patient.id)
@@ -817,6 +823,43 @@ export default function PatientView({
                                   className="text-[8px] px-2 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg transition-colors font-black uppercase tracking-widest"
                                 >
                                   Mark Paid
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    const phone = patient.contact?.replace(/[^0-9]/g, '')
+                                    if (!phone) {
+                                      alert('Patient has no contact number.')
+                                      return
+                                    }
+                                    const invoiceUrl = `https://nursingcareinfo.github.io/hmsp-dashboard/invoice.html?id=${inv.id}`
+                                    const msg = encodeURIComponent(
+                                      `HMSP Digital Invoice — #${inv.id.slice(0, 8).toUpperCase()}\n\n` +
+                                        `Dear ${patient.full_name}, your invoice for home medical services is ready.\n\n` +
+                                        `Amount: PKR ${inv.amount.toLocaleString()}\n` +
+                                        `Period: ${new Date(inv.period_start).toLocaleDateString()} to ${new Date(inv.period_end).toLocaleDateString()}\n\n` +
+                                        `View & Download: ${invoiceUrl}\n\n` +
+                                        `Please settle the payment and notify the agency.`
+                                    )
+                                    window.open(
+                                      `https://wa.me/${phone}?text=${msg}`,
+                                      '_blank',
+                                      'noopener,noreferrer'
+                                    )
+                                  }}
+                                  className="text-[8px] px-2 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-colors font-black uppercase tracking-widest flex items-center gap-1"
+                                >
+                                  <MessageSquare size={10} /> WhatsApp
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    window.open(
+                                      `https://nursingcareinfo.github.io/hmsp-dashboard/invoice.html?id=${inv.id}`,
+                                      '_blank'
+                                    )
+                                  }}
+                                  className="text-[8px] px-2 py-1 bg-white/5 hover:bg-white/10 text-slate-400 rounded-lg transition-colors font-black uppercase tracking-widest"
+                                >
+                                  View
                                 </button>
                               </div>
                             )}
