@@ -125,24 +125,16 @@ export const staffService = {
       }
     }
 
-    // New staff: generate emp_no
+    // New staff: get next emp_no from the DB sequence (atomic, race-safe)
     if (!staffData.emp_no) {
-      const { data: staffBatch } = await supabase
-        .from('employees')
-        .select('emp_no')
-        .order('created_at', { ascending: false })
-        .limit(1)
+      const { data: nextNo, error: seqErr } = await supabase.rpc('get_next_emp_no')
 
-      const lastStaff = staffBatch && staffBatch.length > 0 ? staffBatch[0] : null
-
-      let nextNum = 1
-      if (lastStaff?.emp_no) {
-        const match = lastStaff.emp_no.match(/(\d+)$/)
-        if (match) {
-          nextNum = parseInt(match[1]) + 1
-        }
+      if (seqErr) {
+        console.error('StaffService: Error fetching next emp_no:', seqErr)
+        throw seqErr
       }
-      staffData.emp_no = `NC-KHI-${nextNum.toString().padStart(4, '0')}`
+
+      staffData.emp_no = (nextNo as string) || `NC-KHI-0001`
     }
 
     console.log('StaffService: Inserting new staff data:', staffData)

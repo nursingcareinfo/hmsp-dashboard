@@ -18,6 +18,7 @@ import {
   Menu,
   X,
   Share2,
+  UserCheck,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { cn } from './lib/utils'
@@ -32,7 +33,8 @@ type View =
   | 'ocr'
   | 'attendance'
   | 'memory'
-  | 'intakes'
+  | 'patient_intakes'
+  | 'staff_intakes'
 
 import StaffView from './components/StaffView'
 import OCRView from './components/OCRView'
@@ -45,6 +47,7 @@ import FinanceView from './components/FinanceView'
 import MemoryView from './components/MemoryView'
 import AttendanceView from './components/AttendanceView'
 import PatientIntakesView from './components/PatientIntakesView'
+import StaffIntakesView from './components/StaffIntakesView'
 import LoginView from './components/LoginView'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import ShareIntakeModal from './components/ShareIntakeModal'
@@ -62,6 +65,8 @@ function AppContent() {
     { id: 'ocr', label: 'Registrar', icon: UserPlus },
     { id: 'patients', label: 'Patients', icon: ClipboardList },
     { id: 'attendance', label: 'Attendance', icon: ClipboardList },
+    { id: 'patient_intakes', label: 'Patient Intakes', icon: MessageSquare },
+    { id: 'staff_intakes', label: 'Staff Intakes', icon: UserCheck },
   ]
 
   const [mtdMargin, setMtdMargin] = useState<number>(0)
@@ -220,7 +225,8 @@ function AppContent() {
             {activeView === 'matchmaker' && <MatchmakerView />}
             {activeView === 'attendance' && <AttendanceView />}
             {activeView === 'memory' && <MemoryView />}
-            {activeView === 'intakes' && <PatientIntakesView />}
+            {activeView === 'patient_intakes' && <PatientIntakesView />}
+            {activeView === 'staff_intakes' && <StaffIntakesView />}
             {activeView === 'finance' && <FinanceView />}
 
             {activeView === 'whatsapp' && (

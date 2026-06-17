@@ -16,6 +16,7 @@ import {
   MapPin,
   ShieldCheck,
   Phone,
+  MessageSquare,
 } from 'lucide-react'
 import { extractStaffData } from '../services/geminiService'
 import { staffService } from '../services/staffService'
@@ -23,11 +24,20 @@ import { cn, formatPKR } from '../lib/utils'
 import { motion, AnimatePresence } from 'motion/react'
 
 export default function OCRView() {
+  const [mode, setMode] = useState<'upload' | 'quick'>('upload')
   const [files, setFiles] = useState<File[]>([])
   const [isExtracting, setIsExtracting] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [extractedData, setExtractedData] = useState<any>(null)
   const [error, setError] = useState<string | null>(null)
+
+  const [quickForm, setQuickForm] = useState({
+    full_name: '',
+    whatsapp: '',
+    cnic: '',
+  })
+  const [quickResult, setQuickResult] = useState<any>(null)
+  const [isQuickSubmitting, setIsQuickSubmitting] = useState(false)
 
   const onDrop = (acceptedFiles: File[]) => {
     setFiles((prev) => [...prev, ...acceptedFiles].slice(0, 4)) // Max 4 files
@@ -241,85 +251,310 @@ export default function OCRView() {
   return (
     <div className="space-y-6">
       <div className="max-w-4xl mx-auto">
-        {!extractedData ? (
-          <div className="bg-slate-900/40 border border-white/5 rounded-xl p-8 text-center flex flex-col items-center">
-            <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Registration Gatekeeper (Multimodal AI Batch)
-            </h2>
+        {!extractedData && !quickResult ? (
+          <div className="bg-slate-900/40 border border-white/5 rounded-xl p-8 flex flex-col items-center">
+            <div className="flex items-center gap-2 mb-6">
+              <button
+                onClick={() => {
+                  setMode('quick')
+                  setError(null)
+                }}
+                className={cn(
+                  'px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all',
+                  mode === 'quick'
+                    ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/20'
+                    : 'bg-white/5 text-slate-400 hover:text-white border border-white/10'
+                )}
+              >
+                Quick Register
+              </button>
+              <button
+                onClick={() => {
+                  setMode('upload')
+                  setError(null)
+                }}
+                className={cn(
+                  'px-4 py-2 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all',
+                  mode === 'upload'
+                    ? 'bg-blue-500 text-black shadow-lg shadow-blue-500/20'
+                    : 'bg-white/5 text-slate-400 hover:text-white border border-white/10'
+                )}
+              >
+                AI Batch Upload
+              </button>
+            </div>
 
-            <div
-              {...getRootProps()}
-              className={cn(
-                'w-full border-2 border-dashed rounded-2xl p-12 transition-all cursor-pointer mb-8 flex flex-col items-center bg-white/5',
-                isDragActive
-                  ? 'border-blue-500/50 bg-blue-500/5'
-                  : 'border-white/10 hover:border-blue-500/30'
-              )}
-            >
-              <input {...getInputProps()} />
-              {files.length > 0 ? (
-                <div className="w-full">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    {files.map((f, i) => (
-                      <div
-                        key={i}
-                        className="aspect-square bg-slate-800 rounded-lg border border-white/10 flex flex-col items-center justify-center p-2 relative group"
-                      >
-                        <FileText size={24} className="text-blue-400 mb-2" />
-                        <span className="text-[8px] text-slate-300 truncate w-full text-center px-1 font-mono uppercase tracking-tighter">
-                          {f.name}
-                        </span>
+            {mode === 'quick' ? (
+              <div className="w-full max-w-md mx-auto space-y-5">
+                <div className="text-center mb-2">
+                  <h2 className="text-xs font-bold text-white uppercase tracking-widest">
+                    Quick Staff Registration
+                  </h2>
+                  <p className="text-[9px] text-slate-500 mt-1 uppercase tracking-widest">
+                    Enter basic info — staff can complete the rest via digital form
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                    Full Name <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    required
+                    value={quickForm.full_name}
+                    onChange={(e) => setQuickForm({ ...quickForm, full_name: e.target.value })}
+                    placeholder="e.g. Fatima BiBi"
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                    WhatsApp Number <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    required
+                    value={quickForm.whatsapp}
+                    onChange={(e) => setQuickForm({ ...quickForm, whatsapp: e.target.value })}
+                    placeholder="03XX-XXXXXXX"
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                    CNIC Number
+                  </label>
+                  <input
+                    value={quickForm.cnic}
+                    onChange={(e) => setQuickForm({ ...quickForm, cnic: e.target.value })}
+                    placeholder="42101-1234567-1 (optional)"
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
+                  />
+                </div>
+
+                <button
+                  disabled={
+                    !quickForm.full_name.trim() || !quickForm.whatsapp.trim() || isQuickSubmitting
+                  }
+                  onClick={async () => {
+                    setIsQuickSubmitting(true)
+                    setError(null)
+                    try {
+                      const digits = quickForm.whatsapp.replace(/\D/g, '')
+                      let phone = ''
+                      if (digits.startsWith('92') && digits.length === 12) {
+                        phone = `+${digits.slice(0, 2)} ${digits.slice(2, 5)} ${digits.slice(5)}`
+                      } else if (digits.startsWith('03') && digits.length === 11) {
+                        phone = `+92 ${digits.slice(1, 4)} ${digits.slice(4)}`
+                      } else if (digits.startsWith('3') && digits.length === 10) {
+                        phone = `+92 ${digits.slice(0, 3)} ${digits.slice(3)}`
+                      } else {
+                        phone = quickForm.whatsapp
+                      }
+
+                      const cleanCNIC = (cnic: string) => {
+                        const d = cnic.replace(/\D/g, '')
+                        if (d.length === 13)
+                          return `${d.slice(0, 5)}-${d.slice(5, 12)}-${d.slice(12)}`
+                        return null
+                      }
+
+                      const result = await staffService.createStaff({
+                        full_name: quickForm.full_name.trim(),
+                        phone_primary: phone,
+                        whatsapp_number: phone,
+                        cnic_number: cleanCNIC(quickForm.cnic) || undefined,
+                        is_active: true,
+                        is_available: false,
+                        is_acknowledgment_signed: false,
+                        rating: 5.0,
+                      })
+                      setQuickResult(result)
+                      setQuickForm({ full_name: '', whatsapp: '', cnic: '' })
+                    } catch (err: any) {
+                      console.error('Quick registration error:', err)
+                      setError(err?.message || 'Registration failed')
+                    } finally {
+                      setIsQuickSubmitting(false)
+                    }
+                  }}
+                  className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-black text-xs rounded-xl uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
+                >
+                  {isQuickSubmitting ? (
+                    <>
+                      <Loader2 className="animate-spin" size={16} /> Registering...
+                    </>
+                  ) : (
+                    'Register Staff Member'
+                  )}
+                </button>
+
+                {error && (
+                  <p className="text-red-400 text-center text-xs font-bold uppercase tracking-widest">
+                    {error}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <>
+                <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-8 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                  Registration Gatekeeper (Multimodal AI Batch)
+                </h2>
+
+                <div
+                  {...getRootProps()}
+                  className={cn(
+                    'w-full border-2 border-dashed rounded-2xl p-12 transition-all cursor-pointer mb-8 flex flex-col items-center bg-white/5',
+                    isDragActive
+                      ? 'border-blue-500/50 bg-blue-500/5'
+                      : 'border-white/10 hover:border-blue-500/30'
+                  )}
+                >
+                  <input {...getInputProps()} />
+                  {files.length > 0 ? (
+                    <div className="w-full">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                        {files.map((f, i) => (
+                          <div
+                            key={i}
+                            className="aspect-square bg-slate-800 rounded-lg border border-white/10 flex flex-col items-center justify-center p-2 relative group"
+                          >
+                            <FileText size={24} className="text-blue-400 mb-2" />
+                            <span className="text-[8px] text-slate-300 truncate w-full text-center px-1 font-mono uppercase tracking-tighter">
+                              {f.name}
+                            </span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                  <div className="flex flex-col items-center">
-                    <p className="text-sm text-white font-medium">
-                      {files.length} Documents Selected
-                    </p>
-                    <button
-                      onClick={clearFiles}
-                      className="text-[9px] text-red-500 font-black uppercase tracking-widest mt-2 hover:text-red-400 transition-colors"
-                    >
-                      Clear Batch
-                    </button>
-                  </div>
+                      <div className="flex flex-col items-center">
+                        <p className="text-sm text-white font-medium">
+                          {files.length} Documents Selected
+                        </p>
+                        <button
+                          onClick={clearFiles}
+                          className="text-[9px] text-red-500 font-black uppercase tracking-widest mt-2 hover:text-red-400 transition-colors"
+                        >
+                          Clear Batch
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center opacity-40">
+                      <div className="w-16 h-16 bg-white/10 text-slate-400 rounded-full flex items-center justify-center mb-4 border border-white/10">
+                        <Upload size={32} />
+                      </div>
+                      <p className="text-sm font-bold uppercase tracking-[0.1em]">
+                        Batch Upload Documents
+                      </p>
+                      <p className="text-[10px] text-slate-500 mt-2">
+                        Employee Form • CNIC • Curriculum Vitae (Max 4)
+                      </p>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="flex flex-col items-center opacity-40">
-                  <div className="w-16 h-16 bg-white/10 text-slate-400 rounded-full flex items-center justify-center mb-4 border border-white/10">
-                    <Upload size={32} />
-                  </div>
-                  <p className="text-sm font-bold uppercase tracking-[0.1em]">
-                    Batch Upload Documents
+
+                <button
+                  onClick={handleStartExtraction}
+                  disabled={files.length === 0 || isExtracting}
+                  className="w-full max-w-sm py-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs rounded-xl uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-all active:scale-[0.98] disabled:grayscale flex items-center justify-center gap-3"
+                >
+                  {isExtracting ? (
+                    <>
+                      <Loader2 className="animate-spin" size={16} /> Reasoning Across docs...
+                    </>
+                  ) : (
+                    'Run Multimodal Extraction'
+                  )}
+                </button>
+
+                {error && (
+                  <p className="text-red-400 mt-4 text-xs font-bold uppercase tracking-widest">
+                    {error}
                   </p>
-                  <p className="text-[10px] text-slate-500 mt-2">
-                    Employee Form • CNIC • Curriculum Vitae (Max 4)
+                )}
+              </>
+            )}
+          </div>
+        ) : quickResult ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="max-w-md mx-auto space-y-6"
+          >
+            <div className="bg-slate-900/40 border border-emerald-500/20 rounded-xl p-6 shadow-2xl text-center">
+              <div className="w-14 h-14 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-4 border border-emerald-500/20">
+                <CheckCircle2 size={28} className="text-emerald-400" />
+              </div>
+              <h2 className="text-lg font-black text-white uppercase tracking-tighter">
+                {quickResult.full_name}
+              </h2>
+              <p className="text-[10px] text-slate-500 font-bold mt-1 uppercase tracking-widest">
+                {quickResult.emp_no || 'Staff Registered'}
+              </p>
+              <div className="mt-4 flex flex-wrap justify-center gap-3">
+                <span className="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest">
+                  Missing Info
+                </span>
+                <span className="px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-lg text-[9px] font-black uppercase tracking-widest">
+                  Missing Docs
+                </span>
+              </div>
+            </div>
+
+            <div className="bg-slate-900/40 border border-white/5 rounded-xl p-6 shadow-2xl space-y-3">
+              <p className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-center">
+                Required Actions
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/5">
+                  <div className="w-2 h-2 rounded-full bg-amber-400"></div>
+                  <p className="text-[11px] text-slate-300 font-medium">
+                    Staff needs to complete digital intake form
                   </p>
                 </div>
-              )}
+                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/5">
+                  <div className="w-2 h-2 rounded-full bg-amber-400"></div>
+                  <p className="text-[11px] text-slate-300 font-medium">
+                    Upload CNIC, PNC certificate & CV
+                  </p>
+                </div>
+              </div>
             </div>
 
             <button
-              onClick={handleStartExtraction}
-              disabled={files.length === 0 || isExtracting}
-              className="w-full max-w-sm py-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs rounded-xl uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-all active:scale-[0.98] disabled:grayscale flex items-center justify-center gap-3"
+              onClick={() => {
+                const phone = quickResult.whatsapp_number?.replace(/[^0-9]/g, '')
+                if (!phone) {
+                  alert('No WhatsApp number on file.')
+                  return
+                }
+                const name = encodeURIComponent(quickResult.full_name || '')
+                const phoneParam = encodeURIComponent(quickResult.whatsapp_number || '')
+                const msg = encodeURIComponent(
+                  'HMSP Staff Registration – Complete Your Profile\n\n' +
+                    'Dear Staff Member, please fill your professional details and upload required documents:\n\n' +
+                    `Link: https://nursingcareinfo.github.io/hmsp-dashboard/staff-intake.html?name=${name}&phone=${phoneParam}\n\n` +
+                    'Required: CNIC, PNC Certificate, CV, Bank Details'
+                )
+                window.open(`https://wa.me/${phone}?text=${msg}`, '_blank', 'noopener,noreferrer')
+              }}
+              className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs rounded-xl uppercase tracking-[0.2em] shadow-xl shadow-emerald-500/20 transition-all flex items-center justify-center gap-2"
             >
-              {isExtracting ? (
-                <>
-                  <Loader2 className="animate-spin" size={16} /> Reasoning Across docs...
-                </>
-              ) : (
-                'Run Multimodal Extraction'
-              )}
+              <MessageSquare size={16} /> Send Intake Form via WhatsApp
             </button>
 
-            {error && (
-              <p className="text-red-400 mt-4 text-xs font-bold uppercase tracking-widest">
-                {error}
-              </p>
-            )}
-          </div>
+            <button
+              onClick={() => {
+                setQuickResult(null)
+                setMode('quick')
+              }}
+              className="w-full py-3 bg-white/5 hover:bg-white/10 text-white text-[10px] font-black uppercase tracking-widest rounded-xl border border-white/10 transition-all"
+            >
+              Register Another Staff Member
+            </button>
+          </motion.div>
         ) : (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
