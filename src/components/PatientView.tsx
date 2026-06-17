@@ -58,6 +58,9 @@ export default function PatientView({
     full_name: '',
     cnic: '',
     contact: '',
+    gender: '',
+    marital_status: '',
+    date_of_birth: '',
     district: '',
     complete_address: '',
     service_type: '12h_day',
@@ -173,6 +176,9 @@ export default function PatientView({
         full_name: '',
         cnic: '',
         contact: '',
+        gender: '',
+        marital_status: '',
+        date_of_birth: '',
         district: '',
         complete_address: '',
         service_type: '12h_day',
@@ -268,6 +274,68 @@ export default function PatientView({
                   setFormData({ ...formData, contact: formatPhoneInput(e.target.value) })
                 }
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                Gender
+              </label>
+              <select
+                value={formData.gender}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                Marital Status
+              </label>
+              <select
+                value={formData.marital_status}
+                onChange={(e) => setFormData({ ...formData, marital_status: e.target.value })}
+                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+              >
+                <option value="">Select...</option>
+                <option value="Single">Single</option>
+                <option value="Married">Married</option>
+                <option value="Divorced">Divorced</option>
+                <option value="Widowed">Widowed</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                value={formData.date_of_birth}
+                onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                Age
+              </label>
+              <input
+                readOnly
+                value={
+                  formData.date_of_birth
+                    ? (() => {
+                        const b = new Date(formData.date_of_birth)
+                        const t = new Date()
+                        let a = t.getFullYear() - b.getFullYear()
+                        const m = t.getMonth() - b.getMonth()
+                        if (m < 0 || (m === 0 && t.getDate() < b.getDate())) a--
+                        return a + ' years'
+                      })()
+                    : ''
+                }
+                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-slate-400 text-sm font-mono outline-none"
               />
             </div>
             <div className="space-y-2">
