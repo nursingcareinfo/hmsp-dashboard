@@ -62,6 +62,8 @@ export default function StaffView({
   })
   const [selectedStaffForAdvance, setSelectedStaffForAdvance] = useState<any | null>(null)
   const [advanceAmount, setAdvanceAmount] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState<string>('Cash')
+  const [recentAdvances, setRecentAdvances] = useState<any[]>([])
   const [isSubmittingAdvance, setIsSubmittingAdvance] = useState(false)
   const [selectedStaffForEdit, setSelectedStaffForEdit] = useState<any | null>(null)
   const [isSubmittingEdit, setIsSubmittingEdit] = useState(false)
@@ -106,6 +108,14 @@ export default function StaffView({
       return null
     }
   }
+
+  useEffect(() => {
+    if (selectedStaffForAdvance) {
+      advanceService.getAdvancesByEmployee(selectedStaffForAdvance.id).then((advances) => {
+        setRecentAdvances(advances.slice(0, 3))
+      })
+    }
+  }, [selectedStaffForAdvance])
 
   const handleToggleBlacklist = async (staff: any) => {
     const newStatus = !staff.is_blacklisted
@@ -246,7 +256,7 @@ export default function StaffView({
       await advanceService.addAdvance({
         employee_id: selectedStaffForAdvance.id,
         amount_pkr: parseFloat(advanceAmount),
-        payment_method: 'Cash', // Default to cash for quick advances
+        payment_method: paymentMethod as 'Cash' | 'JazzCash' | 'EasyPesa' | 'Bank',
         status: 'Pending',
       })
       alert(`Advance of PKR ${advanceAmount} recorded for ${selectedStaffForAdvance.full_name}`)
@@ -943,6 +953,20 @@ export default function StaffView({
                     autoFocus
                   />
                 </div>
+
+                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-2 mt-4">
+                  Payment Method
+                </p>
+                <select
+                  value={paymentMethod}
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  className="w-full bg-slate-800 border border-white/10 rounded-xl py-3 px-4 text-white font-mono focus:border-emerald-500 outline-none"
+                >
+                  <option value="Cash">Cash</option>
+                  <option value="JazzCash">JazzCash</option>
+                  <option value="EasyPesa">EasyPesa</option>
+                  <option value="Bank">Bank Transfer</option>
+                </select>
               </div>
 
               <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-4">
