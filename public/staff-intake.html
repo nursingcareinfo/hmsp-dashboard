@@ -612,8 +612,8 @@
           })
 
           if (!resp.ok) {
-            const errBody = await resp.text()
-            throw new Error(errBody || 'Server error: ' + resp.status)
+            await resp.text() // consume response body for connection pooling
+            throw new Error('Server error: ' + resp.status)
           }
 
           document.getElementById('formContainer').style.display = 'none'

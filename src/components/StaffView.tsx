@@ -220,7 +220,7 @@ export default function StaffView({
       loadStaff()
     } catch (error: any) {
       console.error('Error registering staff:', error)
-      alert(`Registration failed: ${error.message || 'Unknown error'}`)
+      alert('Registration failed. Please try again or contact support.')
     } finally {
       setIsSubmitting(false)
     }
@@ -291,7 +291,7 @@ export default function StaffView({
       loadStaff() // Refresh the list
     } catch (error: any) {
       console.error('Error updating staff:', error)
-      alert(`Update failed: ${error.message || 'Unknown error'}`)
+      alert('Update failed. Please try again or contact support.')
     } finally {
       setIsSubmittingEdit(false)
     }
@@ -308,7 +308,7 @@ export default function StaffView({
       loadStaff() // Refresh the list
     } catch (error: any) {
       console.error('Error deleting staff:', error)
-      alert(`Delete failed: ${error.message || 'Unknown error'}`)
+      alert('Delete failed. Please try again or contact support.')
     } finally {
       setIsDeleting(false)
     }
