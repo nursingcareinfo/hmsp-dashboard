@@ -22,6 +22,7 @@ import {
   Trash2,
   Calendar,
   Ban,
+  Receipt,
 } from 'lucide-react'
 import { Staff } from '../types'
 import { cn, formatPKR, formatNameInput, formatCNICInput, formatPhoneInput } from '../lib/utils'
@@ -31,6 +32,7 @@ import { advanceService } from '../services/advanceService'
 import { patientService, type Patient } from '../services/patientService'
 import { shiftService } from '../services/shiftService'
 import StaffAttendanceCalendarModal from './StaffAttendanceCalendarModal'
+import StaffLedgerModal from './StaffLedgerModal'
 
 export default function StaffView({
   setActiveView,
@@ -87,6 +89,7 @@ export default function StaffView({
     Record<string, { name: string; id: string; shiftType: string }>
   >({})
   const [selectedStaffForAttendance, setSelectedStaffForAttendance] = useState<any | null>(null)
+  const [selectedStaffForLedger, setSelectedStaffForLedger] = useState<any | null>(null)
   const [patients, setPatients] = useState<Patient[]>([])
   const [assigningStaffId, setAssigningStaffId] = useState<string | null>(null)
   const [assignPatientId, setAssignPatientId] = useState('')
@@ -864,6 +867,14 @@ export default function StaffView({
                     <span>Attendance</span>
                   </button>
                   <button
+                    onClick={() => setSelectedStaffForLedger(staff)}
+                    className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-md transition-all"
+                    title="View Financial Ledger"
+                  >
+                    <Receipt size={12} />
+                    <span>Ledger</span>
+                  </button>
+                  <button
                     onClick={() => setSelectedStaffForAdvance(staff)}
                     className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-md transition-all"
                   >
@@ -1287,6 +1298,14 @@ export default function StaffView({
           nightRate={selectedStaffForAttendance.night_shift_rate}
           expectedSalary={selectedStaffForAttendance.expected_salary_pkr}
           onClose={() => setSelectedStaffForAttendance(null)}
+        />
+      )}
+
+      {/* Ledger Modal */}
+      {selectedStaffForLedger && (
+        <StaffLedgerModal
+          staff={selectedStaffForLedger}
+          onClose={() => setSelectedStaffForLedger(null)}
         />
       )}
     </div>
