@@ -993,31 +993,58 @@ export default function StaffView({
                     Recent Advances
                   </p>
                   <div className="space-y-1.5">
-                    {recentAdvances.map((adv) => (
-                      <div
-                        key={adv.id}
-                        className="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2 border border-white/5"
-                      >
-                        <span className="text-[10px] text-slate-300 font-mono">
-                          {formatPKR(adv.amount_pkr)}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[8px] text-slate-500 font-mono">
-                            {adv.payment_method || 'Cash'}
-                          </span>
-                          <span
-                            className={
-                              'text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ' +
-                              (adv.status === 'Settled'
-                                ? 'text-emerald-400 bg-emerald-500/10'
-                                : 'text-amber-400 bg-amber-500/10')
-                            }
-                          >
-                            {adv.status}
-                          </span>
+                    {recentAdvances.map((adv) => {
+                      const date = adv.disbursement_date
+                        ? new Date(adv.disbursement_date)
+                        : adv.created_at
+                          ? new Date(adv.created_at)
+                          : null
+                      const dateStr = date
+                        ? date.toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                          })
+                        : ''
+                      const timeStr = date
+                        ? date.toLocaleTimeString('en-GB', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })
+                        : ''
+                      return (
+                        <div
+                          key={adv.id}
+                          className="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2 border border-white/5"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <span className="text-[10px] text-slate-300 font-mono shrink-0">
+                              {formatPKR(adv.amount_pkr)}
+                            </span>
+                            {dateStr && (
+                              <span className="text-[8px] text-slate-600 font-mono whitespace-nowrap">
+                                {dateStr} {timeStr}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[8px] text-slate-500 font-mono">
+                              {adv.payment_method || 'Cash'}
+                            </span>
+                            <span
+                              className={
+                                'text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ' +
+                                (adv.status === 'Settled'
+                                  ? 'text-emerald-400 bg-emerald-500/10'
+                                  : 'text-amber-400 bg-amber-500/10')
+                              }
+                            >
+                              {adv.status}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
               )}
