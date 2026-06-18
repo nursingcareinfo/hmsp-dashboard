@@ -69,15 +69,15 @@ export default function AttendanceView() {
   const getStatusColor = (status: string | undefined) => {
     switch (status) {
       case 'Present':
-        return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+        return 'bg-emerald-500/20 text-emerald-600 border-emerald-500/30'
       case 'Absent':
-        return 'bg-red-500/20 text-red-400 border-red-500/30'
+        return 'bg-red-500/20 text-red-600 border-red-500/30'
       case 'Late':
-        return 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+        return 'bg-amber-500/20 text-amber-600 border-amber-500/30'
       case 'Half-Day':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+        return 'bg-blue-500/20 text-blue-600 border-blue-500/30'
       default:
-        return 'bg-white/5 text-slate-600 border-white/10'
+        return 'bg-gray-50/80 text-gray-400 border-gray-200'
     }
   }
 
@@ -99,12 +99,12 @@ export default function AttendanceView() {
   return (
     <div className="space-y-6 h-full flex flex-col">
       {/* Header */}
-      <div className="flex justify-between items-center bg-slate-900/40 border border-white/5 p-6 rounded-xl">
+      <div className="flex justify-between items-center bg-white border border-gray-200 p-6 rounded-xl">
         <div>
-          <h2 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-2">
+          <h2 className="text-xl font-black text-gray-800 uppercase tracking-tighter flex items-center gap-2">
             <Calendar className="text-blue-500" /> Attendance Ledger
           </h2>
-          <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black mt-1">
             Mark daily presence • Auto-calculate payroll
           </p>
         </div>
@@ -117,39 +117,39 @@ export default function AttendanceView() {
           </button>
           <button
             onClick={() => setCurrentDate(new Date(year, month - 1, 1))}
-            className="p-2 hover:bg-white/5 rounded-lg border border-white/5"
+            className="p-2 hover:bg-gray-50/80 rounded-lg border border-gray-200"
           >
-            <ChevronLeft size={20} className="text-slate-400" />
+            <ChevronLeft size={20} className="text-gray-400" />
           </button>
-          <h3 className="text-sm font-mono font-bold text-white uppercase tracking-widest w-32 text-center">
+          <h3 className="text-sm font-mono font-bold text-gray-800 uppercase tracking-widest w-32 text-center">
             {new Date(year, month).toLocaleString('default', { month: 'long', year: 'numeric' })}
           </h3>
           <button
             onClick={() => setCurrentDate(new Date(year, month + 1, 1))}
-            className="p-2 hover:bg-white/5 rounded-lg border border-white/5"
+            className="p-2 hover:bg-gray-50/80 rounded-lg border border-gray-200"
           >
-            <ChevronRight size={20} className="text-slate-400" />
+            <ChevronRight size={20} className="text-gray-400" />
           </button>
         </div>
       </div>
 
       {/* Calendar Grid */}
-      <div className="flex-1 overflow-auto bg-slate-900/40 border border-white/5 rounded-xl p-6">
+      <div className="flex-1 overflow-auto bg-white border border-gray-200 rounded-xl p-6">
         {loading ? (
           <div className="flex items-center justify-center h-64">
-            <div className="text-slate-500 text-xs uppercase tracking-widest">Loading...</div>
+            <div className="text-gray-500 text-xs uppercase tracking-widest">Loading...</div>
           </div>
         ) : (
           <div className="min-w-[800px]">
             {/* Header Row */}
             <div className="grid grid-cols-[200px_repeat(31,1fr)] gap-1 mb-2">
-              <div className="text-[10px] font-black uppercase tracking-widest text-slate-500 py-2">
+              <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 py-2">
                 Staff Member
               </div>
               {Array.from({ length: daysInMonth }, (_, i) => (
                 <div
                   key={i}
-                  className="text-[8px] text-center font-bold text-slate-600 py-2 border-b border-white/5"
+                  className="text-[8px] text-center font-bold text-gray-400 py-2 border-b border-gray-200"
                 >
                   {i + 1}
                 </div>
@@ -159,7 +159,7 @@ export default function AttendanceView() {
             {/* Staff Rows */}
             {staff.map((s) => (
               <div key={s.id} className="grid grid-cols-[200px_repeat(31,1fr)] gap-1 mb-1">
-                <div className="text-[10px] font-bold text-white py-2 truncate pr-2">
+                <div className="text-[10px] font-bold text-gray-800 py-2 truncate pr-2">
                   {s.full_name}
                 </div>
                 {Array.from({ length: daysInMonth }, (_, i) => {
@@ -185,15 +185,15 @@ export default function AttendanceView() {
 
       {/* Salary Modal */}
       {showSalaryModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-4xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-white/5">
-              <h3 className="text-sm font-black text-emerald-400 uppercase tracking-[0.2em] flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="w-full max-w-4xl bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-sm font-black text-emerald-600 uppercase tracking-[0.2em] flex items-center gap-2">
                 <DollarSign size={16} /> Monthly Salary Breakdown
               </h3>
               <button
                 onClick={() => setShowSalaryModal(false)}
-                className="text-slate-500 hover:text-white"
+                className="text-gray-500 hover:text-gray-800"
               >
                 ✕
               </button>
@@ -201,42 +201,42 @@ export default function AttendanceView() {
             <div className="p-6 overflow-auto max-h-[60vh]">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b border-white/5">
-                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  <tr className="border-b border-gray-200">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-500">
                       Staff
                     </th>
-                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-500">
                       Present
                     </th>
-                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-500">
                       Daily Rate
                     </th>
-                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-500">
                       Deductions
                     </th>
-                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 text-right">
+                    <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-500 text-right">
                       Net Pay
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-gray-200">
                   {staff.map((s) => {
                     const calc = calculateSalary(s)
                     return (
-                      <tr key={s.id} className="hover:bg-white/[0.02]">
-                        <td className="px-4 py-3 text-[11px] font-bold text-white">
+                      <tr key={s.id} className="hover:bg-gray-50/50">
+                        <td className="px-4 py-3 text-[11px] font-bold text-gray-800">
                           {s.full_name}
                         </td>
-                        <td className="px-4 py-3 text-[10px] text-emerald-400">
+                        <td className="px-4 py-3 text-[10px] text-emerald-600">
                           {calc.present} days
                         </td>
-                        <td className="px-4 py-3 text-[10px] text-slate-400">
+                        <td className="px-4 py-3 text-[10px] text-gray-400">
                           PKR {calc.dailyRate.toFixed(0)}
                         </td>
-                        <td className="px-4 py-3 text-[10px] text-red-400">
+                        <td className="px-4 py-3 text-[10px] text-red-600">
                           -{calc.lateDeduction.toFixed(0)}
                         </td>
-                        <td className="px-4 py-3 text-[11px] font-mono font-bold text-emerald-400 text-right">
+                        <td className="px-4 py-3 text-[11px] font-mono font-bold text-emerald-600 text-right">
                           PKR {calc.totalSalary.toFixed(0)}
                         </td>
                       </tr>
@@ -245,7 +245,7 @@ export default function AttendanceView() {
                 </tbody>
               </table>
             </div>
-            <div className="p-6 border-t border-white/5 flex justify-end gap-3">
+            <div className="p-6 border-t border-gray-200 flex justify-end gap-3">
               <button className="btn-secondary flex items-center gap-2">
                 <Download size={14} /> Export CSV
               </button>

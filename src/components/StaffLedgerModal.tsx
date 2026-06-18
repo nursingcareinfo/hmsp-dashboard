@@ -89,26 +89,26 @@ export default function StaffLedgerModal({ staff, onClose }: StaffLedgerModalPro
       case 'Completed':
       case 'Paid':
       case 'Settled':
-        return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+        return 'text-emerald-600 bg-emerald-50 border-emerald-200'
       case 'Pending':
       case 'Scheduled':
-        return 'text-amber-400 bg-amber-500/10 border-amber-500/20'
+        return 'text-amber-600 bg-amber-500/10 border-amber-500/20'
       case 'Abandoned':
       case 'Cancelled':
         return 'text-rose-400 bg-rose-500/10 border-rose-500/20'
       default:
-        return 'text-slate-400 bg-slate-500/10 border-slate-500/20'
+        return 'text-gray-400 bg-gray-100 border-gray-200'
     }
   }
 
   const typeIcon = (type: string) => {
     switch (type) {
       case 'advance':
-        return <Banknote size={14} className="text-amber-400" />
+        return <Banknote size={14} className="text-amber-600" />
       case 'shift':
-        return <Briefcase size={14} className="text-blue-400" />
+        return <Briefcase size={14} className="text-blue-600" />
       case 'payroll':
-        return <Receipt size={14} className="text-emerald-400" />
+        return <Receipt size={14} className="text-emerald-600" />
       default:
         return null
     }
@@ -116,8 +116,8 @@ export default function StaffLedgerModal({ staff, onClose }: StaffLedgerModalPro
 
   if (loading) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-        <div className="flex flex-col items-center gap-4 text-slate-400">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+        <div className="flex flex-col items-center gap-4 text-gray-400">
           <Loader2 className="animate-spin text-emerald-500" size={32} />
           <p className="text-[10px] uppercase tracking-widest font-bold">Loading Ledger...</p>
         </div>
@@ -127,10 +127,10 @@ export default function StaffLedgerModal({ staff, onClose }: StaffLedgerModalPro
 
   if (error) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-        <div className="w-full max-w-md bg-slate-900 border border-red-500/20 rounded-2xl p-6 text-center">
-          <p className="text-red-400 font-bold text-sm mb-2">Failed to load ledger</p>
-          <p className="text-slate-400 text-xs mb-4">{error}</p>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+        <div className="w-full max-w-md bg-white border border-red-500/20 rounded-2xl p-6 text-center">
+          <p className="text-red-600 font-bold text-sm mb-2">Failed to load ledger</p>
+          <p className="text-gray-400 text-xs mb-4">{error}</p>
           <button onClick={onClose} className="btn-primary px-6 py-2 text-xs">
             Close
           </button>
@@ -142,20 +142,20 @@ export default function StaffLedgerModal({ staff, onClose }: StaffLedgerModalPro
   const hasData = timeline.length > 0
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="w-full max-w-2xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="w-full max-w-2xl bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
         {/* Header */}
-        <div className="sticky top-0 bg-slate-900 border-b border-white/5 p-6 flex items-start gap-4 z-10">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center text-lg font-bold text-emerald-400 shrink-0">
+        <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-start gap-4 z-10">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center text-lg font-bold text-emerald-600 shrink-0">
             {(staff.full_name || '?')[0]}
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-base font-bold text-white truncate">{staff.full_name}</h2>
+            <h2 className="text-base font-bold text-gray-800 truncate">{staff.full_name}</h2>
             <p className="text-[10px] font-mono text-emerald-500/80">
               {staff.emp_no} &bull; {staff.position_applied}
             </p>
           </div>
-          <button onClick={onClose} className="text-slate-500 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-800 transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -163,16 +163,16 @@ export default function StaffLedgerModal({ staff, onClose }: StaffLedgerModalPro
         {/* Summary Cards */}
         <div className="grid grid-cols-3 gap-3 p-6 pb-0">
           <div className="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4 text-center">
-            <p className="text-[9px] text-blue-400 uppercase tracking-widest font-bold mb-1">
+            <p className="text-[9px] text-blue-600 uppercase tracking-widest font-bold mb-1">
               Earnings
             </p>
-            <p className="text-lg font-black text-blue-400 font-mono">{formatPKR(totalEarnings)}</p>
+            <p className="text-lg font-black text-blue-600 font-mono">{formatPKR(totalEarnings)}</p>
           </div>
           <div className="bg-amber-500/5 border border-amber-500/10 rounded-xl p-4 text-center">
-            <p className="text-[9px] text-amber-400 uppercase tracking-widest font-bold mb-1">
+            <p className="text-[9px] text-amber-600 uppercase tracking-widest font-bold mb-1">
               Advances
             </p>
-            <p className="text-lg font-black text-amber-400 font-mono">
+            <p className="text-lg font-black text-amber-600 font-mono">
               {formatPKR(totalAdvances)}
             </p>
           </div>
@@ -184,13 +184,13 @@ export default function StaffLedgerModal({ staff, onClose }: StaffLedgerModalPro
                 : 'bg-rose-500/5 border-rose-500/10')
             }
           >
-            <p className="text-[9px] uppercase tracking-widest font-bold mb-1 text-slate-400">
+            <p className="text-[9px] uppercase tracking-widest font-bold mb-1 text-gray-400">
               Net Due
             </p>
             <p
               className={
                 'text-lg font-black font-mono ' +
-                (netBalance >= 0 ? 'text-emerald-400' : 'text-rose-400')
+                (netBalance >= 0 ? 'text-emerald-600' : 'text-rose-400')
               }
             >
               {formatPKR(netBalance)}
@@ -200,13 +200,13 @@ export default function StaffLedgerModal({ staff, onClose }: StaffLedgerModalPro
 
         {/* Timeline */}
         <div className="p-6">
-          <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-4">
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-4">
             Activity Timeline
           </p>
 
           {!hasData ? (
-            <div className="bg-slate-800/50 border border-white/5 rounded-xl p-8 text-center">
-              <p className="text-slate-500 text-sm">
+            <div className="bg-gray-100/50 border border-gray-200 rounded-xl p-8 text-center">
+              <p className="text-gray-500 text-sm">
                 No financial history recorded for this staff member.
               </p>
             </div>
@@ -222,7 +222,7 @@ export default function StaffLedgerModal({ staff, onClose }: StaffLedgerModalPro
                 return (
                   <React.Fragment key={event.id + '-' + i}>
                     {showDateHeader && (
-                      <p className="text-[9px] text-slate-600 uppercase tracking-widest font-bold pt-4 pb-1">
+                      <p className="text-[9px] text-gray-400 uppercase tracking-widest font-bold pt-4 pb-1">
                         {new Date(event.date).toLocaleDateString('en-GB', {
                           day: 'numeric',
                           month: 'short',
@@ -230,17 +230,17 @@ export default function StaffLedgerModal({ staff, onClose }: StaffLedgerModalPro
                         })}
                       </p>
                     )}
-                    <div className="flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.05] rounded-xl px-4 py-3 transition-colors border border-white/5">
-                      <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center shrink-0">
+                    <div className="flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.05] rounded-xl px-4 py-3 transition-colors border border-gray-200">
+                      <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
                         {typeIcon(event.type)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-white truncate">
+                        <p className="text-xs font-medium text-gray-800 truncate">
                           {event.description}
                         </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-xs font-bold font-mono text-white">
+                        <p className="text-xs font-bold font-mono text-gray-800">
                           {formatPKR(event.amount)}
                         </p>
                       </div>
@@ -264,7 +264,7 @@ export default function StaffLedgerModal({ staff, onClose }: StaffLedgerModalPro
         <div className="p-6 pt-0">
           <button
             onClick={onClose}
-            className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all"
+            className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-800 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all"
           >
             Close
           </button>

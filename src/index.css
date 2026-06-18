@@ -1,14 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0A0B0D;
-  --color-card: rgba(15, 23, 42, 0.4);
-  --color-border: rgba(255, 255, 255, 0.05);
-  --color-border-hover: rgba(255, 255, 255, 0.1);
-  --color-ink: #CBD5E1;
-  --color-ink-dim: #64748B;
-  --color-brand: #10B981;
-  --color-brand-dim: #059669;
+  --color-bg: #F5F3EE;
+  --color-card: #FFFFFF;
+  --color-border: #E5E2DC;
+  --color-border-hover: #D6D2CA;
+  --color-ink: #292524;
+  --color-ink-dim: #78716C;
+  --color-brand: #059669;
+  --color-brand-dim: #047857;
   --color-accent: #3B82F6;
   --color-emerald-glow: #34D399;
 
@@ -31,29 +31,29 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+    @apply bg-black/10 rounded-full hover:bg-black/20 transition-colors;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-slate-900/40 border border-white/5 rounded-xl backdrop-blur-sm shadow-2xl;
+    @apply bg-white border border-[var(--color-border)] rounded-xl shadow-sm;
   }
 
   .input-field {
-    @apply bg-black/40 border border-white/10 rounded-lg px-4 py-2 text-white placeholder:text-slate-600 focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 outline-none transition-all font-mono text-sm;
+    @apply bg-white border border-[var(--color-border)] rounded-lg px-4 py-2 text-[var(--color-ink)] placeholder:text-[var(--color-ink-dim)] focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 outline-none transition-all font-mono text-sm;
   }
 
   .btn-primary {
-    @apply bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black px-4 py-2 rounded-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-[0.1em] text-xs;
+    @apply bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 py-2 rounded-lg transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-[0.1em] text-xs;
   }
 
   .btn-secondary {
-    @apply bg-white/5 hover:bg-white/10 text-slate-300 font-medium px-4 py-2 rounded-lg border border-white/10 transition-all text-sm;
+    @apply bg-[var(--color-card)] hover:bg-[var(--color-border)] text-[var(--color-ink-dim)] font-medium px-4 py-2 rounded-lg border border-[var(--color-border)] transition-all text-sm;
   }
 
   .text-mono-emerald {
-    @apply font-mono text-emerald-400 font-semibold;
+    @apply font-mono text-emerald-600 font-semibold;
   }
 }
 

@@ -83,12 +83,12 @@ export default function CalendarView() {
 
   return (
     <div className="space-y-6 h-full flex flex-col">
-      <div className="flex justify-between items-center bg-slate-900/40 border border-white/5 p-6 rounded-xl shadow-2xl">
+      <div className="flex justify-between items-center bg-white border border-gray-200 p-6 rounded-xl shadow-2xl">
         <div>
-          <h2 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-2">
+          <h2 className="text-xl font-black text-gray-800 uppercase tracking-tighter flex items-center gap-2">
             <CalendarIcon className="text-blue-500" /> Attendance Management
           </h2>
-          <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black mt-1">
             Operational Shift Ledger • {monthNames[month]} {year}
           </p>
         </div>
@@ -96,29 +96,29 @@ export default function CalendarView() {
         <div className="flex items-center gap-4">
           <button
             onClick={prevMonth}
-            className="p-2 hover:bg-white/5 rounded-lg border border-white/5 transition-colors"
+            className="p-2 hover:bg-gray-50/80 rounded-lg border border-gray-200 transition-colors"
           >
-            <ChevronLeft size={20} className="text-slate-400" />
+            <ChevronLeft size={20} className="text-gray-400" />
           </button>
-          <h3 className="text-sm font-mono font-bold text-white uppercase tracking-widest w-32 text-center">
+          <h3 className="text-sm font-mono font-bold text-gray-800 uppercase tracking-widest w-32 text-center">
             {monthNames[month]}
           </h3>
           <button
             onClick={nextMonth}
-            className="p-2 hover:bg-white/5 rounded-lg border border-white/5 transition-colors"
+            className="p-2 hover:bg-gray-50/80 rounded-lg border border-gray-200 transition-colors"
           >
-            <ChevronRight size={20} className="text-slate-400" />
+            <ChevronRight size={20} className="text-gray-400" />
           </button>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 flex-1 overflow-hidden">
-        <div className="lg:col-span-3 bg-slate-900/40 border border-white/5 rounded-xl p-6 shadow-2xl flex flex-col h-full overflow-hidden">
+        <div className="lg:col-span-3 bg-white border border-gray-200 rounded-xl p-6 shadow-2xl flex flex-col h-full overflow-hidden">
           <div className="grid grid-cols-7 mb-4">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
               <div
                 key={d}
-                className="text-[10px] text-center font-black uppercase tracking-widest text-slate-500 py-2 border-b border-white/5"
+                className="text-[10px] text-center font-black uppercase tracking-widest text-gray-500 py-2 border-b border-gray-200"
               >
                 {d}
               </div>
@@ -134,7 +134,7 @@ export default function CalendarView() {
             {days.map((date, i) => {
               if (!date)
                 return (
-                  <div key={i} className="aspect-square border border-white/5 opacity-10"></div>
+                  <div key={i} className="aspect-square border border-gray-200 opacity-10"></div>
                 )
 
               const dayShifts = getDayShifts(date)
@@ -146,8 +146,8 @@ export default function CalendarView() {
                   key={i}
                   onClick={() => setSelectedDate(date)}
                   className={cn(
-                    'aspect-square border border-white/5 p-2 cursor-pointer transition-all hover:bg-white/5 flex flex-col items-start gap-1',
-                    isSelected ? 'bg-blue-500/10 border-blue-500/30' : '',
+                    'aspect-square border border-gray-200 p-2 cursor-pointer transition-all hover:bg-gray-50/80 flex flex-col items-start gap-1',
+                    isSelected ? 'bg-blue-50 border-blue-500/30' : '',
                     isToday
                       ? 'relative before:absolute before:top-2 before:right-2 before:w-1.5 before:h-1.5 before:bg-blue-500 before:rounded-full'
                       : ''
@@ -156,7 +156,7 @@ export default function CalendarView() {
                   <span
                     className={cn(
                       'text-[10px] font-mono font-bold',
-                      isSelected ? 'text-blue-400' : 'text-slate-500'
+                      isSelected ? 'text-blue-600' : 'text-gray-500'
                     )}
                   >
                     {date.getDate()}
@@ -173,7 +173,7 @@ export default function CalendarView() {
                             ? 'bg-emerald-500/40'
                             : s.is_abandoned
                               ? 'bg-red-500/40'
-                              : 'bg-slate-500/40'
+                              : 'bg-gray-300'
                         )}
                       />
                     ))}
@@ -185,20 +185,20 @@ export default function CalendarView() {
         </div>
 
         <div className="flex flex-col gap-4 overflow-hidden">
-          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 px-2 flex items-center gap-2">
-            <Clock size={14} className="text-emerald-400" /> Shift Details
+          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 px-2 flex items-center gap-2">
+            <Clock size={14} className="text-emerald-600" /> Shift Details
           </h3>
           <div className="flex-1 overflow-auto space-y-4 pr-1 scrollbar-none">
             {!selectedDate ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-8 border border-dashed border-white/5 rounded-xl opacity-40">
-                <CalendarIcon size={32} className="text-slate-700 mb-4" />
-                <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <div className="h-full flex flex-col items-center justify-center text-center p-8 border border-dashed border-gray-200 rounded-xl opacity-40">
+                <CalendarIcon size={32} className="text-gray-500 mb-4" />
+                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500">
                   Pick a date to audit shifts
                 </p>
               </div>
             ) : (
               <>
-                <h4 className="text-[10px] text-white font-mono font-bold uppercase tracking-widest px-2 mb-4">
+                <h4 className="text-[10px] text-gray-800 font-mono font-bold uppercase tracking-widest px-2 mb-4">
                   {selectedDate.toLocaleDateString('en-GB', {
                     day: 'numeric',
                     month: 'long',
@@ -207,8 +207,8 @@ export default function CalendarView() {
                 </h4>
 
                 {selectedDayShifts.length === 0 ? (
-                  <div className="p-8 text-center border border-dashed border-white/5 rounded-xl opacity-40">
-                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest leading-relaxed">
+                  <div className="p-8 text-center border border-dashed border-gray-200 rounded-xl opacity-40">
+                    <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest leading-relaxed">
                       No shifts logged for
                       <br />
                       this date.
@@ -218,18 +218,18 @@ export default function CalendarView() {
                   selectedDayShifts.map((s: any) => (
                     <div
                       key={s.id}
-                      className="bg-slate-900/40 border border-white/5 rounded-xl p-4 space-y-4 group hover:border-white/10 transition-colors"
+                      className="bg-white border border-gray-200 rounded-xl p-4 space-y-4 group hover:border-gray-200 transition-colors"
                     >
                       <div className="flex justify-between items-start">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center border border-white/5">
-                            <User size={14} className="text-emerald-400" />
+                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200">
+                            <User size={14} className="text-emerald-600" />
                           </div>
                           <div>
-                            <p className="text-xs font-bold text-white uppercase tracking-tight">
+                            <p className="text-xs font-bold text-gray-800 uppercase tracking-tight">
                               {s.employee?.full_name}
                             </p>
-                            <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest">
+                            <p className="text-[9px] text-gray-500 uppercase font-bold tracking-widest">
                               Shift: {s.shift_type} (12h)
                             </p>
                           </div>
@@ -238,21 +238,21 @@ export default function CalendarView() {
                           className={cn(
                             'px-2 py-0.5 rounded border text-[8px] font-black uppercase tracking-widest',
                             s.attendance_status === 'Completed'
-                              ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+                              ? 'bg-emerald-50 border-emerald-200 text-emerald-600'
                               : s.attendance_status === 'Abandoned'
-                                ? 'bg-red-500/10 border-red-500/20 text-red-400'
-                                : 'bg-slate-500/10 border-slate-500/20 text-slate-400'
+                                ? 'bg-red-50 border-red-500/20 text-red-600'
+                                : 'bg-gray-100 border-gray-200 text-gray-400'
                           )}
                         >
                           {s.attendance_status}
                         </div>
                       </div>
 
-                      <div className="pt-2 border-t border-white/5 flex justify-between items-center">
-                        <div className="text-[9px] text-slate-500 font-bold uppercase tracking-widest">
+                      <div className="pt-2 border-t border-gray-200 flex justify-between items-center">
+                        <div className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">
                           Rate (PKR)
                         </div>
-                        <div className="text-xs font-mono font-bold text-emerald-400">
+                        <div className="text-xs font-mono font-bold text-emerald-600">
                           {s.decided_rate_pkr.toLocaleString()}
                           {s.penalty_applied && (
                             <span className="ml-2 text-red-500 text-[10px]">(Penalty Applied)</span>
@@ -268,7 +268,7 @@ export default function CalendarView() {
                               const data = await shiftService.getShiftsByMonth(year, month)
                               setShifts(data)
                             }}
-                            className="py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-emerald-500/20 transition-all flex items-center justify-center gap-1"
+                            className="py-2 bg-emerald-50 border border-emerald-200 text-emerald-600 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-emerald-500/20 transition-all flex items-center justify-center gap-1"
                           >
                             <CheckCircle2 size={12} /> Complete
                           </button>
@@ -284,7 +284,7 @@ export default function CalendarView() {
                                 setShifts(data)
                               }
                             }}
-                            className="py-2 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-red-500/20 transition-all flex items-center justify-center gap-1"
+                            className="py-2 bg-red-50 border border-red-500/20 text-red-600 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-red-500/20 transition-all flex items-center justify-center gap-1"
                           >
                             <XCircle size={12} /> Abandoned
                           </button>
@@ -294,7 +294,7 @@ export default function CalendarView() {
                   ))
                 )}
 
-                <button className="w-full mt-4 py-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black text-xs rounded-xl uppercase tracking-[0.2em] hover:bg-emerald-500/20 transition-all">
+                <button className="w-full mt-4 py-4 bg-emerald-50 border border-emerald-200 text-emerald-600 font-black text-xs rounded-xl uppercase tracking-[0.2em] hover:bg-emerald-500/20 transition-all">
                   Log New Manual Override
                 </button>
               </>

@@ -281,7 +281,7 @@ export default function PatientView({
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <Loader2 className="text-emerald-500 animate-spin" size={40} />
-        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">
+        <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black">
           Syncing Residence Hub...
         </p>
       </div>
@@ -290,12 +290,12 @@ export default function PatientView({
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-slate-900/40 border border-white/5 p-6 rounded-xl shadow-2xl">
+      <div className="flex justify-between items-center bg-white border border-gray-200 p-6 rounded-xl shadow-2xl">
         <div>
-          <h2 className="text-xl font-black text-white uppercase tracking-tighter">
+          <h2 className="text-xl font-black text-gray-800 uppercase tracking-tighter">
             Patient Admissions
           </h2>
-          <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black mt-1">
             Karachi Active Households Ledger
           </p>
         </div>
@@ -314,13 +314,13 @@ export default function PatientView({
       </div>
 
       {showForm && (
-        <div className="bg-slate-900/40 border border-white/5 p-8 rounded-xl shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
-          <h3 className="text-sm font-black text-blue-400 uppercase tracking-[0.2em] mb-6">
+        <div className="bg-white border border-gray-200 p-8 rounded-xl shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
+          <h3 className="text-sm font-black text-blue-600 uppercase tracking-[0.2em] mb-6">
             Patient Registration Form
           </h3>
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                 Full Name
               </label>
               <input
@@ -329,11 +329,11 @@ export default function PatientView({
                 onChange={(e) =>
                   setFormData({ ...formData, full_name: formatNameInput(e.target.value) })
                 }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                 CNIC (XXXXX-XXXXXXX-X)
               </label>
               <input
@@ -342,11 +342,11 @@ export default function PatientView({
                 onChange={(e) =>
                   setFormData({ ...formData, cnic: formatCNICInput(e.target.value) })
                 }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                 Mobile Number
               </label>
               <input
@@ -355,17 +355,17 @@ export default function PatientView({
                 onChange={(e) =>
                   setFormData({ ...formData, contact: formatPhoneInput(e.target.value) })
                 }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                 Gender
               </label>
               <select
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
@@ -373,13 +373,13 @@ export default function PatientView({
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                 Marital Status
               </label>
               <select
                 value={formData.marital_status}
                 onChange={(e) => setFormData({ ...formData, marital_status: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               >
                 <option value="">Select...</option>
                 <option value="Single">Single</option>
@@ -389,18 +389,18 @@ export default function PatientView({
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                 Date of Birth
               </label>
               <input
                 type="date"
                 value={formData.date_of_birth}
                 onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                 Age
               </label>
               <input
@@ -417,18 +417,18 @@ export default function PatientView({
                       })()
                     : ''
                 }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-slate-400 text-sm font-mono outline-none"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-400 text-sm font-mono outline-none"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                 District (Karachi)
               </label>
               <select
                 required
                 value={formData.district}
                 onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               >
                 <option value="">Select District</option>
                 <option value="South">South</option>
@@ -441,23 +441,23 @@ export default function PatientView({
               </select>
             </div>
             <div className="space-y-2 md:col-span-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                 Complete Address
               </label>
               <textarea
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40 h-24"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40 h-24"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                 Service Type
               </label>
               <select
                 value={formData.service_type}
                 onChange={(e) => setFormData({ ...formData, service_type: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               >
                 <option value="12h_day">12h Day</option>
                 <option value="12h_night">12h Night</option>
@@ -465,7 +465,7 @@ export default function PatientView({
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                 Monthly Package (PKR)
               </label>
               <input
@@ -473,7 +473,7 @@ export default function PatientView({
                 required
                 value={formData.billing_rate}
                 onChange={(e) => setFormData({ ...formData, billing_rate: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-emerald-600 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
             <div className="space-y-2 text-right md:col-span-2 mt-4">
@@ -495,60 +495,60 @@ export default function PatientView({
 
       {/* Edit Patient Modal */}
       {editPatient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
-          <div className="bg-slate-900 border border-white/10 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+          <div className="bg-white border border-gray-200 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-sm font-black text-blue-400 uppercase tracking-[0.2em]">
+              <h3 className="text-sm font-black text-blue-600 uppercase tracking-[0.2em]">
                 Edit Patient — {editPatient.full_name}
               </h3>
               <button
                 onClick={() => setEditPatient(null)}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors text-slate-500 hover:text-white"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500 hover:text-gray-800"
               >
                 <X size={18} />
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                   Full Name
                 </label>
                 <input
                   required
                   value={editFormData.full_name}
                   onChange={(e) => setEditFormData({ ...editFormData, full_name: e.target.value })}
-                  className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                   CNIC
                 </label>
                 <input
                   value={editFormData.cnic}
                   onChange={(e) => setEditFormData({ ...editFormData, cnic: e.target.value })}
-                  className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm font-mono outline-none focus:border-emerald-500/40"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                   Mobile Number
                 </label>
                 <input
                   required
                   value={editFormData.contact}
                   onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })}
-                  className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm font-mono outline-none focus:border-emerald-500/40"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                   Gender
                 </label>
                 <select
                   value={editFormData.gender}
                   onChange={(e) => setEditFormData({ ...editFormData, gender: e.target.value })}
-                  className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
                 >
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
@@ -556,14 +556,14 @@ export default function PatientView({
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                   District
                 </label>
                 <select
                   required
                   value={editFormData.district}
                   onChange={(e) => setEditFormData({ ...editFormData, district: e.target.value })}
-                  className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
                 >
                   <option value="">Select District</option>
                   <option value="South">South</option>
@@ -581,7 +581,7 @@ export default function PatientView({
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                   Service Type
                 </label>
                 <select
@@ -589,7 +589,7 @@ export default function PatientView({
                   onChange={(e) =>
                     setEditFormData({ ...editFormData, service_type: e.target.value })
                   }
-                  className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
                 >
                   <option value="24hr">24hr Full</option>
                   <option value="12hr">12hr</option>
@@ -597,7 +597,7 @@ export default function PatientView({
                 </select>
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                   Monthly Package (PKR)
                 </label>
                 <input
@@ -607,11 +607,11 @@ export default function PatientView({
                   onChange={(e) =>
                     setEditFormData({ ...editFormData, billing_rate: e.target.value })
                   }
-                  className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-emerald-500/40"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-emerald-600 text-sm font-mono outline-none focus:border-emerald-500/40"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                   Status
                 </label>
                 <select
@@ -619,7 +619,7 @@ export default function PatientView({
                   onChange={(e) =>
                     setEditFormData({ ...editFormData, status: e.target.value as any })
                   }
-                  className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
                 >
                   <option value="Active">Active</option>
                   <option value="Pending">Pending</option>
@@ -628,20 +628,20 @@ export default function PatientView({
                 </select>
               </div>
               <div className="space-y-2 md:col-span-2">
-                <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest">
+                <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest">
                   Address
                 </label>
                 <textarea
                   value={editFormData.address}
                   onChange={(e) => setEditFormData({ ...editFormData, address: e.target.value })}
-                  className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40 h-24"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40 h-24"
                 />
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-8">
               <button
                 onClick={() => setEditPatient(null)}
-                className="px-6 py-3 bg-white/5 hover:bg-white/10 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all"
+                className="px-6 py-3 bg-gray-50/80 hover:bg-gray-100 text-gray-800 text-xs font-black uppercase tracking-widest rounded-xl transition-all"
               >
                 Cancel
               </button>
@@ -659,9 +659,9 @@ export default function PatientView({
 
       <div className="grid grid-cols-1 gap-6">
         {patients.length === 0 ? (
-          <div className="bg-slate-900/40 border border-dashed border-white/10 rounded-xl p-12 text-center">
-            <ClipboardList className="text-slate-700 mx-auto mb-4" size={48} />
-            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">
+          <div className="bg-white border border-dashed border-gray-200 rounded-xl p-12 text-center">
+            <ClipboardList className="text-gray-500 mx-auto mb-4" size={48} />
+            <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">
               No entries found in registry
             </p>
           </div>
@@ -670,45 +670,45 @@ export default function PatientView({
             <div
               key={patient.id}
               id={`patient-card-${patient.id}`}
-              className="bg-slate-900/40 border border-white/5 rounded-2xl p-6 shadow-2xl group hover:border-white/10 transition-all scroll-mt-8"
+              className="bg-white border border-gray-200 rounded-2xl p-6 shadow-2xl group hover:border-gray-200 transition-all scroll-mt-8"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-6 border-b border-white/5">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-6 border-b border-gray-200">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-200">
                     <User size={20} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-black text-white uppercase tracking-tighter text-xl">
+                      <h3 className="font-black text-gray-800 uppercase tracking-tighter text-xl">
                         {patient.full_name}
                       </h3>
                       <button
                         onClick={() => openEditModal(patient)}
-                        className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-slate-500 hover:text-white"
+                        className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors text-gray-500 hover:text-gray-800"
                         title="Edit patient"
                       >
                         <Pencil size={14} />
                       </button>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 mt-1">
-                      <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold flex items-center gap-1">
+                      <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold flex items-center gap-1">
                         <MapPin size={10} className="text-blue-500" /> {patient.district}
                       </span>
                       {patient.cnic && (
                         <>
-                          <span className="w-1 h-1 bg-slate-800 rounded-full"></span>
-                          <span className="text-[10px] text-slate-500 font-mono font-bold tracking-widest uppercase">
+                          <span className="w-1 h-1 bg-gray-100 rounded-full"></span>
+                          <span className="text-[10px] text-gray-500 font-mono font-bold tracking-widest uppercase">
                             {patient.cnic}
                           </span>
                         </>
                       )}
-                      <span className="w-1 h-1 bg-slate-800 rounded-full"></span>
+                      <span className="w-1 h-1 bg-gray-100 rounded-full"></span>
                       <span
                         className={cn(
                           'px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border',
                           patient.status === 'Active'
-                            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                            : 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                            ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                            : 'bg-blue-50 text-blue-600 border-blue-200'
                         )}
                       >
                         {patient.status}
@@ -717,22 +717,22 @@ export default function PatientView({
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between md:justify-end gap-8 bg-black/40 p-4 rounded-xl border border-white/5">
+                <div className="flex items-center justify-between md:justify-end gap-8 bg-white p-4 rounded-xl border border-gray-200">
                   <div className="text-center md:text-right">
-                    <p className="text-[9px] uppercase font-black text-slate-600 tracking-[0.2em] mb-1">
+                    <p className="text-[9px] uppercase font-black text-gray-400 tracking-[0.2em] mb-1">
                       Monthly Package
                     </p>
-                    <p className="text-lg font-mono font-bold text-emerald-400 tracking-tighter">
+                    <p className="text-lg font-mono font-bold text-emerald-600 tracking-tighter">
                       PKR {(patient.billing_rate || 0).toLocaleString()}
                     </p>
                   </div>
-                  <div className="h-8 w-px bg-white/5 hidden md:block"></div>
+                  <div className="h-8 w-px bg-gray-50/80 hidden md:block"></div>
                   <div className="text-center">
-                    <p className="text-[9px] uppercase font-black text-slate-600 tracking-[0.2em] mb-1">
+                    <p className="text-[9px] uppercase font-black text-gray-400 tracking-[0.2em] mb-1">
                       Service
                     </p>
-                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-white uppercase">
-                      <Clock size={12} className="text-blue-400" />{' '}
+                    <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-gray-800 uppercase">
+                      <Clock size={12} className="text-blue-600" />{' '}
                       {patient.service_type?.replace('_', ' ') || '---'}
                     </div>
                   </div>
@@ -740,37 +740,37 @@ export default function PatientView({
               </div>
 
               {patient.address && (
-                <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/5">
-                  <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1 flex items-center gap-2">
+                <div className="mb-6 p-4 bg-gray-50/80 rounded-xl border border-gray-200">
+                  <p className="text-[9px] text-gray-500 uppercase font-bold tracking-widest mb-1 flex items-center gap-2">
                     <MapPin size={10} /> Residence Address
                   </p>
-                  <p className="text-[11px] text-slate-300 font-medium leading-relaxed">
+                  <p className="text-[11px] text-gray-600 font-medium leading-relaxed">
                     {patient.address}
                   </p>
                 </div>
               )}
 
               {/* Intake Form Status */}
-              <div className="mb-6 flex items-center justify-between bg-white/5 rounded-xl p-4 border border-white/10">
+              <div className="mb-6 flex items-center justify-between bg-gray-50/80 rounded-xl p-4 border border-gray-200">
                 <div className="flex items-center gap-3">
                   {intakeStatus[patient.id] ? (
                     <>
-                      <CheckCircle2 size={18} className="text-emerald-400" />
+                      <CheckCircle2 size={18} className="text-emerald-600" />
                       <div>
-                        <p className="text-sm font-bold text-emerald-400">
+                        <p className="text-sm font-bold text-emerald-600">
                           Terms & Conditions Agreed
                         </p>
-                        <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
+                        <p className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">
                           Digital intake form completed
                         </p>
                       </div>
                     </>
                   ) : (
                     <>
-                      <FileText size={16} className="text-slate-500" />
+                      <FileText size={16} className="text-gray-500" />
                       <div>
-                        <p className="text-sm font-bold text-white">Intake Form Pending</p>
-                        <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold">
+                        <p className="text-sm font-bold text-gray-800">Intake Form Pending</p>
+                        <p className="text-[9px] text-gray-500 uppercase tracking-widest font-bold">
                           Send form to patient via WhatsApp
                         </p>
                       </div>
@@ -805,11 +805,11 @@ export default function PatientView({
 
               {/* Assignments & Manual Salary Slots */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10 relative overflow-hidden">
-                  <div className="absolute top-0 right-0 px-2 py-1 bg-blue-500/20 text-blue-400 text-[7px] font-black uppercase tracking-widest border-b border-l border-blue-500/30 rounded-bl-md">
+                <div className="bg-gray-50/80 rounded-xl p-4 border border-gray-200 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 px-2 py-1 bg-blue-500/20 text-blue-600 text-[7px] font-black uppercase tracking-widest border-b border-l border-blue-500/30 rounded-bl-md">
                     Day Shift (12h)
                   </div>
-                  <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-3">
+                  <p className="text-[9px] text-gray-500 uppercase font-bold tracking-widest mb-3">
                     Assigned Staff
                   </p>
                   {(() => {
@@ -828,15 +828,15 @@ export default function PatientView({
                             <div className="w-8 h-8 rounded-lg bg-emerald-500/5 flex items-center justify-center text-emerald-500 shrink-0">
                               <User size={14} />
                             </div>
-                            <p className="text-sm font-bold text-white truncate">
+                            <p className="text-sm font-bold text-gray-800 truncate">
                               {emp?.full_name || 'Staff Assigned'}
                             </p>
                           </div>
                           <div className="text-right shrink-0">
-                            <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest mb-1">
+                            <p className="text-[8px] text-gray-500 uppercase font-bold tracking-widest mb-1">
                               Rate/Shift
                             </p>
-                            <p className="text-xs font-mono font-bold text-emerald-400">
+                            <p className="text-xs font-mono font-bold text-emerald-600">
                               {formatPKR(rate)}
                             </p>
                           </div>
@@ -846,13 +846,13 @@ export default function PatientView({
                     if (assigningSlot === assignKey) {
                       return (
                         <div className="space-y-3">
-                          <p className="text-[9px] text-blue-400 uppercase font-bold tracking-widest">
+                          <p className="text-[9px] text-blue-600 uppercase font-bold tracking-widest">
                             Assign Day Staff
                           </p>
                           <select
                             value={assigningStaffId}
                             onChange={(e) => setAssigningStaffId(e.target.value)}
-                            className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500/40"
+                            className="w-full bg-black/40 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500/40"
                           >
                             <option value="">Select staff...</option>
                             {availableStaff.map((s: any) => (
@@ -908,7 +908,7 @@ export default function PatientView({
                                 setAssigningSlot(null)
                                 setAssigningStaffId('')
                               }}
-                              className="px-3 py-2 bg-white/5 hover:bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all"
+                              className="px-3 py-2 bg-gray-50/80 hover:bg-gray-100 text-gray-800 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all"
                             >
                               Cancel
                             </button>
@@ -918,7 +918,7 @@ export default function PatientView({
                     }
                     return (
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-amber-400/50 text-[10px] uppercase font-bold italic py-2">
+                        <div className="flex items-center gap-2 text-amber-600/50 text-[10px] uppercase font-bold italic py-2">
                           <AlertCircle size={14} /> Slot Unassigned
                         </div>
                         <button
@@ -926,7 +926,7 @@ export default function PatientView({
                             setAssigningSlot(assignKey)
                             setAssigningStaffId('')
                           }}
-                          className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest text-blue-400 rounded-lg border border-white/10 transition-all"
+                          className="px-3 py-1.5 bg-gray-50/80 hover:bg-gray-100 text-[9px] font-black uppercase tracking-widest text-blue-600 rounded-lg border border-gray-200 transition-all"
                         >
                           Assign Staff +
                         </button>
@@ -936,11 +936,11 @@ export default function PatientView({
                 </div>
 
                 {patient.service_type === '24hr' && (
-                  <div className="bg-white/5 rounded-xl p-4 border border-white/10 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 px-2 py-1 bg-purple-500/20 text-purple-400 text-[7px] font-black uppercase tracking-widest border-b border-l border-purple-500/30 rounded-bl-md">
+                  <div className="bg-gray-50/80 rounded-xl p-4 border border-gray-200 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 px-2 py-1 bg-purple-500/20 text-purple-600 text-[7px] font-black uppercase tracking-widest border-b border-l border-purple-500/30 rounded-bl-md">
                       Night Shift (12h)
                     </div>
-                    <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-3">
+                    <p className="text-[9px] text-gray-500 uppercase font-bold tracking-widest mb-3">
                       Assigned Staff
                     </p>
                     {(() => {
@@ -956,18 +956,18 @@ export default function PatientView({
                         return (
                           <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center gap-3 min-w-0">
-                              <div className="w-8 h-8 rounded-lg bg-purple-500/5 flex items-center justify-center text-purple-400 shrink-0">
+                              <div className="w-8 h-8 rounded-lg bg-purple-500/5 flex items-center justify-center text-purple-600 shrink-0">
                                 <User size={14} />
                               </div>
-                              <p className="text-sm font-bold text-white truncate">
+                              <p className="text-sm font-bold text-gray-800 truncate">
                                 {emp?.full_name || 'Staff Assigned'}
                               </p>
                             </div>
                             <div className="text-right shrink-0">
-                              <p className="text-[8px] text-slate-500 uppercase font-bold tracking-widest mb-1">
+                              <p className="text-[8px] text-gray-500 uppercase font-bold tracking-widest mb-1">
                                 Rate/Shift
                               </p>
-                              <p className="text-xs font-mono font-bold text-purple-400">
+                              <p className="text-xs font-mono font-bold text-purple-600">
                                 {formatPKR(rate)}
                               </p>
                             </div>
@@ -977,13 +977,13 @@ export default function PatientView({
                       if (assigningSlot === nightAssignKey) {
                         return (
                           <div className="space-y-3">
-                            <p className="text-[9px] text-purple-400 uppercase font-bold tracking-widest">
+                            <p className="text-[9px] text-purple-600 uppercase font-bold tracking-widest">
                               Assign Night Staff
                             </p>
                             <select
                               value={assigningStaffId}
                               onChange={(e) => setAssigningStaffId(e.target.value)}
-                              className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-purple-500/40"
+                              className="w-full bg-black/40 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-purple-500/40"
                             >
                               <option value="">Select staff...</option>
                               {availableStaff.map((s: any) => (
@@ -1041,7 +1041,7 @@ export default function PatientView({
                                   setAssigningSlot(null)
                                   setAssigningStaffId('')
                                 }}
-                                className="px-3 py-2 bg-white/5 hover:bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all"
+                                className="px-3 py-2 bg-gray-50/80 hover:bg-gray-100 text-gray-800 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all"
                               >
                                 Cancel
                               </button>
@@ -1051,7 +1051,7 @@ export default function PatientView({
                       }
                       return (
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-amber-400/50 text-[10px] uppercase font-bold italic py-2">
+                          <div className="flex items-center gap-2 text-amber-600/50 text-[10px] uppercase font-bold italic py-2">
                             <AlertCircle size={14} /> Pending Match
                           </div>
                           <button
@@ -1059,7 +1059,7 @@ export default function PatientView({
                               setAssigningSlot(nightAssignKey)
                               setAssigningStaffId('')
                             }}
-                            className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest text-purple-400 rounded-lg border border-white/10 transition-all"
+                            className="px-3 py-1.5 bg-gray-50/80 hover:bg-gray-100 text-[9px] font-black uppercase tracking-widest text-purple-600 rounded-lg border border-gray-200 transition-all"
                           >
                             Assign Staff +
                           </button>
@@ -1071,7 +1071,7 @@ export default function PatientView({
               </div>
 
               {/* Invoices Section */}
-              <div className="border-t border-white/5 pt-4 mt-4">
+              <div className="border-t border-gray-200 pt-4 mt-4">
                 <button
                   onClick={() => {
                     const next = new Set(expandedPatients)
@@ -1079,7 +1079,7 @@ export default function PatientView({
                     else next.add(patient.id)
                     setExpandedPatients(next)
                   }}
-                  className="w-full flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
+                  className="w-full flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-800 transition-colors"
                 >
                   <div className="flex items-center gap-2">
                     {expandedPatients.has(patient.id) ? (
@@ -1093,7 +1093,7 @@ export default function PatientView({
                       const patientInvs = invoices[patient.id] || []
                       const unpaid = patientInvs.find((i) => i.status === 'Unpaid')
                       return unpaid ? (
-                        <span className="text-amber-400 ml-2">
+                        <span className="text-amber-600 ml-2">
                           — PKR {unpaid.amount.toLocaleString()} • Unpaid
                         </span>
                       ) : null
@@ -1108,7 +1108,7 @@ export default function PatientView({
                       )
                       setInvoices((prev) => ({ ...prev, [patient.id]: refreshed }))
                     }}
-                    className="text-[9px] px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-colors"
+                    className="text-[9px] px-3 py-1.5 bg-gray-50/80 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors"
                   >
                     + Generate Invoice
                   </button>
@@ -1117,35 +1117,35 @@ export default function PatientView({
                 {expandedPatients.has(patient.id) && (
                   <div className="mt-3 space-y-1">
                     {(invoices[patient.id] || []).length === 0 ? (
-                      <p className="text-[10px] text-slate-600 italic py-2 text-center">
+                      <p className="text-[10px] text-gray-400 italic py-2 text-center">
                         No invoices yet
                       </p>
                     ) : (
                       (invoices[patient.id] || []).map((inv) => (
                         <div
                           key={inv.id}
-                          className="flex items-center justify-between py-2 px-3 rounded-lg bg-white/5 border border-white/5 text-[11px]"
+                          className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50/80 border border-gray-200 text-[11px]"
                         >
                           <div className="flex items-center gap-3">
-                            <span className="text-slate-400 font-mono">
+                            <span className="text-gray-400 font-mono">
                               {formatPeriod(inv.period_start, inv.period_end)}
                             </span>
-                            <span className="font-mono font-bold text-emerald-400">
+                            <span className="font-mono font-bold text-emerald-600">
                               PKR {inv.amount.toLocaleString()}
                             </span>
                           </div>
                           <div className="flex items-center gap-3">
                             {inv.status === 'Paid' ? (
-                              <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-emerald-400">
+                              <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-emerald-600">
                                 <CheckCircle2 size={12} /> Paid
                               </span>
                             ) : inv.status === 'Cancelled' ? (
-                              <span className="text-[9px] font-black uppercase tracking-widest text-slate-500">
+                              <span className="text-[9px] font-black uppercase tracking-widest text-gray-500">
                                 Cancelled
                               </span>
                             ) : (
                               <div className="flex items-center gap-2">
-                                <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-amber-400">
+                                <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-amber-600">
                                   <Circle size={12} className="fill-amber-400/20" /> Unpaid
                                 </span>
                                 <button
@@ -1161,7 +1161,7 @@ export default function PatientView({
                                       await patientInvoiceService.getInvoicesForPatient(patient.id)
                                     setInvoices((prev) => ({ ...prev, [patient.id]: refreshed }))
                                   }}
-                                  className="text-[8px] px-2 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg transition-colors font-black uppercase tracking-widest"
+                                  className="text-[8px] px-2 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-600 rounded-lg transition-colors font-black uppercase tracking-widest"
                                 >
                                   Mark Paid
                                 </button>
@@ -1187,7 +1187,7 @@ export default function PatientView({
                                       'noopener,noreferrer'
                                     )
                                   }}
-                                  className="text-[8px] px-2 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-colors font-black uppercase tracking-widest flex items-center gap-1"
+                                  className="text-[8px] px-2 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-600 rounded-lg transition-colors font-black uppercase tracking-widest flex items-center gap-1"
                                 >
                                   <MessageSquare size={10} /> WhatsApp
                                 </button>
@@ -1198,7 +1198,7 @@ export default function PatientView({
                                       '_blank'
                                     )
                                   }}
-                                  className="text-[8px] px-2 py-1 bg-white/5 hover:bg-white/10 text-slate-400 rounded-lg transition-colors font-black uppercase tracking-widest"
+                                  className="text-[8px] px-2 py-1 bg-gray-50/80 hover:bg-gray-100 text-gray-400 rounded-lg transition-colors font-black uppercase tracking-widest"
                                 >
                                   View
                                 </button>
@@ -1213,7 +1213,7 @@ export default function PatientView({
               </div>
 
               {/* Equipment Rentals Section */}
-              <div className="border-t border-white/5 pt-4 mt-4">
+              <div className="border-t border-gray-200 pt-4 mt-4">
                 <button
                   onClick={() => {
                     const next = new Set(expandedEquipment)
@@ -1221,7 +1221,7 @@ export default function PatientView({
                     else next.add(patient.id)
                     setExpandedEquipment(next)
                   }}
-                  className="w-full flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-white transition-colors"
+                  className="w-full flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-gray-800 transition-colors"
                 >
                   <div className="flex items-center gap-2">
                     {expandedEquipment.has(patient.id) ? (
@@ -1236,7 +1236,7 @@ export default function PatientView({
                       const rented = items.filter((i) => i.status === 'rented')
                       const total = rented.reduce((s, i) => s + i.rental_rate * i.quantity, 0)
                       return rented.length > 0 ? (
-                        <span className="text-blue-400 ml-2">
+                        <span className="text-blue-600 ml-2">
                           — {rented.length} item{rented.length > 1 ? 's' : ''} rented • PKR{' '}
                           {total.toLocaleString()}/mo
                         </span>
@@ -1248,7 +1248,7 @@ export default function PatientView({
                 {expandedEquipment.has(patient.id) && (
                   <div className="mt-3 space-y-2">
                     {(equipment[patient.id] || []).length === 0 ? (
-                      <p className="text-[10px] text-slate-600 italic py-2 text-center">
+                      <p className="text-[10px] text-gray-400 italic py-2 text-center">
                         No equipment rentals yet
                       </p>
                     ) : (
@@ -1257,25 +1257,25 @@ export default function PatientView({
                           key={item.id}
                           className={`flex items-center justify-between py-2 px-3 rounded-lg border text-[11px] ${
                             item.status === 'returned'
-                              ? 'bg-white/5 border-white/5 text-slate-500'
-                              : 'bg-white/5 border-white/10 text-white'
+                              ? 'bg-gray-50/80 border-gray-200 text-gray-500'
+                              : 'bg-gray-50/80 border-gray-200 text-gray-800'
                           }`}
                         >
                           <div className="flex items-center gap-3 min-w-0">
                             <span className="font-bold truncate">{item.item_name}</span>
-                            <span className="text-slate-500 shrink-0">×{item.quantity}</span>
+                            <span className="text-gray-500 shrink-0">×{item.quantity}</span>
                             <span className="font-mono font-bold shrink-0">
                               PKR {(item.rental_rate * item.quantity).toLocaleString()}/
                               {item.rate_period === 'daily' ? 'day' : 'mo'}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-[8px] text-slate-500 font-mono">
+                            <span className="text-[8px] text-gray-500 font-mono">
                               {item.rented_at}
                             </span>
                             {item.status === 'rented' ? (
                               <>
-                                <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-emerald-50 text-emerald-600 border border-emerald-200">
                                   Rented
                                 </span>
                                 <button
@@ -1292,13 +1292,13 @@ export default function PatientView({
                                       setIsReturningEquip(null)
                                     }
                                   }}
-                                  className="text-[8px] px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-400 rounded-lg transition-colors font-black uppercase tracking-widest"
+                                  className="text-[8px] px-2 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-600 rounded-lg transition-colors font-black uppercase tracking-widest"
                                 >
                                   {isReturningEquip === item.id ? '...' : 'Return'}
                                 </button>
                               </>
                             ) : (
-                              <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-slate-500/10 text-slate-500 border border-slate-500/20">
+                              <span className="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-widest bg-gray-100 text-gray-500 border border-gray-200">
                                 Returned {item.returned_at}
                               </span>
                             )}
@@ -1309,13 +1309,13 @@ export default function PatientView({
 
                     {/* Add Equipment Form */}
                     {showEquipForm === patient.id ? (
-                      <div className="p-3 rounded-lg bg-white/5 border border-white/10 space-y-3">
-                        <p className="text-[9px] text-blue-400 uppercase font-bold tracking-widest">
+                      <div className="p-3 rounded-lg bg-gray-50/80 border border-gray-200 space-y-3">
+                        <p className="text-[9px] text-blue-600 uppercase font-bold tracking-widest">
                           Add Equipment
                         </p>
                         <div className="grid grid-cols-2 gap-3">
                           <div className="space-y-1">
-                            <label className="text-[8px] text-slate-500 uppercase font-black tracking-widest">
+                            <label className="text-[8px] text-gray-500 uppercase font-black tracking-widest">
                               Item Name
                             </label>
                             <input
@@ -1324,11 +1324,11 @@ export default function PatientView({
                                 setEquipForm({ ...equipForm, item_name: e.target.value })
                               }
                               placeholder="e.g. Hospital Bed"
-                              className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500/40"
+                              className="w-full bg-black/40 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500/40"
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="text-[8px] text-slate-500 uppercase font-black tracking-widest">
+                            <label className="text-[8px] text-gray-500 uppercase font-black tracking-widest">
                               Qty
                             </label>
                             <input
@@ -1341,11 +1341,11 @@ export default function PatientView({
                                   quantity: parseInt(e.target.value) || 1,
                                 })
                               }
-                              className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500/40"
+                              className="w-full bg-black/40 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500/40"
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="text-[8px] text-slate-500 uppercase font-black tracking-widest">
+                            <label className="text-[8px] text-gray-500 uppercase font-black tracking-widest">
                               Rental Rate (PKR)
                             </label>
                             <input
@@ -1354,11 +1354,11 @@ export default function PatientView({
                               onChange={(e) =>
                                 setEquipForm({ ...equipForm, rental_rate: e.target.value })
                               }
-                              className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500/40"
+                              className="w-full bg-black/40 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500/40"
                             />
                           </div>
                           <div className="space-y-1">
-                            <label className="text-[8px] text-slate-500 uppercase font-black tracking-widest">
+                            <label className="text-[8px] text-gray-500 uppercase font-black tracking-widest">
                               Period
                             </label>
                             <select
@@ -1369,14 +1369,14 @@ export default function PatientView({
                                   rate_period: e.target.value as 'daily' | 'monthly',
                                 })
                               }
-                              className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500/40"
+                              className="w-full bg-black/40 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500/40"
                             >
                               <option value="monthly">Monthly</option>
                               <option value="daily">Daily</option>
                             </select>
                           </div>
                           <div className="space-y-1">
-                            <label className="text-[8px] text-slate-500 uppercase font-black tracking-widest">
+                            <label className="text-[8px] text-gray-500 uppercase font-black tracking-widest">
                               Rented Date
                             </label>
                             <input
@@ -1385,7 +1385,7 @@ export default function PatientView({
                               onChange={(e) =>
                                 setEquipForm({ ...equipForm, rented_at: e.target.value })
                               }
-                              className="w-full bg-black/60 border border-white/10 rounded-lg px-3 py-2 text-sm text-white outline-none focus:border-blue-500/40"
+                              className="w-full bg-black/40 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-800 outline-none focus:border-blue-500/40"
                             />
                           </div>
                         </div>
@@ -1429,7 +1429,7 @@ export default function PatientView({
                           </button>
                           <button
                             onClick={() => setShowEquipForm(null)}
-                            className="px-3 py-2 bg-white/5 hover:bg-white/10 text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-all"
+                            className="px-3 py-2 bg-gray-50/80 hover:bg-gray-100 text-gray-800 text-[9px] font-black uppercase tracking-widest rounded-lg transition-all"
                           >
                             Cancel
                           </button>
@@ -1438,7 +1438,7 @@ export default function PatientView({
                     ) : (
                       <button
                         onClick={() => setShowEquipForm(patient.id)}
-                        className="w-full py-2 bg-white/5 hover:bg-white/10 text-[9px] font-black uppercase tracking-widest text-blue-400 rounded-lg border border-dashed border-white/10 transition-all"
+                        className="w-full py-2 bg-gray-50/80 hover:bg-gray-100 text-[9px] font-black uppercase tracking-widest text-blue-600 rounded-lg border border-dashed border-gray-200 transition-all"
                       >
                         + Add Equipment
                       </button>
@@ -1450,11 +1450,11 @@ export default function PatientView({
               <div className="mt-6 flex justify-end gap-3">
                 <button
                   title="Financial Ledger"
-                  className="p-3 hover:bg-white/5 rounded-xl transition-colors border border-white/5 group-hover:border-white/10"
+                  className="p-3 hover:bg-gray-50/80 rounded-xl transition-colors border border-gray-200 group-hover:border-gray-200"
                 >
                   <CreditCard
                     size={18}
-                    className="text-slate-500 group-hover:text-white transition-colors"
+                    className="text-gray-500 group-hover:text-gray-800 transition-colors"
                   />
                 </button>
                 <button className="flex-1 md:flex-none px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 text-[10px] font-black uppercase tracking-[0.2em] rounded-xl transition-all shadow-xl shadow-emerald-500/10">

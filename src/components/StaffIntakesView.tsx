@@ -57,10 +57,10 @@ const STATUS_FLOW = ['pending', 'reviewed', 'verified', 'approved', 'rejected'] 
 
 const STATUS_STYLES: Record<string, string> = {
   pending: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-  reviewed: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  verified: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  approved: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-  rejected: 'bg-red-500/10 text-red-400 border-red-500/20',
+  reviewed: 'bg-blue-50 text-blue-600 border-blue-200',
+  verified: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+  approved: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+  rejected: 'bg-red-50 text-red-600 border-red-500/20',
 }
 
 function formatDate(iso: string) {
@@ -200,7 +200,7 @@ export default function StaffIntakesView() {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <Loader2 className="text-emerald-500 animate-spin" size={40} />
-        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">
+        <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black">
           Loading Staff Applications...
         </p>
       </div>
@@ -210,19 +210,19 @@ export default function StaffIntakesView() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 bg-slate-900/40 border border-white/5 p-6 rounded-xl">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 bg-white border border-gray-200 p-6 rounded-xl">
         <div>
-          <h2 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
-            <UserCheck size={22} className="text-emerald-400" />
+          <h2 className="text-xl font-black text-gray-800 uppercase tracking-tighter flex items-center gap-3">
+            <UserCheck size={22} className="text-emerald-600" />
             Staff Registration Queue
           </h2>
-          <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black mt-1">
             Review &amp; Verify Digital Registrations
           </p>
         </div>
         <button
           onClick={loadIntakes}
-          className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-slate-400"
+          className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-gray-50/80 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors text-gray-400"
         >
           Refresh List
         </button>
@@ -230,9 +230,9 @@ export default function StaffIntakesView() {
 
       {/* List */}
       {filtered.length === 0 ? (
-        <div className="p-16 text-center border border-dashed border-white/5 rounded-xl">
-          <Clock size={40} className="mx-auto mb-4 text-slate-600" />
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
+        <div className="p-16 text-center border border-dashed border-gray-200 rounded-xl">
+          <Clock size={40} className="mx-auto mb-4 text-gray-400" />
+          <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">
             No registration requests found
           </p>
         </div>
@@ -247,7 +247,7 @@ export default function StaffIntakesView() {
             return (
               <div
                 key={intake.id}
-                className="bg-slate-900/40 border border-white/5 rounded-xl overflow-hidden transition-all hover:border-white/10"
+                className="bg-white border border-gray-200 rounded-xl overflow-hidden transition-all hover:border-gray-200"
               >
                 <button
                   onClick={() => setExpandedId(isExpanded ? null : intake.id)}
@@ -255,10 +255,10 @@ export default function StaffIntakesView() {
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3">
-                      <h3 className="font-bold text-white truncate">{intake.full_name}</h3>
+                      <h3 className="font-bold text-gray-800 truncate">{intake.full_name}</h3>
                       <StatusBadge status={intake.status} />
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
                       <span className="flex items-center gap-1">
                         <Phone size={10} /> {intake.phone_primary}
                       </span>
@@ -292,37 +292,39 @@ export default function StaffIntakesView() {
                 </button>
 
                 {isExpanded && (
-                  <div className="px-5 pb-5 border-t border-white/5 pt-4 space-y-5">
+                  <div className="px-5 pb-5 border-t border-gray-200 pt-4 space-y-5">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {/* Column 1: Personal */}
                       <div className="space-y-3">
-                        <h4 className="text-[9px] font-black uppercase tracking-widest text-emerald-400 flex items-center gap-2">
+                        <h4 className="text-[9px] font-black uppercase tracking-widest text-emerald-600 flex items-center gap-2">
                           <User size={12} /> Personal Details
                         </h4>
-                        <div className="bg-black/40 rounded-xl p-4 space-y-2 text-xs">
+                        <div className="bg-white rounded-xl p-4 space-y-2 text-xs">
                           <p>
-                            <span className="text-slate-500">Father/Husband:</span>{' '}
-                            <span className="text-white">{intake.father_husband_name || '—'}</span>
+                            <span className="text-gray-500">Father/Husband:</span>{' '}
+                            <span className="text-gray-800">
+                              {intake.father_husband_name || '—'}
+                            </span>
                           </p>
                           <p>
-                            <span className="text-slate-500">CNIC:</span>{' '}
-                            <span className="text-white font-mono">
+                            <span className="text-gray-500">CNIC:</span>{' '}
+                            <span className="text-gray-800 font-mono">
                               {intake.cnic_number || '—'}
                             </span>
                           </p>
                           <p>
-                            <span className="text-slate-500">DOB:</span>{' '}
-                            <span className="text-white">
+                            <span className="text-gray-500">DOB:</span>{' '}
+                            <span className="text-gray-800">
                               {formatDate(intake.date_of_birth || '')}
                             </span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Gender:</span>{' '}
-                            <span className="text-white">{intake.gender || '—'}</span>
+                            <span className="text-gray-500">Gender:</span>{' '}
+                            <span className="text-gray-800">{intake.gender || '—'}</span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Address:</span>{' '}
-                            <span className="text-white leading-relaxed">
+                            <span className="text-gray-500">Address:</span>{' '}
+                            <span className="text-gray-800 leading-relaxed">
                               {intake.complete_address || '—'}
                             </span>
                           </p>
@@ -331,27 +333,27 @@ export default function StaffIntakesView() {
 
                       {/* Column 2: Professional */}
                       <div className="space-y-3">
-                        <h4 className="text-[9px] font-black uppercase tracking-widest text-blue-400 flex items-center gap-2">
+                        <h4 className="text-[9px] font-black uppercase tracking-widest text-blue-600 flex items-center gap-2">
                           <Briefcase size={12} /> Professional
                         </h4>
-                        <div className="bg-black/40 rounded-xl p-4 space-y-2 text-xs">
+                        <div className="bg-white rounded-xl p-4 space-y-2 text-xs">
                           <p>
-                            <span className="text-slate-500">Position:</span>{' '}
-                            <span className="text-white font-bold">
+                            <span className="text-gray-500">Position:</span>{' '}
+                            <span className="text-gray-800 font-bold">
                               {intake.position_applied || '—'}
                             </span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Experience:</span>{' '}
-                            <span className="text-white">{intake.experience_years} Years</span>
+                            <span className="text-gray-500">Experience:</span>{' '}
+                            <span className="text-gray-800">{intake.experience_years} Years</span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Shift Pref:</span>{' '}
-                            <span className="text-white">{intake.shift_preference || '—'}</span>
+                            <span className="text-gray-500">Shift Pref:</span>{' '}
+                            <span className="text-gray-800">{intake.shift_preference || '—'}</span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Expected:</span>{' '}
-                            <span className="text-emerald-400 font-mono font-bold">
+                            <span className="text-gray-500">Expected:</span>{' '}
+                            <span className="text-emerald-600 font-mono font-bold">
                               {formatPKR(intake.expected_salary_pkr || 0)}
                             </span>
                           </p>
@@ -360,25 +362,27 @@ export default function StaffIntakesView() {
 
                       {/* Column 3: Banking */}
                       <div className="space-y-3">
-                        <h4 className="text-[9px] font-black uppercase tracking-widest text-purple-400 flex items-center gap-2">
+                        <h4 className="text-[9px] font-black uppercase tracking-widest text-purple-600 flex items-center gap-2">
                           <CreditCard size={12} /> Bank Details
                         </h4>
-                        <div className="bg-black/40 rounded-xl p-4 space-y-2 text-xs">
+                        <div className="bg-white rounded-xl p-4 space-y-2 text-xs">
                           <p>
-                            <span className="text-slate-500">Bank:</span>{' '}
-                            <span className="text-white">{intake.bank_name || '—'}</span>
+                            <span className="text-gray-500">Bank:</span>{' '}
+                            <span className="text-gray-800">{intake.bank_name || '—'}</span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Account #:</span>{' '}
-                            <span className="text-white font-mono">{intake.account_no || '—'}</span>
+                            <span className="text-gray-500">Account #:</span>{' '}
+                            <span className="text-gray-800 font-mono">
+                              {intake.account_no || '—'}
+                            </span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Title:</span>{' '}
-                            <span className="text-white">{intake.account_title || '—'}</span>
+                            <span className="text-gray-500">Title:</span>{' '}
+                            <span className="text-gray-800">{intake.account_title || '—'}</span>
                           </p>
                           <p>
-                            <span className="text-slate-500">IBAN:</span>{' '}
-                            <span className="text-white font-mono break-all">
+                            <span className="text-gray-500">IBAN:</span>{' '}
+                            <span className="text-gray-800 font-mono break-all">
                               {intake.iban || '—'}
                             </span>
                           </p>
@@ -387,7 +391,7 @@ export default function StaffIntakesView() {
                     </div>
 
                     {/* Status Management */}
-                    <div className="flex gap-2 pt-2 border-t border-white/5">
+                    <div className="flex gap-2 pt-2 border-t border-gray-200">
                       {STATUS_FLOW.map((s) => (
                         <button
                           key={s}
@@ -396,7 +400,7 @@ export default function StaffIntakesView() {
                             'text-[8px] font-black uppercase tracking-widest px-3 py-2 rounded-lg border transition-all',
                             intake.status === s
                               ? STATUS_STYLES[s]
-                              : 'border-white/5 text-slate-500 hover:text-white hover:bg-white/5'
+                              : 'border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-50/80'
                           )}
                         >
                           {s}

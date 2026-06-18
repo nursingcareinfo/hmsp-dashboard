@@ -245,11 +245,11 @@ export default function MemoryView() {
   const getMemoryTypeIcon = (type: string) => {
     switch (type) {
       case 'system_info':
-        return <Zap size={16} className="text-blue-400" />
+        return <Zap size={16} className="text-blue-600" />
       case 'staff_preference':
         return <Users size={16} className="text-green-400" />
       case 'patient_preference':
-        return <MessageSquare size={16} className="text-purple-400" />
+        return <MessageSquare size={16} className="text-purple-600" />
       default:
         return <Brain size={16} className="text-gray-400" />
     }
@@ -258,7 +258,7 @@ export default function MemoryView() {
   const getMemoryTypeColor = (type: string) => {
     switch (type) {
       case 'system_info':
-        return 'border-blue-500/20 bg-blue-500/5'
+        return 'border-blue-200 bg-blue-500/5'
       case 'staff_preference':
         return 'border-green-500/20 bg-green-500/5'
       case 'patient_preference':
@@ -273,11 +273,11 @@ export default function MemoryView() {
       {/* Header */}
       <div className="flex items-center gap-4">
         <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30 flex items-center justify-center">
-          <Brain className="text-purple-400" size={24} />
+          <Brain className="text-purple-600" size={24} />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-white">AI Memory System</h2>
-          <p className="text-slate-400 text-sm">Intelligent context and preference management</p>
+          <h2 className="text-2xl font-bold text-gray-800">AI Memory System</h2>
+          <p className="text-gray-400 text-sm">Intelligent context and preference management</p>
         </div>
       </div>
 
@@ -285,20 +285,20 @@ export default function MemoryView() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="glass-card p-4">
           <div className="flex items-center gap-3">
-            <Brain className="text-purple-400" size={20} />
+            <Brain className="text-purple-600" size={20} />
             <div>
-              <p className="text-2xl font-bold text-white">{stats.total_memories}</p>
-              <p className="text-xs text-slate-400 uppercase tracking-widest">Total Memories</p>
+              <p className="text-2xl font-bold text-gray-800">{stats.total_memories}</p>
+              <p className="text-xs text-gray-400 uppercase tracking-widest">Total Memories</p>
             </div>
           </div>
         </div>
 
         <div className="glass-card p-4">
           <div className="flex items-center gap-3">
-            <Zap className="text-blue-400" size={20} />
+            <Zap className="text-blue-600" size={20} />
             <div>
-              <p className="text-2xl font-bold text-white">{stats.system_memories}</p>
-              <p className="text-xs text-slate-400 uppercase tracking-widest">System Info</p>
+              <p className="text-2xl font-bold text-gray-800">{stats.system_memories}</p>
+              <p className="text-xs text-gray-400 uppercase tracking-widest">System Info</p>
             </div>
           </div>
         </div>
@@ -307,8 +307,8 @@ export default function MemoryView() {
           <div className="flex items-center gap-3">
             <Users className="text-green-400" size={20} />
             <div>
-              <p className="text-2xl font-bold text-white">{stats.user_memories}</p>
-              <p className="text-xs text-slate-400 uppercase tracking-widest">User Memories</p>
+              <p className="text-2xl font-bold text-gray-800">{stats.user_memories}</p>
+              <p className="text-xs text-gray-400 uppercase tracking-widest">User Memories</p>
             </div>
           </div>
         </div>
@@ -317,8 +317,8 @@ export default function MemoryView() {
           <div className="flex items-center gap-3">
             <Clock className="text-orange-400" size={20} />
             <div>
-              <p className="text-2xl font-bold text-white">{stats.recent_activity}</p>
-              <p className="text-xs text-slate-400 uppercase tracking-widest">Recent Activity</p>
+              <p className="text-2xl font-bold text-gray-800">{stats.recent_activity}</p>
+              <p className="text-xs text-gray-400 uppercase tracking-widest">Recent Activity</p>
             </div>
           </div>
         </div>
@@ -328,8 +328,8 @@ export default function MemoryView() {
       <div className="grid md:grid-cols-3 gap-6">
         {/* Search */}
         <div className="glass-card p-6">
-          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <Search size={18} className="text-slate-400" />
+          <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <Search size={18} className="text-gray-400" />
             Search Memories
           </h3>
 
@@ -340,7 +340,7 @@ export default function MemoryView() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="flex-1 px-4 py-2 bg-black/50 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:border-purple-500/50 focus:outline-none"
+              className="flex-1 px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 placeholder-gray-400 focus:border-purple-500/50 focus:outline-none"
             />
             <button
               onClick={handleSearch}
@@ -354,8 +354,8 @@ export default function MemoryView() {
 
         {/* Add Memory */}
         <div className="glass-card p-6">
-          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <Plus size={18} className="text-slate-400" />
+          <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <Plus size={18} className="text-gray-400" />
             Add Memory
           </h3>
 
@@ -365,7 +365,7 @@ export default function MemoryView() {
               value={newMemory}
               onChange={(e) => setNewMemory(e.target.value)}
               rows={3}
-              className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg text-white placeholder-slate-500 focus:border-purple-500/50 focus:outline-none resize-none"
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 placeholder-gray-400 focus:border-purple-500/50 focus:outline-none resize-none"
             />
             <button
               onClick={handleAddMemory}
@@ -380,13 +380,13 @@ export default function MemoryView() {
 
         {/* System Info */}
         <div className="glass-card p-6">
-          <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-            <Zap size={18} className="text-blue-400" />
+          <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <Zap size={18} className="text-blue-600" />
             System Info
           </h3>
 
           <div className="space-y-3">
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-gray-400">
               Capture current system information and store it in memory for future reference.
             </p>
             <button
@@ -403,8 +403,8 @@ export default function MemoryView() {
 
       {/* Memory List */}
       <div className="glass-card p-6">
-        <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-          <TrendingUp size={18} className="text-slate-400" />
+        <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <TrendingUp size={18} className="text-gray-400" />
           Recent Memories
         </h3>
 
@@ -419,8 +419,8 @@ export default function MemoryView() {
               <div className="flex items-start gap-3">
                 {getMemoryTypeIcon(memory.type)}
                 <div className="flex-1">
-                  <p className="text-white text-sm leading-relaxed">{memory.content}</p>
-                  <div className="flex items-center gap-4 mt-2 text-xs text-slate-500">
+                  <p className="text-gray-800 text-sm leading-relaxed">{memory.content}</p>
+                  <div className="flex items-center gap-4 mt-2 text-xs text-gray-500">
                     <span className="uppercase tracking-widest font-medium">
                       {memory.type.replace('_', ' ')}
                     </span>
@@ -435,8 +435,8 @@ export default function MemoryView() {
 
         {memories.length === 0 && (
           <div className="text-center py-12">
-            <Brain size={48} className="mx-auto mb-4 text-slate-600" />
-            <p className="text-slate-400">No memories found. Start by adding some context!</p>
+            <Brain size={48} className="mx-auto mb-4 text-gray-400" />
+            <p className="text-gray-400">No memories found. Start by adding some context!</p>
           </div>
         )}
       </div>

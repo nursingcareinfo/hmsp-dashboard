@@ -24,7 +24,7 @@ export default function LoginView() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Ambient glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-emerald-500/3 rounded-full blur-[100px] pointer-events-none" />
@@ -37,26 +37,28 @@ export default function LoginView() {
       >
         {/* Brand */}
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-black tracking-tighter text-white">
+          <h1 className="text-3xl font-black tracking-tighter text-gray-800">
             HMSP <span className="text-emerald-500">HQ</span>
           </h1>
-          <p className="text-[10px] text-slate-500 uppercase tracking-[0.2em] mt-2 font-bold">
+          <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mt-2 font-bold">
             Home Medical Services Provider
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-black border border-white/10 rounded-2xl p-8 shadow-2xl">
+        <div className="bg-white border border-gray-200 rounded-2xl p-8 shadow-2xl">
           <div className="mb-6">
-            <h2 className="text-sm font-black text-white uppercase tracking-[0.15em]">Sign In</h2>
-            <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1 font-bold">
+            <h2 className="text-sm font-black text-gray-800 uppercase tracking-[0.15em]">
+              Sign In
+            </h2>
+            <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-1 font-bold">
               Authorized personnel only
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1.5">
+              <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5">
                 Email
               </label>
               <input
@@ -65,13 +67,13 @@ export default function LoginView() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="client@example.com"
-                className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40 transition-colors placeholder:text-slate-700"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40 transition-colors placeholder:text-gray-500"
                 autoComplete="email"
               />
             </div>
 
             <div>
-              <label className="block text-[9px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1.5">
+              <label className="block text-[9px] font-black text-gray-400 uppercase tracking-[0.15em] mb-1.5">
                 Password
               </label>
               <div className="relative">
@@ -81,13 +83,13 @@ export default function LoginView() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40 transition-colors placeholder:text-slate-700 pr-10"
+                  className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40 transition-colors placeholder:text-gray-500 pr-10"
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-400 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-400 transition-colors"
                 >
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
@@ -100,7 +102,7 @@ export default function LoginView() {
                 animate={{ opacity: 1, height: 'auto' }}
                 className="flex items-start gap-2 bg-red-500/5 border border-red-500/10 rounded-xl p-3"
               >
-                <AlertCircle size={14} className="text-red-400 mt-0.5 shrink-0" />
+                <AlertCircle size={14} className="text-red-600 mt-0.5 shrink-0" />
                 <p className="text-[11px] text-red-300/80 font-medium">{error}</p>
               </motion.div>
             )}
@@ -122,7 +124,7 @@ export default function LoginView() {
           </form>
         </div>
 
-        <p className="text-[9px] text-slate-700 text-center mt-6 uppercase tracking-widest font-bold">
+        <p className="text-[9px] text-gray-500 text-center mt-6 uppercase tracking-widest font-bold">
           HMSP Dashboard v2.0 &middot; Karachi
         </p>
       </motion.div>

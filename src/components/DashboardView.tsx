@@ -141,18 +141,18 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
 
   return (
     <div className="space-y-8 h-full pb-12">
-      <div className="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5">
+      <div className="flex justify-between items-center bg-gray-50/80 p-4 rounded-xl border border-gray-200">
         <div>
-          <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+          <h2 className="text-sm font-black text-gray-800 uppercase tracking-widest flex items-center gap-2">
             Karachi HQ Operational Pulse
           </h2>
-          <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mt-0.5">
+          <p className="text-[9px] text-gray-500 uppercase font-bold tracking-widest mt-0.5">
             Real-time sync with remote Ledger
           </p>
         </div>
         <button
           onClick={() => window.location.reload()}
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors border border-white/5"
+          className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors border border-gray-200"
         >
           Force Refresh
         </button>
@@ -162,18 +162,18 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
         {stats.map((stat, i) => (
           <div
             key={i}
-            className="bg-slate-900/40 border border-white/5 rounded-xl p-5 relative overflow-hidden group shadow-2xl"
+            className="bg-white border border-gray-200 rounded-xl p-5 relative overflow-hidden group shadow-2xl"
           >
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em] mb-4">
+                <p className="text-[10px] uppercase font-black text-gray-500 tracking-[0.2em] mb-4">
                   {stat.label}
                 </p>
                 <div className="flex items-baseline gap-1">
                   {stat.isCurrency && (
                     <span className="text-[10px] text-emerald-500 font-mono font-bold">PKR</span>
                   )}
-                  <div className="text-2xl font-mono font-bold text-white tracking-tighter">
+                  <div className="text-2xl font-mono font-bold text-gray-800 tracking-tighter">
                     {stat.value}
                   </div>
                 </div>
@@ -182,8 +182,8 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
                 className={cn(
                   'text-[9px] font-black px-2 py-0.5 rounded border uppercase tracking-widest',
                   stat.trend.startsWith('+')
-                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                    : 'bg-red-500/10 text-red-400 border-red-500/20'
+                    ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                    : 'bg-red-50 text-red-600 border-red-500/20'
                 )}
               >
                 {stat.trend}
@@ -201,8 +201,8 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-slate-900/40 border border-white/5 rounded-xl p-6">
-          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-8 flex items-center gap-2">
+        <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-6">
+          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-8 flex items-center gap-2">
             <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
             Staff Category Distribution
           </h3>
@@ -218,10 +218,10 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
                 />
                 <YAxis hide />
                 <Tooltip
-                  cursor={{ fill: 'rgba(255,255,255,0.02)' }}
+                  cursor={{ fill: 'rgba(0,0,0,0.02)' }}
                   contentStyle={{
-                    backgroundColor: '#0F172A',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    backgroundColor: '#FFFFFF',
+                    border: '1px solid #E5E2DC',
                     borderRadius: '8px',
                     fontSize: '10px',
                     fontWeight: '700',
@@ -239,8 +239,8 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
           </div>
         </div>
 
-        <div className="bg-slate-900/40 border border-white/5 rounded-xl p-6 flex flex-col">
-          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-8 flex items-center gap-2">
+        <div className="bg-white border border-gray-200 rounded-xl p-6 flex flex-col">
+          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 mb-8 flex items-center gap-2">
             <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
             Fulfillment Rate
           </h3>
@@ -252,7 +252,7 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
                   cy="88"
                   r="76"
                   fill="transparent"
-                  stroke="rgba(255,255,255,0.05)"
+                  stroke="rgba(0,0,0,0.06)"
                   strokeWidth="10"
                 />
                 <circle
@@ -268,18 +268,20 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
                 />
               </svg>
               <div className="absolute text-center">
-                <div className="text-4xl font-mono font-black text-white">{fulfillmentRate}%</div>
-                <div className="text-[9px] text-slate-500 font-black uppercase tracking-[0.15em]">
+                <div className="text-4xl font-mono font-black text-gray-800">
+                  {fulfillmentRate}%
+                </div>
+                <div className="text-[9px] text-gray-500 font-black uppercase tracking-[0.15em]">
                   Matched
                 </div>
               </div>
             </div>
             <div className="mt-8 w-full space-y-3">
               <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
-                <span className="text-slate-500 font-mono">Performance Metric</span>
-                <span className="text-blue-400">Stable</span>
+                <span className="text-gray-500 font-mono">Performance Metric</span>
+                <span className="text-blue-600">Stable</span>
               </div>
-              <div className="text-[10px] text-center text-slate-600 font-bold uppercase tracking-widest px-4 leading-relaxed">
+              <div className="text-[10px] text-center text-gray-400 font-bold uppercase tracking-widest px-4 leading-relaxed">
                 Target: 90% (Karachi Operations Benchmark)
               </div>
             </div>
@@ -288,15 +290,15 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
       </div>
 
       {/* Recent Staff Activity List */}
-      <div className="bg-slate-900/40 border border-white/5 rounded-xl overflow-hidden shadow-2xl">
-        <div className="p-6 border-b border-white/5 flex justify-between items-center">
-          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
+      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-2xl">
+        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+          <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 flex items-center gap-2">
             <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
             Recent Registered Professionals
           </h3>
           <button
             onClick={() => setActiveView('staff')}
-            className="text-[10px] font-black text-blue-400 uppercase tracking-widest hover:underline"
+            className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline"
           >
             View All Staff
           </button>
@@ -304,53 +306,53 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="border-b border-white/5">
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <tr className="border-b border-gray-200">
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
                   Professional
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
                   ID
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
                   Category
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
                   Age
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
                   Religion
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
                   Marital
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
                   District
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
                   Relative
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
                   Address
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
                   WhatsApp
                 </th>
-                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-gray-500">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-gray-200">
               {recentStaff.map((staff) => (
-                <tr key={staff.id} className="hover:bg-white/[0.02] transition-colors">
+                <tr key={staff.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-[10px] font-bold text-blue-400 uppercase">
+                      <div className="w-8 h-8 rounded-lg bg-gray-50/80 flex items-center justify-center text-[10px] font-bold text-blue-600 uppercase">
                         {(staff.full_name || '?')[0]}
                       </div>
                       <div>
-                        <div className="text-[11px] font-bold text-white">{staff.full_name}</div>
-                        <div className="text-[9px] text-slate-500 font-mono italic">
+                        <div className="text-[11px] font-bold text-gray-800">{staff.full_name}</div>
+                        <div className="text-[9px] text-gray-500 font-mono italic">
                           Exp: {staff.experience_years} yrs
                         </div>
                       </div>
@@ -360,7 +362,7 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
                     {staff.emp_no}
                   </td>
                   <td className="px-6 py-4">
-                    <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 text-[10px] font-black uppercase tracking-widest border border-blue-500/20">
+                    <span className="px-2 py-0.5 rounded bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest border border-blue-200">
                       {staff.category || 'N/A'}
                     </span>
                   </td>
@@ -368,33 +370,33 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
                     {(() => {
                       const age = calculateAge(staff.dob)
                       return age ? (
-                        <span className="text-emerald-400 font-bold">{age}</span>
+                        <span className="text-emerald-600 font-bold">{age}</span>
                       ) : (
-                        <span className="text-red-400 font-black">—</span>
+                        <span className="text-red-600 font-black">—</span>
                       )
                     })()}
                   </td>
                   <td className="px-6 py-4 text-[10px]">
                     {staff.religion ? (
-                      <span className="text-purple-400 font-bold">{staff.religion}</span>
+                      <span className="text-purple-600 font-bold">{staff.religion}</span>
                     ) : (
-                      <span className="text-red-400 font-black">—</span>
+                      <span className="text-red-600 font-black">—</span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-[10px]">
                     {staff.marital_status ? (
-                      <span className="text-amber-400 font-bold">{staff.marital_status}</span>
+                      <span className="text-amber-600 font-bold">{staff.marital_status}</span>
                     ) : (
-                      <span className="text-red-400 font-black">—</span>
+                      <span className="text-red-600 font-black">—</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                  <td className="px-6 py-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                     {staff.district}
                   </td>
-                  <td className="px-6 py-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                  <td className="px-6 py-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                     {staff.father_husband_name || 'N/A'}
                   </td>
-                  <td className="px-6 py-4 text-[10px] text-slate-400 font-bold uppercase tracking-widest max-w-[200px] truncate">
+                  <td className="px-6 py-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest max-w-[200px] truncate">
                     {staff.complete_address || 'N/A'}
                   </td>
                   <td className="px-6 py-4">
@@ -403,18 +405,18 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
                         href={`https://wa.me/${staff.whatsapp_number.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[10px] text-emerald-400 hover:underline font-bold"
+                        className="text-[10px] text-emerald-600 hover:underline font-bold"
                       >
                         {staff.whatsapp_number}
                       </a>
                     ) : (
-                      <span className="text-[10px] text-slate-600">N/A</span>
+                      <span className="text-[10px] text-gray-400">N/A</span>
                     )}
                   </td>
                   <td className="px-6 py-4">
                     <button
                       onClick={() => setActiveView('staff')}
-                      className="px-3 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-[10px] font-black text-white uppercase transition-colors"
+                      className="px-3 py-1 bg-gray-50/80 hover:bg-gray-100 rounded-lg text-[10px] font-black text-gray-800 uppercase transition-colors"
                     >
                       Edit
                     </button>
@@ -425,7 +427,7 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
                 <tr>
                   <td
                     colSpan={11}
-                    className="px-6 py-12 text-center text-slate-600 text-[10px] font-black uppercase tracking-widest"
+                    className="px-6 py-12 text-center text-gray-400 text-[10px] font-black uppercase tracking-widest"
                   >
                     No recent registrations detected in ledger
                   </td>

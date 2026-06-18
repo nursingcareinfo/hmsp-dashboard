@@ -53,10 +53,10 @@ const STATUS_FLOW = ['pending', 'reviewed', 'contacted', 'assigned', 'completed'
 
 const STATUS_STYLES: Record<string, string> = {
   pending: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-  reviewed: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-  contacted: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-  assigned: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-  completed: 'bg-slate-500/10 text-slate-400 border-slate-500/20',
+  reviewed: 'bg-blue-50 text-blue-600 border-blue-200',
+  contacted: 'bg-purple-500/10 text-purple-600 border-purple-500/20',
+  assigned: 'bg-emerald-50 text-emerald-600 border-emerald-200',
+  completed: 'bg-gray-100 text-gray-400 border-gray-200',
 }
 
 function formatDate(iso: string) {
@@ -175,7 +175,7 @@ export default function PatientIntakesView() {
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <Loader2 className="text-emerald-500 animate-spin" size={40} />
-        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">
+        <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black">
           Loading Intakes...
         </p>
       </div>
@@ -185,27 +185,27 @@ export default function PatientIntakesView() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 bg-slate-900/40 border border-white/5 p-6 rounded-xl">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 bg-white border border-gray-200 p-6 rounded-xl">
         <div>
-          <h2 className="text-xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
-            <ClipboardList size={22} className="text-emerald-400" />
+          <h2 className="text-xl font-black text-gray-800 uppercase tracking-tighter flex items-center gap-3">
+            <ClipboardList size={22} className="text-emerald-600" />
             Patient Intake Queue
           </h2>
-          <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mt-1">
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black mt-1">
             Review &amp; Manage Incoming Referrals
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowShare(true)}
-            className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-slate-400 flex items-center gap-1.5"
+            className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-gray-50/80 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors text-gray-400 flex items-center gap-1.5"
           >
             <Share2 size={12} />
             Share Link
           </button>
           <button
             onClick={loadIntakes}
-            className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg transition-colors text-slate-400"
+            className="text-[10px] font-black uppercase tracking-widest px-4 py-2 bg-gray-50/80 hover:bg-gray-100 border border-gray-200 rounded-lg transition-colors text-gray-400"
           >
             Refresh
           </button>
@@ -218,7 +218,7 @@ export default function PatientIntakesView() {
           {
             label: 'Total',
             count: counts.total,
-            color: 'text-white',
+            color: 'text-gray-800',
             active: statusFilter === 'all',
           },
           {
@@ -230,19 +230,19 @@ export default function PatientIntakesView() {
           {
             label: 'Reviewed',
             count: counts.reviewed,
-            color: 'text-blue-400',
+            color: 'text-blue-600',
             active: statusFilter === 'reviewed',
           },
           {
             label: 'Contacted',
             count: counts.contacted,
-            color: 'text-purple-400',
+            color: 'text-purple-600',
             active: statusFilter === 'contacted',
           },
           {
             label: 'Assigned',
             count: counts.assigned,
-            color: 'text-emerald-400',
+            color: 'text-emerald-600',
             active: statusFilter === 'assigned',
           },
         ].map((s) => (
@@ -250,11 +250,13 @@ export default function PatientIntakesView() {
             key={s.label}
             onClick={() => setStatusFilter(s.active ? 'all' : s.label.toLowerCase())}
             className={cn(
-              'bg-slate-900/40 border rounded-xl p-4 text-left transition-all',
-              s.active ? 'border-white/20 bg-white/5' : 'border-white/5 hover:border-white/10'
+              'bg-white border rounded-xl p-4 text-left transition-all',
+              s.active
+                ? 'border-emerald-200 bg-emerald-50/50'
+                : 'border-gray-200 hover:border-gray-300'
             )}
           >
-            <p className="text-[9px] text-slate-500 uppercase tracking-widest font-black">
+            <p className="text-[9px] text-gray-500 uppercase tracking-widest font-black">
               {s.label}
             </p>
             <p className={cn('text-xl font-black mt-1', s.color)}>{s.count}</p>
@@ -264,24 +266,24 @@ export default function PatientIntakesView() {
 
       {/* Search */}
       <div className="relative">
-        <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+        <Search size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
         <input
           type="text"
           placeholder="Search by name, mobile, CNIC, or service..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-slate-900/40 border border-white/5 rounded-xl pl-10 pr-4 py-3 text-sm text-white outline-none focus:border-emerald-500/30 transition-colors placeholder:text-slate-600"
+          className="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-800 outline-none focus:border-emerald-500/30 transition-colors placeholder:text-gray-400"
         />
       </div>
 
       {/* Intake List */}
       {filtered.length === 0 ? (
-        <div className="p-16 text-center border border-dashed border-white/5 rounded-xl">
-          <ClipboardList size={40} className="mx-auto mb-4 text-slate-600" />
-          <p className="text-sm font-bold text-slate-500 uppercase tracking-widest">
+        <div className="p-16 text-center border border-dashed border-gray-200 rounded-xl">
+          <ClipboardList size={40} className="mx-auto mb-4 text-gray-400" />
+          <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">
             {intakes.length === 0 ? 'No intake submissions yet' : 'No intakes match your filter'}
           </p>
-          <p className="text-[10px] text-slate-600 mt-2">
+          <p className="text-[10px] text-gray-400 mt-2">
             {intakes.length === 0
               ? 'Patient intake forms will appear here once submitted via the public form.'
               : 'Try adjusting your search or filter.'}
@@ -302,7 +304,7 @@ export default function PatientIntakesView() {
             return (
               <div
                 key={intake.id}
-                className="bg-slate-900/40 border border-white/5 rounded-xl overflow-hidden transition-all hover:border-white/10"
+                className="bg-white border border-gray-200 rounded-xl overflow-hidden transition-all hover:border-gray-200"
               >
                 {/* Summary Row */}
                 <button
@@ -311,10 +313,10 @@ export default function PatientIntakesView() {
                 >
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3">
-                      <h3 className="font-bold text-white truncate">{intake.full_name}</h3>
+                      <h3 className="font-bold text-gray-800 truncate">{intake.full_name}</h3>
                       <StatusBadge status={intake.status} />
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
                       <span className="flex items-center gap-1">
                         <Phone size={10} /> {intake.mobile}
                       </span>
@@ -331,14 +333,14 @@ export default function PatientIntakesView() {
                       </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 text-slate-500">
+                  <div className="flex items-center gap-3 text-gray-500">
                     {nextStatus && (
                       <span
                         onClick={(e) => {
                           e.stopPropagation()
                           updateStatus(intake.id, nextStatus)
                         }}
-                        className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 rounded-lg transition-colors flex items-center gap-1.5"
+                        className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 bg-emerald-50 hover:bg-emerald-500/20 text-emerald-600 border border-emerald-200 rounded-lg transition-colors flex items-center gap-1.5"
                       >
                         {updatingId === intake.id ? (
                           <Loader2 size={10} className="animate-spin" />
@@ -354,86 +356,90 @@ export default function PatientIntakesView() {
 
                 {/* Expanded Details */}
                 {isExpanded && (
-                  <div className="px-5 pb-5 border-t border-white/5 pt-4 space-y-5">
+                  <div className="px-5 pb-5 border-t border-gray-200 pt-4 space-y-5">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {/* Patient Info */}
                       <div className="space-y-2">
-                        <h4 className="text-[9px] font-black uppercase tracking-widest text-emerald-400 flex items-center gap-1.5">
+                        <h4 className="text-[9px] font-black uppercase tracking-widest text-emerald-600 flex items-center gap-1.5">
                           <User size={10} /> Patient Details
                         </h4>
-                        <div className="bg-black/30 rounded-lg p-3 space-y-1.5 text-xs">
+                        <div className="bg-gray-50/80 rounded-lg p-3 space-y-1.5 text-xs">
                           <p>
-                            <span className="text-slate-500">Guardian:</span>{' '}
-                            <span className="text-white">{intake.guardian_name}</span>
+                            <span className="text-gray-500">Guardian:</span>{' '}
+                            <span className="text-gray-800">{intake.guardian_name}</span>
                           </p>
                           <p>
-                            <span className="text-slate-500">CNIC:</span>{' '}
-                            <span className="text-white font-mono">{intake.cnic}</span>
+                            <span className="text-gray-500">CNIC:</span>{' '}
+                            <span className="text-gray-800 font-mono">{intake.cnic}</span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Gender:</span>{' '}
-                            <span className="text-white">{intake.gender}</span>
+                            <span className="text-gray-500">Gender:</span>{' '}
+                            <span className="text-gray-800">{intake.gender}</span>
                           </p>
                           {intake.date_of_birth && (
                             <p>
-                              <span className="text-slate-500">DOB:</span>{' '}
-                              <span className="text-white">{formatDate(intake.date_of_birth)}</span>
+                              <span className="text-gray-500">DOB:</span>{' '}
+                              <span className="text-gray-800">
+                                {formatDate(intake.date_of_birth)}
+                              </span>
                             </p>
                           )}
                           <p>
-                            <span className="text-slate-500">Address:</span>{' '}
-                            <span className="text-white">{intake.address || '—'}</span>
+                            <span className="text-gray-500">Address:</span>{' '}
+                            <span className="text-gray-800">{intake.address || '—'}</span>
                           </p>
                         </div>
                       </div>
 
                       {/* Service Info */}
                       <div className="space-y-2">
-                        <h4 className="text-[9px] font-black uppercase tracking-widest text-blue-400 flex items-center gap-1.5">
+                        <h4 className="text-[9px] font-black uppercase tracking-widest text-blue-600 flex items-center gap-1.5">
                           <FileText size={10} /> Service Details
                         </h4>
-                        <div className="bg-black/30 rounded-lg p-3 space-y-1.5 text-xs">
+                        <div className="bg-gray-50/80 rounded-lg p-3 space-y-1.5 text-xs">
                           <p>
-                            <span className="text-slate-500">Service:</span>{' '}
-                            <span className="text-white">{intake.service_type}</span>
+                            <span className="text-gray-500">Service:</span>{' '}
+                            <span className="text-gray-800">{intake.service_type}</span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Rate:</span>{' '}
-                            <span className="text-emerald-400 font-mono font-bold">
+                            <span className="text-gray-500">Rate:</span>{' '}
+                            <span className="text-emerald-600 font-mono font-bold">
                               {formatPKR(intake.billing_rate)}/day
                             </span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Start:</span>{' '}
-                            <span className="text-white">{formatDate(intake.start_date)}</span>
+                            <span className="text-gray-500">Start:</span>{' '}
+                            <span className="text-gray-800">{formatDate(intake.start_date)}</span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Submitted:</span>{' '}
-                            <span className="text-white">{formatDateTime(intake.created_at)}</span>
+                            <span className="text-gray-500">Submitted:</span>{' '}
+                            <span className="text-gray-800">
+                              {formatDateTime(intake.created_at)}
+                            </span>
                           </p>
                           <p>
-                            <span className="text-slate-500">Signed by:</span>{' '}
-                            <span className="text-white">{intake.signatory_name}</span>
+                            <span className="text-gray-500">Signed by:</span>{' '}
+                            <span className="text-gray-800">{intake.signatory_name}</span>
                           </p>
                         </div>
                       </div>
 
                       {/* Equipment */}
                       <div className="space-y-2">
-                        <h4 className="text-[9px] font-black uppercase tracking-widest text-purple-400 flex items-center gap-1.5">
+                        <h4 className="text-[9px] font-black uppercase tracking-widest text-purple-600 flex items-center gap-1.5">
                           <Package size={10} /> Equipment Rental
                         </h4>
-                        <div className="bg-black/30 rounded-lg p-3 space-y-1.5 text-xs">
+                        <div className="bg-gray-50/80 rounded-lg p-3 space-y-1.5 text-xs">
                           {equipment.length === 0 ? (
-                            <p className="text-slate-500 italic">No equipment requested</p>
+                            <p className="text-gray-500 italic">No equipment requested</p>
                           ) : (
                             equipment.map((eq: any, i: number) => (
                               <div
                                 key={i}
-                                className="border-b border-white/5 pb-1.5 last:border-0 last:pb-0"
+                                className="border-b border-gray-200 pb-1.5 last:border-0 last:pb-0"
                               >
-                                <p className="text-white font-bold">{eq.name}</p>
-                                <p className="text-slate-500 text-[10px]">
+                                <p className="text-gray-800 font-bold">{eq.name}</p>
+                                <p className="text-gray-500 text-[10px]">
                                   Qty: {eq.quantity}
                                   {eq.daily_fee > 0 && ` • ${formatPKR(eq.daily_fee)}/day`}
                                   {eq.start_date && ` • ${formatDate(eq.start_date)}`}
@@ -449,7 +455,7 @@ export default function PatientIntakesView() {
                     {/* Notes & Actions */}
                     <div className="flex flex-col md:flex-row gap-4 items-start">
                       <div className="flex-1 w-full">
-                        <label className="text-[9px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5 mb-1.5">
+                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-500 flex items-center gap-1.5 mb-1.5">
                           <MessageSquare size={10} /> Staff Notes
                         </label>
                         <textarea
@@ -457,7 +463,7 @@ export default function PatientIntakesView() {
                           rows={2}
                           placeholder="Add notes about this intake..."
                           onBlur={(e) => saveNotes(intake.id, e.target.value)}
-                          className="w-full bg-black/30 border border-white/5 rounded-lg p-3 text-xs text-white outline-none focus:border-emerald-500/30 transition-colors placeholder:text-slate-600 resize-none"
+                          className="w-full bg-gray-50/80 border border-gray-200 rounded-lg p-3 text-xs text-gray-800 outline-none focus:border-emerald-500/30 transition-colors placeholder:text-gray-400 resize-none"
                         />
                       </div>
                       <div className="flex gap-2">
@@ -469,8 +475,8 @@ export default function PatientIntakesView() {
                             className={cn(
                               'text-[9px] font-black uppercase tracking-widest px-3 py-2 rounded-lg border transition-all',
                               s === intake.status
-                                ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
-                                : 'border-white/5 text-slate-500 hover:border-white/20 hover:text-white'
+                                ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-600'
+                                : 'border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-800'
                             )}
                           >
                             {updatingId === intake.id ? (

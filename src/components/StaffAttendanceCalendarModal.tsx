@@ -176,17 +176,17 @@ export default function StaffAttendanceCalendarModal({
   const getStatusColor = (status: string | undefined) => {
     switch (status) {
       case 'Day':
-        return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
+        return 'bg-emerald-500/20 text-emerald-600 border-emerald-500/30'
       case 'Night':
         return 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30'
       case 'Absent':
-        return 'bg-red-500/20 text-red-400 border-red-500/30'
+        return 'bg-red-500/20 text-red-600 border-red-500/30'
       case 'Late':
-        return 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+        return 'bg-amber-500/20 text-amber-600 border-amber-500/30'
       case 'Half-Day':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+        return 'bg-blue-500/20 text-blue-600 border-blue-500/30'
       default:
-        return 'bg-white/5 text-slate-600 border-white/10'
+        return 'bg-gray-50/80 text-gray-400 border-gray-200'
     }
   }
 
@@ -213,28 +213,28 @@ export default function StaffAttendanceCalendarModal({
   const summary = calculateSummary()
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-white/5">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div>
-            <h3 className="text-sm font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+            <h3 className="text-sm font-black text-emerald-600 uppercase tracking-widest flex items-center gap-2">
               <Calendar size={16} /> Attendance Tracker
             </h3>
-            <p className="text-[10px] text-slate-500 mt-1">
+            <p className="text-[10px] text-gray-500 mt-1">
               {staffName} <span className="text-emerald-500 font-mono">({empNo})</span>
             </p>
             {expectedSalary ? (
-              <span className="text-[9px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded mt-1.5 inline-block">
+              <span className="text-[9px] font-mono text-amber-600 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded mt-1.5 inline-block">
                 Rs.{Math.round(expectedSalary / 30).toLocaleString()}/shift
               </span>
             ) : dayRate || nightRate ? (
-              <span className="text-[9px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded mt-1.5 inline-block">
+              <span className="text-[9px] font-mono text-amber-600 bg-amber-500/10 border border-amber-500/20 px-1.5 py-0.5 rounded mt-1.5 inline-block">
                 Rs.{(dayRate || nightRate || 0).toLocaleString()}/shift
               </span>
             ) : null}
           </div>
-          <button onClick={onClose} className="text-slate-500 hover:text-white">
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-800">
             <X size={20} />
           </button>
         </div>
@@ -245,29 +245,29 @@ export default function StaffAttendanceCalendarModal({
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={goToPrevPeriod}
-              className="p-2 hover:bg-white/5 rounded-lg border border-white/5"
+              className="p-2 hover:bg-gray-50/80 rounded-lg border border-gray-200"
             >
-              <ChevronLeft size={18} className="text-slate-400" />
+              <ChevronLeft size={18} className="text-gray-400" />
             </button>
-            <h4 className="text-xs font-mono font-bold text-white uppercase tracking-widest">
+            <h4 className="text-xs font-mono font-bold text-gray-800 uppercase tracking-widest">
               {getPeriodLabel(year, month, periodNum)}
             </h4>
             <button
               onClick={goToNextPeriod}
-              className="p-2 hover:bg-white/5 rounded-lg border border-white/5"
+              className="p-2 hover:bg-gray-50/80 rounded-lg border border-gray-200"
             >
-              <ChevronRight size={18} className="text-slate-400" />
+              <ChevronRight size={18} className="text-gray-400" />
             </button>
           </div>
 
           {/* Calendar Grid */}
           {loading ? (
-            <div className="text-center py-8 text-slate-500 text-xs">Loading...</div>
+            <div className="text-center py-8 text-gray-500 text-xs">Loading...</div>
           ) : (
             <div className="grid grid-cols-7 gap-1">
               {/* Day of week headers */}
               {['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa'].map((d) => (
-                <div key={d} className="text-[8px] text-center font-bold text-slate-600 py-1">
+                <div key={d} className="text-[8px] text-center font-bold text-gray-400 py-1">
                   {d === 'Su' ? 'S' : d === 'Sa' ? 'S' : d}
                 </div>
               ))}
@@ -301,7 +301,7 @@ export default function StaffAttendanceCalendarModal({
                         active && 'hover:scale-105',
                         active
                           ? getStatusColor(status)
-                          : 'opacity-30 cursor-default bg-white/[0.02] border-white/5'
+                          : 'opacity-30 cursor-default bg-white/[0.02] border-gray-200'
                       )}
                       title={`${day} - ${active ? status || 'Not marked' : 'Outside period'}${showRate ? ` (Rs ${singleRate}/shift)` : ''}`}
                     >
@@ -321,50 +321,50 @@ export default function StaffAttendanceCalendarModal({
         </div>
 
         {/* Summary */}
-        <div className="p-4 bg-black/20 border-t border-white/5 space-y-2">
+        <div className="p-4 bg-gray-50/50 border-t border-gray-200 space-y-2">
           <div className="flex items-center justify-between text-[10px]">
             <div className="flex items-center gap-4">
               <div>
-                <span className="text-emerald-400 font-bold">{summary.paidDays}</span>
-                <span className="text-slate-600 ml-1">paid</span>
+                <span className="text-emerald-600 font-bold">{summary.paidDays}</span>
+                <span className="text-gray-400 ml-1">paid</span>
               </div>
               <div className="flex items-center gap-3">
                 <div>
-                  <span className="text-amber-400 font-bold">{summary.late}</span>
-                  <span className="text-slate-600 ml-1">late</span>
+                  <span className="text-amber-600 font-bold">{summary.late}</span>
+                  <span className="text-gray-400 ml-1">late</span>
                 </div>
                 <div>
-                  <span className="text-red-400 font-bold">{summary.absent}</span>
-                  <span className="text-slate-600 ml-1">unpaid</span>
+                  <span className="text-red-600 font-bold">{summary.absent}</span>
+                  <span className="text-gray-400 ml-1">unpaid</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-[10px] pt-1.5 border-t border-white/5">
-            <span className="text-slate-500 font-semibold">earned salary</span>
-            <span className="text-emerald-400 font-mono font-bold">
+          <div className="flex items-center justify-between text-[10px] pt-1.5 border-t border-gray-200">
+            <span className="text-gray-500 font-semibold">earned salary</span>
+            <span className="text-emerald-600 font-mono font-bold">
               {formatPKR(summary.totalSalary)}
             </span>
           </div>
 
           {summary.totalAdvances > 0 && (
             <div className="flex items-center justify-between text-[10px]">
-              <span className="text-slate-500 font-semibold flex items-center gap-1">
+              <span className="text-gray-500 font-semibold flex items-center gap-1">
                 <Minus size={10} /> advance taken
               </span>
-              <span className="text-red-400 font-mono font-bold">
+              <span className="text-red-600 font-mono font-bold">
                 -{formatPKR(summary.totalAdvances)}
               </span>
             </div>
           )}
 
           {summary.totalAdvances > 0 && (
-            <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-white/5">
-              <span className="text-slate-300 font-bold flex items-center gap-1">
+            <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-gray-200">
+              <span className="text-gray-600 font-bold flex items-center gap-1">
                 <Equal size={11} /> net payable
               </span>
-              <span className="text-emerald-400 font-mono font-bold">
+              <span className="text-emerald-600 font-mono font-bold">
                 {formatPKR(Math.max(0, summary.netSalary))}
               </span>
             </div>

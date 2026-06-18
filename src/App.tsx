@@ -90,7 +90,7 @@ function AppContent() {
   // Loading state
   if (loading) {
     return (
-      <div className="h-screen bg-black flex items-center justify-center">
+      <div className="h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin" />
       </div>
     )
@@ -108,21 +108,21 @@ function AppContent() {
       <motion.aside
         initial={false}
         animate={{ width: isSidebarOpen ? 260 : 80 }}
-        className="bg-black border-r border-white/10 hidden md:flex flex-col overflow-hidden z-20"
+        className="bg-white border-r border-[var(--color-border)] hidden md:flex flex-col overflow-hidden z-20"
       >
         <div className="p-6 flex items-center justify-between mb-8">
           {isSidebarOpen && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="font-black text-xl tracking-tighter text-white"
+              className="font-black text-xl tracking-tighter text-gray-800"
             >
-              HMSP <span className="text-emerald-500">HQ</span>
+              HMSP <span className="text-emerald-600">HQ</span>
             </motion.div>
           )}
           <button
             onClick={() => setSidebarOpen(!isSidebarOpen)}
-            className="p-2 hover:bg-white/5 rounded-lg transition-colors text-slate-500"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-[var(--color-ink-dim)]"
           >
             {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -136,15 +136,15 @@ function AppContent() {
               className={cn(
                 'w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 group uppercase tracking-[0.15em] text-[10px] font-black',
                 activeView === item.id
-                  ? 'bg-white/10 text-white border border-white/10'
-                  : 'hover:bg-white/5 text-slate-500 hover:text-slate-300'
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'hover:bg-gray-100 text-[var(--color-ink-dim)] hover:text-[var(--color-ink)]'
               )}
             >
               <item.icon
                 size={16}
                 className={cn(
                   'shrink-0',
-                  activeView === item.id ? 'text-emerald-400' : 'group-hover:text-emerald-500/50'
+                  activeView === item.id ? 'text-emerald-600' : 'group-hover:text-emerald-500/50'
                 )}
               />
               {isSidebarOpen && <span className="truncate">{item.label}</span>}
@@ -152,9 +152,9 @@ function AppContent() {
           ))}
         </nav>
 
-        <div className="p-4 mt-auto border-t border-white/5">
-          <div className="w-full flex items-center gap-3 p-3 text-emerald-500 uppercase text-[9px] font-black tracking-[0.2em] px-6">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
+        <div className="p-4 mt-auto border-t border-[var(--color-border)]">
+          <div className="w-full flex items-center gap-3 p-3 text-emerald-600 uppercase text-[9px] font-black tracking-[0.2em] px-6">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_rgba(5,150,105,0.3)]" />
             {isSidebarOpen && <span>Demo Mode</span>}
           </div>
         </div>
@@ -162,15 +162,15 @@ function AppContent() {
 
       {/* Main Content */}
       <main className="flex-1 relative overflow-auto pb-24 md:pb-8 p-4 md:p-8">
-        <header className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center border-b border-white/10 pb-6 gap-4">
+        <header className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center border-b border-[var(--color-border)] pb-6 gap-4">
           <div>
-            <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white">
-              HMSP <span className="text-emerald-500 uppercase">High-Performance</span> Ledger
+            <h1 className="text-xl md:text-2xl font-black tracking-tighter text-gray-800">
+              HMSP <span className="text-emerald-600 uppercase">High-Performance</span> Ledger
             </h1>
-            <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1 font-bold flex items-center gap-2">
+            <p className="text-[10px] text-[var(--color-ink-dim)] uppercase tracking-widest mt-1 font-bold flex items-center gap-2">
               Manual Management • Karachi HQ • Karachi-S1
-              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[8px] font-black tracking-[0.2em]">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-600 text-[8px] font-black tracking-[0.2em]">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 DEMO
               </span>
             </p>
@@ -178,16 +178,16 @@ function AppContent() {
 
           <div className="flex gap-4 md:gap-8 items-center justify-between md:justify-end">
             <div className="text-right">
-              <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black mb-1">
+              <p className="text-[10px] text-[var(--color-ink-dim)] uppercase tracking-widest font-black mb-1">
                 Estimated MTD Margin
               </p>
-              <p className="text-xl md:text-2xl font-mono text-emerald-400 font-bold tracking-tighter">
+              <p className="text-xl md:text-2xl font-mono text-emerald-600 font-bold tracking-tighter">
                 PKR {mtdMargin.toLocaleString()}
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
+              <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center">
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(5,150,105,0.4)]"></div>
               </div>
             </div>
           </div>
@@ -195,7 +195,7 @@ function AppContent() {
 
         <div className="mb-8 flex justify-between items-center">
           <div>
-            <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+            <h2 className="text-sm font-bold text-[var(--color-ink-dim)] uppercase tracking-widest flex items-center gap-2">
               <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
               {activeView.replace('-', ' ')}
             </h2>
@@ -240,14 +240,14 @@ function AppContent() {
         </AnimatePresence>
 
         {/* Mobile Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 h-20 bg-black/80 backdrop-blur-xl border-t border-white/10 flex items-center justify-around px-2 z-50 md:hidden pb-safe">
+        <div className="fixed bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-xl border-t border-[var(--color-border)] flex items-center justify-around px-2 z-50 md:hidden pb-safe">
           {menuItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveView(item.id as View)}
               className={cn(
                 'flex flex-col items-center gap-1 p-2 transition-all',
-                activeView === item.id ? 'text-emerald-400' : 'text-slate-500'
+                activeView === item.id ? 'text-emerald-600' : 'text-[var(--color-ink-dim)]'
               )}
             >
               <item.icon size={20} />
@@ -260,7 +260,7 @@ function AppContent() {
       {/* Share Intake FAB */}
       <button
         onClick={() => setShowShare(true)}
-        className="fixed bottom-24 md:bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-emerald-500 hover:bg-emerald-400 text-black shadow-lg shadow-emerald-500/20 flex items-center justify-center transition-all hover:scale-105"
+        className="fixed bottom-24 md:bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 flex items-center justify-center transition-all hover:scale-105"
         aria-label="Share intake form link"
       >
         <Share2 size={20} />

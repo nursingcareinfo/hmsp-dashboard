@@ -357,7 +357,7 @@ export default function StaffView({
     return (
       <div className="flex flex-col items-center justify-center h-64 space-y-4">
         <Loader2 className="text-emerald-500 animate-spin" size={40} />
-        <p className="text-[10px] text-slate-500 uppercase tracking-widest font-black">
+        <p className="text-[10px] text-gray-500 uppercase tracking-widest font-black">
           Decrypting Staff Ledger...
         </p>
       </div>
@@ -366,12 +366,12 @@ export default function StaffView({
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5">
+      <div className="flex justify-between items-center bg-gray-50/80 p-4 rounded-xl border border-gray-200">
         <div>
-          <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+          <h2 className="text-sm font-black text-gray-800 uppercase tracking-widest flex items-center gap-2">
             Staff Management
           </h2>
-          <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mt-0.5">
+          <p className="text-[9px] text-gray-500 uppercase font-bold tracking-widest mt-0.5">
             Manage and register Karachi medical professionals
           </p>
         </div>
@@ -390,13 +390,13 @@ export default function StaffView({
       </div>
 
       {showForm && (
-        <div className="bg-slate-900/40 border border-white/5 p-8 rounded-xl shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
-          <h3 className="text-sm font-black text-blue-400 uppercase tracking-[0.2em] mb-6">
+        <div className="bg-white border border-gray-200 p-8 rounded-xl shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
+          <h3 className="text-sm font-black text-blue-600 uppercase tracking-[0.2em] mb-6">
             Staff Registration Form
           </h3>
           <form onSubmit={handleRegisterStaff} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 Full Name
               </label>
               <input
@@ -405,11 +405,11 @@ export default function StaffView({
                 onChange={(e) =>
                   setFormData({ ...formData, full_name: formatNameInput(e.target.value) })
                 }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 CNIC (XXXXX-XXXXXXX-X)
               </label>
               <input
@@ -419,11 +419,11 @@ export default function StaffView({
                 onChange={(e) =>
                   setFormData({ ...formData, cnic_number: formatCNICInput(e.target.value) })
                 }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 Mobile Number
               </label>
               <input
@@ -432,17 +432,17 @@ export default function StaffView({
                 onChange={(e) =>
                   setFormData({ ...formData, phone_primary: formatPhoneInput(e.target.value) })
                 }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 Gender
               </label>
               <select
                 value={formData.gender}
                 onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               >
                 <option value="">Select Gender</option>
                 <option value="Male">Male</option>
@@ -450,13 +450,13 @@ export default function StaffView({
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 Marital Status
               </label>
               <select
                 value={formData.marital_status}
                 onChange={(e) => setFormData({ ...formData, marital_status: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               >
                 <option value="">Select...</option>
                 <option value="Single">Single</option>
@@ -466,18 +466,18 @@ export default function StaffView({
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 Date of Birth
               </label>
               <input
                 type="date"
                 value={formData.date_of_birth}
                 onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 Age
               </label>
               <input
@@ -494,18 +494,18 @@ export default function StaffView({
                       })()
                     : ''
                 }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-slate-400 text-sm font-mono outline-none"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-400 text-sm font-mono outline-none"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 District
               </label>
               <select
                 required
                 value={formData.district}
                 onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               >
                 <option value="">Select District</option>
                 {KARACHI_AREAS.map((area) => (
@@ -516,14 +516,14 @@ export default function StaffView({
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 Category
               </label>
               <select
                 required
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
               >
                 {STAFF_CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
@@ -533,19 +533,19 @@ export default function StaffView({
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 Position Applied
               </label>
               <input
                 required
                 value={formData.position_applied}
                 onChange={(e) => setFormData({ ...formData, position_applied: e.target.value })}
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-emerald-500/40"
                 placeholder="e.g. ICU Nurse"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 Experience Years
               </label>
               <input
@@ -554,11 +554,11 @@ export default function StaffView({
                 onChange={(e) =>
                   setFormData({ ...formData, experience_years: parseInt(e.target.value) || 0 })
                 }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+              <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                 Decided Salary (per shift)
               </label>
               <input
@@ -570,9 +570,9 @@ export default function StaffView({
                     expected_salary_pkr: (parseInt(e.target.value) || 0) * 30,
                   })
                 }
-                className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-emerald-500/40"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-emerald-600 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
-              <p className="text-[8px] text-slate-500 font-mono">
+              <p className="text-[8px] text-gray-500 font-mono">
                 = Rs {(formData.expected_salary_pkr || 0).toLocaleString()}/month
               </p>
             </div>
@@ -618,11 +618,11 @@ export default function StaffView({
                 'px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all shrink-0 whitespace-nowrap',
                 availabilityFilter === filter
                   ? filter === 'Blacklisted'
-                    ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                    ? 'bg-red-500/20 text-red-600 border border-red-500/30'
                     : filter === 'On Duty'
-                      ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                      : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                  : 'bg-slate-800/50 text-slate-500 hover:text-slate-300 border border-white/5'
+                      ? 'bg-amber-500/20 text-amber-600 border border-amber-500/30'
+                      : 'bg-emerald-500/20 text-emerald-600 border border-emerald-500/30'
+                  : 'bg-gray-100/50 text-gray-500 hover:text-gray-600 border border-gray-200'
               )}
             >
               {filter === 'Available'
@@ -645,7 +645,7 @@ export default function StaffView({
                   ? cat === 'Action Required'
                     ? 'bg-red-500 text-white shadow-[0_0_15px_rgba(239,68,68,0.4)]'
                     : 'bg-emerald-500 text-slate-950'
-                  : 'bg-slate-900 text-slate-500 hover:text-slate-300 border border-white/5'
+                  : 'bg-white text-gray-500 hover:text-gray-600 border border-gray-200'
               )}
             >
               {cat}
@@ -661,24 +661,24 @@ export default function StaffView({
             <div
               key={staff.id}
               className={cn(
-                'bg-slate-900/60 border border-white/5 rounded-2xl overflow-hidden hover:border-white/10 transition-all group',
+                'bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-gray-200 transition-all group',
                 staff.critical_missing_info && 'border-red-500/30 ring-1 ring-red-500/20',
                 staff.is_blacklisted && 'border-rose-500/40 ring-1 ring-rose-500/20 opacity-70'
               )}
             >
               {/* Header - Avatar + Name + Quick Actions */}
-              <div className="p-4 flex items-start gap-4 border-b border-white/5">
+              <div className="p-4 flex items-start gap-4 border-b border-gray-200">
                 {/* Avatar */}
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center text-lg font-bold text-emerald-400 shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center text-lg font-bold text-emerald-600 shrink-0">
                   {(staff.full_name || '?')[0]}
                 </div>
 
                 {/* Name + ID */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-base font-bold text-white truncate flex items-center gap-2">
+                  <h3 className="text-base font-bold text-gray-800 truncate flex items-center gap-2">
                     {staff.full_name}
                     {staff.is_verified && (
-                      <CheckCircle2 size={14} className="text-blue-400 shrink-0" />
+                      <CheckCircle2 size={14} className="text-blue-600 shrink-0" />
                     )}
                     {staff.is_blacklisted && (
                       <XCircle size={14} className="text-rose-400 shrink-0" />
@@ -693,14 +693,14 @@ export default function StaffView({
                 <div className="flex gap-1 shrink-0">
                   <button
                     onClick={() => handleStartEdit(staff)}
-                    className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-blue-400"
+                    className="p-1.5 hover:bg-gray-50/80 rounded-lg transition-colors text-gray-500 hover:text-blue-600"
                     title="Edit"
                   >
                     <Edit size={14} />
                   </button>
                   <button
                     onClick={() => setSelectedStaffForDelete(staff)}
-                    className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-red-400"
+                    className="p-1.5 hover:bg-gray-50/80 rounded-lg transition-colors text-gray-500 hover:text-red-600"
                     title="Delete"
                   >
                     <Trash2 size={14} />
@@ -711,7 +711,7 @@ export default function StaffView({
                       'p-1.5 rounded-lg transition-colors',
                       staff.is_blacklisted
                         ? 'text-rose-400 hover:text-rose-300 bg-rose-500/10'
-                        : 'text-slate-500 hover:text-rose-400'
+                        : 'text-gray-500 hover:text-rose-400'
                     )}
                     title={staff.is_blacklisted ? 'Unblacklist' : 'Blacklist'}
                   >
@@ -722,14 +722,14 @@ export default function StaffView({
 
               {/* Position + Location */}
               <div className="px-4 py-3 flex flex-wrap gap-2">
-                <span className="text-[10px] font-medium px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="text-[10px] font-medium px-2 py-1 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-200">
                   {staff.position_applied}
                 </span>
-                <span className="text-[10px] font-medium px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center gap-1">
+                <span className="text-[10px] font-medium px-2 py-1 rounded-md bg-blue-50 text-blue-600 border border-blue-200 flex items-center gap-1">
                   <MapPin size={10} /> {staff.district}
                 </span>
                 {staff.category && staff.category !== staff.position_applied && (
-                  <span className="text-[10px] font-medium px-2 py-1 rounded-md bg-white/5 text-slate-400 border border-white/10">
+                  <span className="text-[10px] font-medium px-2 py-1 rounded-md bg-gray-50/80 text-gray-400 border border-gray-200">
                     {staff.category}
                   </span>
                 )}
@@ -737,36 +737,36 @@ export default function StaffView({
 
               {/* Details Row */}
               <div className="px-4 py-2 flex flex-wrap gap-1.5 text-[9px]">
-                {staff.religion && <span className="text-slate-500">{staff.religion}</span>}
+                {staff.religion && <span className="text-gray-500">{staff.religion}</span>}
                 {calculateAge(staff.dob) && (
-                  <span className="text-slate-500">Age {calculateAge(staff.dob)}</span>
+                  <span className="text-gray-500">Age {calculateAge(staff.dob)}</span>
                 )}
                 {staff.father_husband_name && (
                   <span
-                    className="text-blue-400/80 truncate max-w-[100px]"
+                    className="text-blue-600/80 truncate max-w-[100px]"
                     title={staff.father_husband_name}
                   >
                     • {staff.father_husband_name}
                   </span>
                 )}
                 {staff.marital_status && (
-                  <span className="text-purple-400/80">• {staff.marital_status}</span>
+                  <span className="text-purple-600/80">• {staff.marital_status}</span>
                 )}
               </div>
 
               {/* Stats Row */}
-              <div className="px-4 py-3 flex items-center justify-between border-t border-white/5 bg-black/20">
+              <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200 bg-gray-50/50">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-1">
-                    <Star size={12} className="text-amber-400" fill="currentColor" />
-                    <span className="text-[11px] font-mono font-bold text-amber-400">
+                    <Star size={12} className="text-amber-600" fill="currentColor" />
+                    <span className="text-[11px] font-mono font-bold text-amber-600">
                       {(staff.rating || 0).toFixed(1)}
                     </span>
                   </div>
-                  <div className="w-px h-4 bg-white/10" />
-                  <div className="text-[11px] font-mono font-bold text-emerald-400">
+                  <div className="w-px h-4 bg-gray-100" />
+                  <div className="text-[11px] font-mono font-bold text-emerald-600">
                     Rs.{Math.round((staff.expected_salary_pkr || 0) / 30).toLocaleString()}
-                    <span className="text-[8px] text-slate-500 ml-0.5">/shift</span>
+                    <span className="text-[8px] text-gray-500 ml-0.5">/shift</span>
                   </div>
                 </div>
 
@@ -781,8 +781,8 @@ export default function StaffView({
                     className={cn(
                       'px-2.5 py-1 rounded-md text-[9px] font-bold uppercase tracking-wider transition-all',
                       staff.is_available
-                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                        : 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
+                        ? 'bg-emerald-500/15 text-emerald-600 border border-emerald-500/30'
+                        : 'bg-amber-500/15 text-amber-600 border border-amber-500/30'
                     )}
                   >
                     {staff.is_available ? 'Available' : 'On Duty'}
@@ -792,7 +792,7 @@ export default function StaffView({
                       {staffAssignments[staff.id] ? (
                         <>
                           <span
-                            className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-white/5 border border-white/5"
+                            className="text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-gray-50/80 border border-gray-200"
                             style={{
                               color:
                                 staffAssignments[staff.id].shiftType === 'Night'
@@ -809,7 +809,7 @@ export default function StaffView({
                               : '☀ DAY SHIFT'}
                           </span>
                           <div className="flex flex-col items-end">
-                            <span className="text-[8px] text-slate-500 uppercase font-black tracking-tighter">
+                            <span className="text-[8px] text-gray-500 uppercase font-black tracking-tighter">
                               Assigned to:
                             </span>
                             <button
@@ -817,7 +817,7 @@ export default function StaffView({
                                 onSelectPatient(staffAssignments[staff.id].id)
                                 setActiveView('patients')
                               }}
-                              className="text-[10px] text-blue-400 font-black truncate max-w-[140px] hover:text-blue-300 hover:underline transition-all uppercase tracking-tight"
+                              className="text-[10px] text-blue-600 font-black truncate max-w-[140px] hover:text-blue-300 hover:underline transition-all uppercase tracking-tight"
                               title="View patient details"
                             >
                               {staffAssignments[staff.id].name}
@@ -825,7 +825,7 @@ export default function StaffView({
                           </div>
                         </>
                       ) : loading ? (
-                        <span className="text-[8px] text-slate-600 font-bold uppercase tracking-widest animate-pulse">
+                        <span className="text-[8px] text-gray-400 font-bold uppercase tracking-widest animate-pulse">
                           Syncing Shift...
                         </span>
                       ) : (
@@ -840,15 +840,15 @@ export default function StaffView({
 
               {/* Inline Assignment UI */}
               {assigningStaffId === staff.id && (
-                <div className="px-4 py-3 border-t border-white/5 bg-emerald-500/5">
+                <div className="px-4 py-3 border-t border-gray-200 bg-emerald-500/5">
                   <div className="space-y-3">
-                    <p className="text-[9px] text-emerald-400 font-bold uppercase tracking-widest">
+                    <p className="text-[9px] text-emerald-600 font-bold uppercase tracking-widest">
                       Assign to Patient
                     </p>
                     <select
                       value={assignPatientId}
                       onChange={(e) => setAssignPatientId(e.target.value)}
-                      className="w-full bg-slate-800 border border-white/10 rounded-lg px-3 py-2 text-white text-[10px] font-mono outline-none focus:border-emerald-500"
+                      className="w-full bg-gray-100 border border-gray-200 rounded-lg px-3 py-2 text-gray-800 text-[10px] font-mono outline-none focus:border-emerald-500"
                     >
                       <option value="">Select patient...</option>
                       {patients
@@ -876,8 +876,8 @@ export default function StaffView({
                               className={cn(
                                 'flex-1 py-2 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all border',
                                 assignShiftType === 'Morning' || is24hr
-                                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
-                                  : 'bg-slate-800 text-slate-500 border-white/10 hover:text-slate-300'
+                                  ? 'bg-amber-500/20 text-amber-600 border-amber-500/40'
+                                  : 'bg-gray-100 text-gray-500 border-gray-200 hover:text-gray-600'
                               )}
                             >
                               ☀ Day
@@ -888,7 +888,7 @@ export default function StaffView({
                                 'flex-1 py-2 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all border',
                                 assignShiftType === 'Night' || is24hr
                                   ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/40'
-                                  : 'bg-slate-800 text-slate-500 border-white/10 hover:text-slate-300'
+                                  : 'bg-gray-100 text-gray-500 border-gray-200 hover:text-gray-600'
                               )}
                             >
                               🌙 Night
@@ -896,13 +896,13 @@ export default function StaffView({
                           </div>
 
                           {is24hr && (
-                            <p className="text-[8px] text-amber-400 font-bold uppercase tracking-widest bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
+                            <p className="text-[8px] text-amber-600 font-bold uppercase tracking-widest bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
                               24HR Service — another staff needed for opposite shift
                             </p>
                           )}
 
                           {assignPatientId && (
-                            <p className="text-[8px] text-slate-500 font-mono">
+                            <p className="text-[8px] text-gray-500 font-mono">
                               Rate: Rs{' '}
                               {Math.round((staff.expected_salary_pkr || 0) / 30).toLocaleString()}
                               /shift
@@ -914,7 +914,7 @@ export default function StaffView({
                     <div className="flex gap-2">
                       <button
                         onClick={() => setAssigningStaffId(null)}
-                        className="flex-1 py-2 bg-slate-700 hover:bg-slate-600 text-white text-[9px] font-bold uppercase tracking-widest rounded-lg transition-all"
+                        className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 text-[9px] font-bold uppercase tracking-widest rounded-lg transition-all"
                       >
                         Cancel
                       </button>
@@ -935,19 +935,19 @@ export default function StaffView({
               )}
 
               {/* Footer - Skills + Actions */}
-              <div className="px-4 py-3 border-t border-white/5 flex items-center justify-between gap-3">
+              <div className="px-4 py-3 border-t border-gray-200 flex items-center justify-between gap-3">
                 {/* Skills */}
                 <div className="flex items-center gap-1.5 overflow-hidden">
                   {(staff.skills || []).slice(0, 2).map((skill: string) => (
                     <span
                       key={skill}
-                      className="text-[8px] font-medium px-1.5 py-0.5 bg-white/5 rounded text-slate-500 whitespace-nowrap"
+                      className="text-[8px] font-medium px-1.5 py-0.5 bg-gray-50/80 rounded text-gray-500 whitespace-nowrap"
                     >
                       {skill}
                     </span>
                   ))}
                   {(staff.skills || []).length > 2 && (
-                    <span className="text-[8px] text-slate-600">+{staff.skills.length - 2}</span>
+                    <span className="text-[8px] text-gray-400">+{staff.skills.length - 2}</span>
                   )}
                 </div>
 
@@ -955,16 +955,16 @@ export default function StaffView({
                 <div className="flex items-center gap-2 shrink-0">
                   {staff.relative_info && (
                     <div className="group/contact relative">
-                      <button className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-slate-500 hover:text-red-400">
+                      <button className="p-1.5 hover:bg-gray-50/80 rounded-lg transition-colors text-gray-500 hover:text-red-600">
                         <Phone size={14} />
                       </button>
                       {/* Tooltip */}
-                      <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-slate-800 border border-white/10 rounded-lg opacity-0 group-hover/contact:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap">
-                        <p className="text-[10px] text-white font-bold">
+                      <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg opacity-0 group-hover/contact:opacity-100 transition-opacity pointer-events-none z-10 whitespace-nowrap">
+                        <p className="text-[10px] text-gray-800 font-bold">
                           {staff.relative_info.name}
                         </p>
-                        <p className="text-[9px] text-slate-400">{staff.relative_info.phone}</p>
-                        <p className="text-[8px] text-slate-500">
+                        <p className="text-[9px] text-gray-400">{staff.relative_info.phone}</p>
+                        <p className="text-[8px] text-gray-500">
                           {staff.relative_info.relationship}
                         </p>
                       </div>
@@ -972,7 +972,7 @@ export default function StaffView({
                   )}
                   <button
                     onClick={() => setSelectedStaffForAttendance(staff)}
-                    className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 rounded-md transition-all"
+                    className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium text-blue-600 bg-blue-50 hover:bg-blue-500/20 rounded-md transition-all"
                     title="Mark Attendance"
                   >
                     <Calendar size={12} />
@@ -988,7 +988,7 @@ export default function StaffView({
                   </button>
                   <button
                     onClick={() => setSelectedStaffForAdvance(staff)}
-                    className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-md transition-all"
+                    className="flex items-center gap-1 px-2 py-1 text-[9px] font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-500/20 rounded-md transition-all"
                   >
                     <Banknote size={12} />
                     <span>Advance</span>
@@ -998,9 +998,9 @@ export default function StaffView({
 
               {/* Critical Info Alert */}
               {staff.critical_missing_info && (
-                <div className="px-4 py-2 bg-red-500/10 border-t border-red-500/20 flex items-center gap-2">
+                <div className="px-4 py-2 bg-red-50 border-t border-red-500/20 flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse" />
-                  <span className="text-[9px] font-medium text-red-400">
+                  <span className="text-[9px] font-medium text-red-600">
                     Missing critical info - needs review
                   </span>
                 </div>
@@ -1009,14 +1009,14 @@ export default function StaffView({
           ))}
         </div>
       ) : (
-        <div className="bg-slate-900/40 border border-white/5 rounded-2xl p-20 text-center flex flex-col items-center justify-center">
-          <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/10 text-slate-500">
+        <div className="bg-white border border-gray-200 rounded-2xl p-20 text-center flex flex-col items-center justify-center">
+          <div className="w-16 h-16 bg-gray-50/80 rounded-full flex items-center justify-center mb-6 border border-gray-200 text-gray-500">
             <Users size={32} />
           </div>
-          <h3 className="text-sm font-black text-white uppercase tracking-widest">
+          <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest">
             No Staff Members Found
           </h3>
-          <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-2 max-w-xs leading-relaxed">
+          <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mt-2 max-w-xs leading-relaxed">
             {searchTerm || categoryFilter !== 'All'
               ? "We couldn't find any staff matching your current search or filters."
               : 'The HQ Ledger is currently empty. Use the Register button or AI OCR to add professionals.'}
@@ -1027,7 +1027,7 @@ export default function StaffView({
                 setSearchTerm('')
                 setCategoryFilter('All')
               }}
-              className="mt-6 text-[10px] font-black text-emerald-400 uppercase tracking-widest border-b border-emerald-400/30 hover:border-emerald-400 transition-all pb-1"
+              className="mt-6 text-[10px] font-black text-emerald-600 uppercase tracking-widest border-b border-emerald-400/30 hover:border-emerald-400 transition-all pb-1"
             >
               Clear all filters
             </button>
@@ -1037,15 +1037,15 @@ export default function StaffView({
 
       {/* Advance Modal */}
       {selectedStaffForAdvance && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-sm bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="w-full max-w-sm bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xs font-black text-emerald-400 uppercase tracking-widest flex items-center gap-2">
+              <h3 className="text-xs font-black text-emerald-600 uppercase tracking-widest flex items-center gap-2">
                 <Banknote size={16} /> Disburse Advance
               </h3>
               <button
                 onClick={() => setSelectedStaffForAdvance(null)}
-                className="text-slate-500 hover:text-white"
+                className="text-gray-500 hover:text-gray-800"
               >
                 <XCircle size={20} />
               </button>
@@ -1053,14 +1053,14 @@ export default function StaffView({
 
             <div className="space-y-4">
               <div>
-                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-2">
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2">
                   Recipient
                 </p>
-                <p className="text-sm font-bold text-white mb-4">
+                <p className="text-sm font-bold text-gray-800 mb-4">
                   {selectedStaffForAdvance.full_name}
                 </p>
 
-                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-2">
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2">
                   Amount (PKR)
                 </p>
                 <div className="relative">
@@ -1072,18 +1072,18 @@ export default function StaffView({
                     value={advanceAmount}
                     onChange={(e) => setAdvanceAmount(e.target.value)}
                     placeholder="E.g. 5000"
-                    className="w-full bg-slate-800 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-white font-mono focus:border-emerald-500 outline-none"
+                    className="w-full bg-gray-100 border border-gray-200 rounded-xl py-3 pl-12 pr-4 text-gray-800 font-mono focus:border-emerald-500 outline-none"
                     autoFocus
                   />
                 </div>
 
-                <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-2 mt-4">
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-2 mt-4">
                   Payment Method
                 </p>
                 <select
                   value={paymentMethod}
                   onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="w-full bg-slate-800 border border-white/10 rounded-xl py-3 px-4 text-white font-mono focus:border-emerald-500 outline-none"
+                  className="w-full bg-gray-100 border border-gray-200 rounded-xl py-3 px-4 text-gray-800 font-mono focus:border-emerald-500 outline-none"
                 >
                   <option value="Cash">Cash</option>
                   <option value="JazzCash">JazzCash</option>
@@ -1093,7 +1093,7 @@ export default function StaffView({
               </div>
 
               <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-xl p-4">
-                <p className="text-[9px] text-emerald-400 font-bold uppercase tracking-widest leading-relaxed">
+                <p className="text-[9px] text-emerald-600 font-bold uppercase tracking-widest leading-relaxed">
                   Notice: Advances are automatically deducted from the Gross Accrual at end of
                   month. No manual entries required in Payout ledger.
                 </p>
@@ -1101,7 +1101,7 @@ export default function StaffView({
 
               {recentAdvances.length > 0 && (
                 <div>
-                  <p className="text-[9px] text-slate-500 uppercase tracking-widest font-bold mb-2">
+                  <p className="text-[9px] text-gray-500 uppercase tracking-widest font-bold mb-2">
                     Recent Advances
                   </p>
                   <div className="space-y-1.5">
@@ -1127,28 +1127,28 @@ export default function StaffView({
                       return (
                         <div
                           key={adv.id}
-                          className="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2 border border-white/5"
+                          className="flex items-center justify-between bg-gray-100/50 rounded-lg px-3 py-2 border border-gray-200"
                         >
                           <div className="flex items-center gap-3 min-w-0">
-                            <span className="text-[10px] text-slate-300 font-mono shrink-0">
+                            <span className="text-[10px] text-gray-600 font-mono shrink-0">
                               {formatPKR(adv.amount_pkr)}
                             </span>
                             {dateStr && (
-                              <span className="text-[8px] text-slate-600 font-mono whitespace-nowrap">
+                              <span className="text-[8px] text-gray-400 font-mono whitespace-nowrap">
                                 {dateStr} {timeStr}
                               </span>
                             )}
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="text-[8px] text-slate-500 font-mono">
+                            <span className="text-[8px] text-gray-500 font-mono">
                               {adv.payment_method || 'Cash'}
                             </span>
                             <span
                               className={
                                 'text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ' +
                                 (adv.status === 'Settled'
-                                  ? 'text-emerald-400 bg-emerald-500/10'
-                                  : 'text-amber-400 bg-amber-500/10')
+                                  ? 'text-emerald-600 bg-emerald-50'
+                                  : 'text-amber-600 bg-amber-500/10')
                               }
                             >
                               {adv.status}
@@ -1179,15 +1179,15 @@ export default function StaffView({
 
       {/* Edit Staff Modal */}
       {selectedStaffForEdit && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-2xl bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between p-6 border-b border-white/5">
-              <h3 className="text-sm font-black text-blue-400 uppercase tracking-[0.2em]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="w-full max-w-2xl bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-sm font-black text-blue-600 uppercase tracking-[0.2em]">
                 Edit Staff Profile
               </h3>
               <button
                 onClick={() => setSelectedStaffForEdit(null)}
-                className="text-slate-500 hover:text-white"
+                className="text-gray-500 hover:text-gray-800"
               >
                 <XCircle size={20} />
               </button>
@@ -1196,7 +1196,7 @@ export default function StaffView({
             <form onSubmit={handleEditStaff} className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                  <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                     Full Name
                   </label>
                   <input
@@ -1208,11 +1208,11 @@ export default function StaffView({
                         full_name: formatNameInput(e.target.value),
                       })
                     }
-                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500/40"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-blue-500/40"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                  <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                     CNIC (XXXXX-XXXXXXX-X)
                   </label>
                   <input
@@ -1225,11 +1225,11 @@ export default function StaffView({
                         cnic_number: formatCNICInput(e.target.value),
                       })
                     }
-                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-blue-500/40"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm font-mono outline-none focus:border-blue-500/40"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                  <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                     Mobile Number
                   </label>
                   <input
@@ -1241,18 +1241,18 @@ export default function StaffView({
                         phone_primary: formatPhoneInput(e.target.value),
                       })
                     }
-                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-blue-500/40"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm font-mono outline-none focus:border-blue-500/40"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                  <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                     District
                   </label>
                   <select
                     required
                     value={editFormData.district}
                     onChange={(e) => setEditFormData({ ...editFormData, district: e.target.value })}
-                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500/40"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-blue-500/40"
                   >
                     <option value="">Select District</option>
                     {KARACHI_AREAS.map((area) => (
@@ -1263,14 +1263,14 @@ export default function StaffView({
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                  <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                     Category
                   </label>
                   <select
                     required
                     value={editFormData.category}
                     onChange={(e) => setEditFormData({ ...editFormData, category: e.target.value })}
-                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500/40"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-blue-500/40"
                   >
                     {STAFF_CATEGORIES.map((cat) => (
                       <option key={cat} value={cat}>
@@ -1280,7 +1280,7 @@ export default function StaffView({
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                  <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                     Position Applied
                   </label>
                   <input
@@ -1289,12 +1289,12 @@ export default function StaffView({
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, position_applied: e.target.value })
                     }
-                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-blue-500/40"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm outline-none focus:border-blue-500/40"
                     placeholder="e.g. ICU Nurse"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                  <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                     Experience Years
                   </label>
                   <input
@@ -1306,11 +1306,11 @@ export default function StaffView({
                         experience_years: parseInt(e.target.value) || 0,
                       })
                     }
-                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm font-mono outline-none focus:border-blue-500/40"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm font-mono outline-none focus:border-blue-500/40"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[9px] text-slate-500 uppercase font-black tracking-widest text-left block">
+                  <label className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-left block">
                     Decided Salary (per shift)
                   </label>
                   <input
@@ -1322,16 +1322,16 @@ export default function StaffView({
                         expected_salary_pkr: (parseInt(e.target.value) || 0) * 30,
                       })
                     }
-                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-emerald-400 text-sm font-mono outline-none focus:border-blue-500/40"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-emerald-600 text-sm font-mono outline-none focus:border-blue-500/40"
                   />
-                  <p className="text-[8px] text-slate-500 font-mono">
+                  <p className="text-[8px] text-gray-500 font-mono">
                     = Rs {(editFormData.expected_salary_pkr || 0).toLocaleString()}/month
                   </p>
                 </div>
               </div>
 
               {/* Checkboxes and actions are outside the 2-column grid */}
-              <div className="flex items-center gap-4 mt-8 pt-6 border-t border-white/5">
+              <div className="flex items-center gap-4 mt-8 pt-6 border-t border-gray-200">
                 <label className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"
@@ -1341,7 +1341,7 @@ export default function StaffView({
                     }
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  <span className="text-[10px] text-slate-400 uppercase font-black tracking-widest">
+                  <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest">
                     Active Staff Member
                   </span>
                 </label>
@@ -1355,7 +1355,7 @@ export default function StaffView({
                     }
                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  <span className="text-[10px] text-slate-400 uppercase font-black tracking-widest">
+                  <span className="text-[10px] text-gray-400 uppercase font-black tracking-widest">
                     Currently Available
                   </span>
                 </label>
@@ -1365,7 +1365,7 @@ export default function StaffView({
                 <button
                   type="button"
                   onClick={() => setSelectedStaffForEdit(null)}
-                  className="flex-1 py-4 bg-slate-700 hover:bg-slate-600 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
+                  className="flex-1 py-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
                 >
                   Cancel
                 </button>
@@ -1388,26 +1388,26 @@ export default function StaffView({
 
       {/* Delete Confirmation Modal */}
       {selectedStaffForDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="w-full max-w-md bg-slate-900 border border-white/10 rounded-2xl shadow-2xl overflow-hidden p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl shadow-2xl overflow-hidden p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-sm font-black text-red-400 uppercase tracking-[0.2em] flex items-center gap-2">
+              <h3 className="text-sm font-black text-red-600 uppercase tracking-[0.2em] flex items-center gap-2">
                 <Trash2 size={20} /> Delete Staff Member
               </h3>
               <button
                 onClick={() => setSelectedStaffForDelete(null)}
-                className="text-slate-500 hover:text-white"
+                className="text-gray-500 hover:text-gray-800"
               >
                 <XCircle size={20} />
               </button>
             </div>
 
             <div className="space-y-4">
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
-                <p className="text-red-400 font-bold text-sm mb-2">
+              <div className="bg-red-50 border border-red-500/20 rounded-xl p-4">
+                <p className="text-red-600 font-bold text-sm mb-2">
                   ⚠️ This action cannot be undone
                 </p>
-                <p className="text-slate-300 text-sm leading-relaxed">
+                <p className="text-gray-600 text-sm leading-relaxed">
                   You are about to permanently delete{' '}
                   <strong>{selectedStaffForDelete.full_name}</strong> (ID:{' '}
                   {selectedStaffForDelete.emp_no}) from the system. This will remove all associated
@@ -1415,21 +1415,21 @@ export default function StaffView({
                 </p>
               </div>
 
-              <div className="bg-slate-800 border border-white/5 rounded-xl p-4">
-                <h4 className="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-2">
+              <div className="bg-gray-100 border border-gray-200 rounded-xl p-4">
+                <h4 className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-2">
                   Staff Details
                 </h4>
                 <div className="space-y-1 text-sm">
-                  <p className="text-white">
+                  <p className="text-gray-800">
                     <strong>Name:</strong> {selectedStaffForDelete.full_name}
                   </p>
-                  <p className="text-slate-300">
+                  <p className="text-gray-600">
                     <strong>ID:</strong> {selectedStaffForDelete.emp_no}
                   </p>
-                  <p className="text-slate-300">
+                  <p className="text-gray-600">
                     <strong>Position:</strong> {selectedStaffForDelete.position_applied}
                   </p>
-                  <p className="text-slate-300">
+                  <p className="text-gray-600">
                     <strong>District:</strong> {selectedStaffForDelete.district}
                   </p>
                 </div>
@@ -1438,7 +1438,7 @@ export default function StaffView({
               <div className="flex gap-4 mt-8">
                 <button
                   onClick={() => setSelectedStaffForDelete(null)}
-                  className="flex-1 py-4 bg-slate-700 hover:bg-slate-600 text-white font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
+                  className="flex-1 py-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
                 >
                   Cancel
                 </button>
