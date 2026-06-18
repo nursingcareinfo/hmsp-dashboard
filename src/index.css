@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-bg: #F5F3EE;
   --color-card: #FFFFFF;
@@ -21,6 +23,20 @@
     @apply bg-[var(--color-bg)] text-[var(--color-ink)] font-sans antialiased selection:bg-emerald-500/30 selection:text-emerald-200;
   }
 
+  .dark body,
+  body.dark,
+  :where(.dark) {
+    --color-bg: #1A1A1A;
+    --color-card: #262626;
+    --color-border: #404040;
+    --color-border-hover: #525252;
+    --color-ink: #F5F5F4;
+    --color-ink-dim: #A8A29E;
+    --color-brand: #34D399;
+    --color-brand-dim: #6EE7B7;
+    --color-emerald-glow: #6EE7B7;
+  }
+
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -31,17 +47,17 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-black/10 rounded-full hover:bg-black/20 transition-colors;
+    @apply bg-black/10 dark:bg-white/10 rounded-full hover:bg-black/20 dark:hover:bg-white/20 transition-colors;
   }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white border border-[var(--color-border)] rounded-xl shadow-sm;
+    @apply bg-white dark:bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl shadow-sm;
   }
 
   .input-field {
-    @apply bg-white border border-[var(--color-border)] rounded-lg px-4 py-2 text-[var(--color-ink)] placeholder:text-[var(--color-ink-dim)] focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 outline-none transition-all font-mono text-sm;
+    @apply bg-white dark:bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg px-4 py-2 text-[var(--color-ink)] placeholder:text-[var(--color-ink-dim)] focus:ring-1 focus:ring-emerald-500/50 focus:border-emerald-500/50 outline-none transition-all font-mono text-sm;
   }
 
   .btn-primary {
@@ -53,7 +69,7 @@
   }
 
   .text-mono-emerald {
-    @apply font-mono text-emerald-600 font-semibold;
+    @apply font-mono text-emerald-600 dark:text-emerald-400 font-semibold;
   }
 }
 

@@ -18,6 +18,8 @@ import {
   X,
   Share2,
   UserCheck,
+  Moon,
+  Sun,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'motion/react'
 import { cn } from './lib/utils'
@@ -69,6 +71,22 @@ function AppContent() {
 
   const [mtdMargin, setMtdMargin] = useState<number>(0)
 
+  // Theme toggle
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('hmsp-theme')
+    return saved === 'dark'
+  })
+
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('hmsp-theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('hmsp-theme', 'light')
+    }
+  }, [isDark])
+
   useEffect(() => {
     async function loadMtdMargin() {
       try {
@@ -91,7 +109,7 @@ function AppContent() {
   if (loading) {
     return (
       <div className="h-screen bg-[var(--color-bg)] flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-emerald-500/30 border-t-emerald-400 rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-emerald-500/30 dark:border-emerald-800 border-t-emerald-400 rounded-full animate-spin" />
       </div>
     )
   }
@@ -108,21 +126,21 @@ function AppContent() {
       <motion.aside
         initial={false}
         animate={{ width: isSidebarOpen ? 260 : 80 }}
-        className="bg-white border-r border-[var(--color-border)] hidden md:flex flex-col overflow-hidden z-20"
+        className="bg-white dark:bg-neutral-900 border-r border-[var(--color-border)] hidden md:flex flex-col overflow-hidden z-20"
       >
         <div className="p-6 flex items-center justify-between mb-8">
           {isSidebarOpen && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="font-black text-xl tracking-tighter text-gray-800"
+              className="font-black text-xl tracking-tighter text-gray-800 dark:text-neutral-100"
             >
-              HMSP <span className="text-emerald-600">HQ</span>
+              HMSP <span className="text-emerald-600 dark:text-emerald-300">HQ</span>
             </motion.div>
           )}
           <button
             onClick={() => setSidebarOpen(!isSidebarOpen)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-[var(--color-ink-dim)]"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-lg transition-colors text-[var(--color-ink-dim)]"
           >
             {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -136,15 +154,17 @@ function AppContent() {
               className={cn(
                 'w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-200 group uppercase tracking-[0.15em] text-[10px] font-black',
                 activeView === item.id
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  : 'hover:bg-gray-100 text-[var(--color-ink-dim)] hover:text-[var(--color-ink)]'
+                  ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                  : 'hover:bg-gray-100 dark:hover:bg-neutral-800 text-[var(--color-ink-dim)] hover:text-[var(--color-ink)]'
               )}
             >
               <item.icon
                 size={16}
                 className={cn(
                   'shrink-0',
-                  activeView === item.id ? 'text-emerald-600' : 'group-hover:text-emerald-500/50'
+                  activeView === item.id
+                    ? 'text-emerald-600 dark:text-emerald-300'
+                    : 'group-hover:text-emerald-500/50'
                 )}
               />
               {isSidebarOpen && <span className="truncate">{item.label}</span>}
@@ -152,11 +172,18 @@ function AppContent() {
           ))}
         </nav>
 
-        <div className="p-4 mt-auto border-t border-[var(--color-border)]">
-          <div className="w-full flex items-center gap-3 p-3 text-emerald-600 uppercase text-[9px] font-black tracking-[0.2em] px-6">
+        <div className="p-4 mt-auto border-t border-[var(--color-border)] space-y-2">
+          <div className="w-full flex items-center gap-3 p-3 text-emerald-600 dark:text-emerald-300 uppercase text-[9px] font-black tracking-[0.2em] px-6">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_6px_rgba(5,150,105,0.3)]" />
             {isSidebarOpen && <span>Demo Mode</span>}
           </div>
+          <button
+            onClick={() => setIsDark(!isDark)}
+            className="w-full flex items-center gap-3 p-3 rounded-lg text-[var(--color-ink-dim)] hover:bg-gray-100 dark:hover:bg-neutral-800 hover:text-[var(--color-ink)] transition-all text-[10px] font-black uppercase tracking-[0.15em]"
+          >
+            {isDark ? <Sun size={16} /> : <Moon size={16} />}
+            {isSidebarOpen && <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>}
+          </button>
         </div>
       </motion.aside>
 
@@ -164,12 +191,16 @@ function AppContent() {
       <main className="flex-1 relative overflow-auto pb-24 md:pb-8 p-4 md:p-8">
         <header className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center border-b border-[var(--color-border)] pb-6 gap-4">
           <div>
-            <h1 className="text-xl md:text-2xl font-black tracking-tighter text-gray-800">
-              HMSP <span className="text-emerald-600 uppercase">High-Performance</span> Ledger
+            <h1 className="text-xl md:text-2xl font-black tracking-tighter text-gray-800 dark:text-neutral-100">
+              HMSP{' '}
+              <span className="text-emerald-600 dark:text-emerald-300 uppercase">
+                High-Performance
+              </span>{' '}
+              Ledger
             </h1>
             <p className="text-[10px] text-[var(--color-ink-dim)] uppercase tracking-widest mt-1 font-bold flex items-center gap-2">
               Manual Management • Karachi HQ • Karachi-S1
-              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-600 text-[8px] font-black tracking-[0.2em]">
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-300 text-[8px] font-black tracking-[0.2em]">
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 DEMO
               </span>
@@ -181,12 +212,12 @@ function AppContent() {
               <p className="text-[10px] text-[var(--color-ink-dim)] uppercase tracking-widest font-black mb-1">
                 Estimated MTD Margin
               </p>
-              <p className="text-xl md:text-2xl font-mono text-emerald-600 font-bold tracking-tighter">
+              <p className="text-xl md:text-2xl font-mono text-emerald-600 dark:text-emerald-300 font-bold tracking-tighter">
                 PKR {mtdMargin.toLocaleString()}
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center">
                 <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(5,150,105,0.4)]"></div>
               </div>
             </div>
@@ -240,14 +271,16 @@ function AppContent() {
         </AnimatePresence>
 
         {/* Mobile Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 right-0 h-20 bg-white/80 backdrop-blur-xl border-t border-[var(--color-border)] flex items-center justify-around px-2 z-50 md:hidden pb-safe">
+        <div className="fixed bottom-0 left-0 right-0 h-20 bg-white dark:bg-neutral-900/80 backdrop-blur-xl border-t border-[var(--color-border)] flex items-center justify-around px-2 z-50 md:hidden pb-safe">
           {menuItems.map((item) => (
             <button
               key={item.id}
               onClick={() => setActiveView(item.id as View)}
               className={cn(
                 'flex flex-col items-center gap-1 p-2 transition-all',
-                activeView === item.id ? 'text-emerald-600' : 'text-[var(--color-ink-dim)]'
+                activeView === item.id
+                  ? 'text-emerald-600 dark:text-emerald-300'
+                  : 'text-[var(--color-ink-dim)]'
               )}
             >
               <item.icon size={20} />
@@ -260,7 +293,7 @@ function AppContent() {
       {/* Share Intake FAB */}
       <button
         onClick={() => setShowShare(true)}
-        className="fixed bottom-24 md:bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/20 flex items-center justify-center transition-all hover:scale-105"
+        className="fixed bottom-24 md:bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg dark:shadow-none shadow-emerald-600/20 flex items-center justify-center transition-all hover:scale-105"
         aria-label="Share intake form link"
       >
         <Share2 size={20} />
