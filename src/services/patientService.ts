@@ -37,6 +37,18 @@ export const patientService = {
     return data as Patient
   },
 
+  async updatePatient(id: string, data: Partial<Patient>) {
+    const { data: result, error } = await supabase
+      .from('patients')
+      .update({ ...data, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
+    return result as Patient
+  },
+
   async getActivePatientsCount() {
     const { count, error } = await supabase
       .from('patients')
@@ -166,5 +178,60 @@ export const patientInvoiceService = {
 
     if (error) throw error
     return data as PatientInvoice
+  },
+}
+
+export interface PatientEquipment {
+  id?: string
+  patient_id: string
+  item_name: string
+  quantity: number
+  rental_rate: number
+  rate_period: 'daily' | 'monthly'
+  rented_at: string
+  returned_at?: string | null
+  status: 'rented' | 'returned'
+  notes?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+export const equipmentService = {
+  async getForPatient(patientId: string) {
+    const { data, error } = await supabase
+      .from('patient_equipment')
+      .select('*')
+      .eq('patient_id', patientId)
+      .order('rented_at', { ascending: false })
+
+    if (error) throw error
+    return data as PatientEquipment[]
+  },
+
+  async addItem(data: Omit<PatientEquipment, 'id' | 'created_at' | 'updated_at'>) {
+    const { data: result, error } = await supabase
+      .from('patient_equipment')
+      .insert([data])
+      .select()
+      .single()
+
+    if (error) throw error
+    return result as PatientEquipment
+  },
+
+  async markReturned(id: string) {
+    const { data, error } = await supabase
+      .from('patient_equipment')
+      .update({
+        returned_at: new Date().toISOString().split('T')[0],
+        status: 'returned',
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data as PatientEquipment
   },
 }
