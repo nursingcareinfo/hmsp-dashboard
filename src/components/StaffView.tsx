@@ -855,41 +855,62 @@ export default function StaffView({
                         .filter((p) => p.status === 'Active')
                         .map((p) => (
                           <option key={p.id} value={p.id}>
-                            {p.full_name} — {p.district}
+                            {p.full_name} — {p.district} (
+                            {p.service_type?.replace('_', ' ')?.toUpperCase() || '---'})
                           </option>
                         ))}
                     </select>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setAssignShiftType('Morning')}
-                        className={cn(
-                          'flex-1 py-2 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all border',
-                          assignShiftType === 'Morning'
-                            ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
-                            : 'bg-slate-800 text-slate-500 border-white/10 hover:text-slate-300'
-                        )}
-                      >
-                        ☀ Day
-                      </button>
-                      <button
-                        onClick={() => setAssignShiftType('Night')}
-                        className={cn(
-                          'flex-1 py-2 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all border',
-                          assignShiftType === 'Night'
-                            ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/40'
-                            : 'bg-slate-800 text-slate-500 border-white/10 hover:text-slate-300'
-                        )}
-                      >
-                        🌙 Night
-                      </button>
-                    </div>
-                    {assignPatientId && (
-                      <p className="text-[8px] text-slate-500 font-mono">
-                        Rate: Rs{' '}
-                        {Math.round((staff.expected_salary_pkr || 0) / 30).toLocaleString()}
-                        /shift
-                      </p>
-                    )}
+
+                    {(() => {
+                      const selectedPatient = patients.find((p) => p.id === assignPatientId)
+                      const is24hr =
+                        selectedPatient?.service_type === '24h' ||
+                        selectedPatient?.service_type === '24hr' ||
+                        selectedPatient?.service_type === '24HR'
+
+                      return (
+                        <>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => setAssignShiftType('Morning')}
+                              className={cn(
+                                'flex-1 py-2 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all border',
+                                assignShiftType === 'Morning' || is24hr
+                                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/40'
+                                  : 'bg-slate-800 text-slate-500 border-white/10 hover:text-slate-300'
+                              )}
+                            >
+                              ☀ Day
+                            </button>
+                            <button
+                              onClick={() => setAssignShiftType('Night')}
+                              className={cn(
+                                'flex-1 py-2 rounded-lg text-[9px] font-bold uppercase tracking-wider transition-all border',
+                                assignShiftType === 'Night' || is24hr
+                                  ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/40'
+                                  : 'bg-slate-800 text-slate-500 border-white/10 hover:text-slate-300'
+                              )}
+                            >
+                              🌙 Night
+                            </button>
+                          </div>
+
+                          {is24hr && (
+                            <p className="text-[8px] text-amber-400 font-bold uppercase tracking-widest bg-amber-500/10 px-2 py-1 rounded border border-amber-500/20">
+                              24HR Service — another staff needed for opposite shift
+                            </p>
+                          )}
+
+                          {assignPatientId && (
+                            <p className="text-[8px] text-slate-500 font-mono">
+                              Rate: Rs{' '}
+                              {Math.round((staff.expected_salary_pkr || 0) / 30).toLocaleString()}
+                              /shift
+                            </p>
+                          )}
+                        </>
+                      )
+                    })()}
                     <div className="flex gap-2">
                       <button
                         onClick={() => setAssigningStaffId(null)}
