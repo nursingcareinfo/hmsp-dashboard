@@ -13,7 +13,6 @@ import {
   MessageSquare,
   Brain,
   Settings,
-  LogOut,
   ChevronRight,
   Menu,
   X,
@@ -48,7 +47,6 @@ import MemoryView from './components/MemoryView'
 import AttendanceView from './components/AttendanceView'
 import PatientIntakesView from './components/PatientIntakesView'
 import StaffIntakesView from './components/StaffIntakesView'
-import LoginView from './components/LoginView'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import ShareIntakeModal from './components/ShareIntakeModal'
 
@@ -98,10 +96,11 @@ function AppContent() {
     )
   }
 
-  // Not authenticated
-  if (!user) {
-    return <LoginView />
-  }
+  // Phase 1: Demo mode — bypass auth gate. Agencies test without signing in.
+  // Phase 2: Uncomment below to re-enable login:
+  // if (!user) {
+  //   return <LoginView />
+  // }
 
   return (
     <div className="flex h-screen bg-[var(--color-bg)] text-[var(--color-ink)] overflow-hidden font-sans">
@@ -154,13 +153,10 @@ function AppContent() {
         </nav>
 
         <div className="p-4 mt-auto border-t border-white/5">
-          <button
-            onClick={signOut}
-            className="w-full flex items-center gap-3 p-3 text-slate-600 hover:text-red-400 transition-colors uppercase text-[9px] font-black tracking-[0.2em] px-6"
-          >
-            <LogOut size={14} />
-            {isSidebarOpen && <span>Secure Logout</span>}
-          </button>
+          <div className="w-full flex items-center gap-3 p-3 text-emerald-500 uppercase text-[9px] font-black tracking-[0.2em] px-6">
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_rgba(52,211,153,0.6)]" />
+            {isSidebarOpen && <span>Demo Mode</span>}
+          </div>
         </div>
       </motion.aside>
 
@@ -171,8 +167,12 @@ function AppContent() {
             <h1 className="text-xl md:text-2xl font-black tracking-tighter text-white">
               HMSP <span className="text-emerald-500 uppercase">High-Performance</span> Ledger
             </h1>
-            <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1 font-bold">
+            <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1 font-bold flex items-center gap-2">
               Manual Management • Karachi HQ • Karachi-S1
+              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[8px] font-black tracking-[0.2em]">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                DEMO
+              </span>
             </p>
           </div>
 
