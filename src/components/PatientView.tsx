@@ -625,7 +625,16 @@ export default function PatientView({
                                     ),
                                     attendance_status: 'Scheduled',
                                   })
+                                  // Mark staff as unavailable globally
+                                  await staffService.updateStaff(assigningStaffId, {
+                                    is_available: false,
+                                  })
                                   await loadAssignments([patient.id])
+                                  // Refresh available staff list
+                                  staffService
+                                    .getAvailableStaff()
+                                    .then(setAvailableStaff)
+                                    .catch(console.error)
                                   setAssigningSlot(null)
                                   setAssigningStaffId('')
                                 } catch (err) {
@@ -749,7 +758,16 @@ export default function PatientView({
                                       ),
                                       attendance_status: 'Scheduled',
                                     })
+                                    // Mark staff as unavailable globally
+                                    await staffService.updateStaff(assigningStaffId, {
+                                      is_available: false,
+                                    })
                                     await loadAssignments([patient.id])
+                                    // Refresh available staff list
+                                    staffService
+                                      .getAvailableStaff()
+                                      .then(setAvailableStaff)
+                                      .catch(console.error)
                                     setAssigningSlot(null)
                                     setAssigningStaffId('')
                                   } catch (err) {
