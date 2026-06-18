@@ -10,7 +10,7 @@ export interface Patient {
   marital_status?: string
   date_of_birth?: string
   district: string
-  complete_address?: string
+  address?: string
   service_type: string
   service_duration?: string
   billing_rate: number

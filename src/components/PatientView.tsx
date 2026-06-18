@@ -66,7 +66,7 @@ export default function PatientView({
     contact: '',
     gender: '',
     district: '',
-    complete_address: '',
+    address: '',
     service_type: '24hr',
     billing_rate: '',
     status: 'Active' as 'Active' | 'Pending' | 'Completed' | 'Cancelled',
@@ -94,7 +94,7 @@ export default function PatientView({
     marital_status: '',
     date_of_birth: '',
     district: '',
-    complete_address: '',
+    address: '',
     service_type: '12h_day',
     billing_rate: '',
     status: 'Pending' as 'Active' | 'Pending' | 'Completed' | 'Cancelled',
@@ -237,7 +237,7 @@ export default function PatientView({
       contact: patient.contact || '',
       gender: patient.gender || '',
       district: patient.district || '',
-      complete_address: patient.complete_address || patient.address || '',
+      address: patient.address || '',
       service_type: patient.service_type || '24hr',
       billing_rate: (patient.billing_rate || 0).toString(),
       status: patient.status || 'Active',
@@ -262,7 +262,7 @@ export default function PatientView({
         marital_status: '',
         date_of_birth: '',
         district: '',
-        complete_address: '',
+        address: '',
         service_type: '12h_day',
         billing_rate: '',
         status: 'Pending',
@@ -445,8 +445,8 @@ export default function PatientView({
                 Complete Address
               </label>
               <textarea
-                value={formData.complete_address}
-                onChange={(e) => setFormData({ ...formData, complete_address: e.target.value })}
+                value={formData.address}
+                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40 h-24"
               />
             </div>
@@ -632,10 +632,8 @@ export default function PatientView({
                   Address
                 </label>
                 <textarea
-                  value={editFormData.complete_address}
-                  onChange={(e) =>
-                    setEditFormData({ ...editFormData, complete_address: e.target.value })
-                  }
+                  value={editFormData.address}
+                  onChange={(e) => setEditFormData({ ...editFormData, address: e.target.value })}
                   className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-emerald-500/40 h-24"
                 />
               </div>
@@ -741,13 +739,13 @@ export default function PatientView({
                 </div>
               </div>
 
-              {patient.complete_address && (
+              {patient.address && (
                 <div className="mb-6 p-4 bg-white/5 rounded-xl border border-white/5">
                   <p className="text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-1 flex items-center gap-2">
                     <MapPin size={10} /> Residence Address
                   </p>
                   <p className="text-[11px] text-slate-300 font-medium leading-relaxed">
-                    {patient.complete_address}
+                    {patient.address}
                   </p>
                 </div>
               )}
