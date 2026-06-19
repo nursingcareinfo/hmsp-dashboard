@@ -9,6 +9,7 @@ import {
   Clock,
   MapPin,
   User,
+  UserX,
   CreditCard,
   Plus,
   AlertCircle,
@@ -23,6 +24,7 @@ import {
   Pencil,
   Package,
   X,
+  XCircle,
 } from 'lucide-react'
 import type { Patient, PatientInvoice } from '../types'
 import { cn, formatPKR, formatNameInput, formatCNICInput, formatPhoneInput } from '../lib/utils'
@@ -103,6 +105,12 @@ export default function PatientView({
     status: 'Pending' as 'Active' | 'Pending' | 'Completed' | 'Cancelled',
     start_date: new Date().toISOString().split('T')[0],
   })
+
+  const [selectedPatientForEndService, setSelectedPatientForEndService] = useState<any | null>(null)
+  const [endServiceDate, setEndServiceDate] = useState('')
+  const [endServiceReason, setEndServiceReason] = useState('')
+  const [endServiceNotes, setEndServiceNotes] = useState('')
+  const [isEndingService, setIsEndingService] = useState(false)
 
   const loadPatients = async () => {
     try {
@@ -685,7 +693,9 @@ export default function PatientView({
           const filteredPatients = patients.filter((p: any) => {
             if (statusFilter === 'All') return true
             if (statusFilter === 'Discontinued')
-              return p.status === 'Completed' || p.status === 'Cancelled'
+              return p.service_end_date != null
+            if (statusFilter === 'Active')
+              return p.status === 'Active' && !p.service_end_date
             return p.status === statusFilter
           })
           return filteredPatients.length === 0 ? (
@@ -722,6 +732,42 @@ export default function PatientView({
                         >
                           <Pencil size={14} />
                         </button>
+                        {!patient.service_end_date ? (
+                          <button
+                            onClick={() => {
+                              setSelectedPatientForEndService(patient)
+                              setEndServiceDate(new Date().toISOString().split('T')[0])
+                              setEndServiceReason('')
+                              setEndServiceNotes('')
+                            }}
+                            className="p-1.5 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-colors text-gray-500 dark:text-neutral-400 hover:text-red-600 dark:hover:text-red-400"
+                            title="End Service"
+                          >
+                            <UserX size={14} />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={async () => {
+                              if (!confirm('Reinstate this patient?')) return
+                              try {
+                                await patientService.updatePatient(patient.id, {
+                                  status: 'Active',
+                                  service_end_date: null,
+                                  service_end_reason: null,
+                                  service_end_notes: null,
+                                })
+                                loadPatients()
+                              } catch (err) {
+                                console.error('Error reinstating patient:', err)
+                                alert('Failed to reinstate patient')
+                              }
+                            }}
+                            className="p-1.5 hover:bg-emerald-50 dark:hover:bg-emerald-950 rounded-lg transition-colors text-emerald-600 dark:text-emerald-400"
+                            title="Reinstate"
+                          >
+                            <Loader2 size={14} />
+                          </button>
+                        )}
                       </div>
                       <div className="flex flex-wrap items-center gap-2 mt-1">
                         <span className="text-[10px] text-gray-500 dark:text-neutral-400 uppercase tracking-widest font-bold flex items-center gap-1">
@@ -739,12 +785,14 @@ export default function PatientView({
                         <span
                           className={cn(
                             'px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border',
-                            patient.status === 'Active'
-                              ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
-                              : 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 border-blue-200 dark:border-blue-800'
+                            patient.service_end_date
+                              ? 'bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 border-red-500/30 dark:border-red-800'
+                              : patient.status === 'Active'
+                                ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+                                : 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 border-blue-200 dark:border-blue-800'
                           )}
                         >
-                          {patient.status}
+                          {patient.service_end_date ? 'DISCONTINUED' : patient.status}
                         </span>
                       </div>
                     </div>
@@ -1513,6 +1561,128 @@ export default function PatientView({
           )
         })()}
       </div>
+
+      {/* End Service Modal */}
+      {selectedPatientForEndService && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-2xl shadow-2xl dark:shadow-none overflow-hidden p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-sm font-black text-red-600 dark:text-red-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                <UserX size={20} /> End Service
+              </h3>
+              <button
+                onClick={() => setSelectedPatientForEndService(null)}
+                className="text-gray-500 dark:text-neutral-400 hover:text-gray-800 dark:text-neutral-100"
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-gray-50 dark:bg-neutral-800/80 rounded-xl p-4 border border-gray-200 dark:border-neutral-700">
+                <p className="text-sm font-bold text-gray-800 dark:text-neutral-100">
+                  {selectedPatientForEndService.full_name}
+                </p>
+                <p className="text-[10px] font-mono text-gray-500 dark:text-neutral-400">
+                  {selectedPatientForEndService.cnic}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
+                  Date of Discontinuation
+                </label>
+                <input
+                  type="date"
+                  value={endServiceDate}
+                  onChange={(e) => setEndServiceDate(e.target.value)}
+                  className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-red-500/40"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
+                  Reason
+                </label>
+                <select
+                  value={endServiceReason}
+                  onChange={(e) => setEndServiceReason(e.target.value)}
+                  className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-red-500/40"
+                >
+                  <option value="">Select a reason...</option>
+                  <option value="Cured">Cured</option>
+                  <option value="Deceased">Deceased</option>
+                  <option value="Transferred">Transferred</option>
+                  <option value="Family Decision">Family Decision</option>
+                  <option value="Violation">Violation</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
+                  Notes (optional)
+                </label>
+                <textarea
+                  value={endServiceNotes}
+                  onChange={(e) => setEndServiceNotes(e.target.value)}
+                  rows={3}
+                  className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-red-500/40"
+                />
+              </div>
+
+              <div className="bg-red-50 dark:bg-red-950 border border-red-500/20 rounded-xl p-4">
+                <p className="text-[10px] text-red-600 dark:text-red-400 font-bold uppercase tracking-widest leading-relaxed">
+                  This will mark the patient as discontinued, unassign all staff shifts, and cancel unpaid invoices.
+                </p>
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setSelectedPatientForEndService(null)}
+                  className="flex-1 py-4 bg-gray-200 hover:bg-gray-300 text-gray-800 dark:text-neutral-100 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!endServiceDate || !endServiceReason) {
+                      alert('Please fill in date and reason')
+                      return
+                    }
+                    setIsEndingService(true)
+                    try {
+                      await patientService.updatePatient(selectedPatientForEndService.id, {
+                        status: 'Cancelled',
+                        service_end_date: endServiceDate,
+                        service_end_reason: endServiceReason,
+                        service_end_notes: endServiceNotes || null,
+                      })
+                      await shiftService.unassignPatientShifts(selectedPatientForEndService.id)
+                      await patientInvoiceService.cancelUnpaidInvoices(selectedPatientForEndService.id)
+                      setSelectedPatientForEndService(null)
+                      loadPatients()
+                    } catch (err) {
+                      console.error('Error ending service:', err)
+                      alert('Failed to end service')
+                    } finally {
+                      setIsEndingService(false)
+                    }
+                  }}
+                  disabled={!endServiceDate || !endServiceReason || isEndingService}
+                  className="flex-1 py-4 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white text-[10px] uppercase tracking-widest rounded-xl shadow-lg shadow-red-500/20 flex items-center justify-center gap-2"
+                >
+                  {isEndingService ? (
+                    <Loader2 className="animate-spin" size={16} />
+                  ) : (
+                    <>End Service</>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

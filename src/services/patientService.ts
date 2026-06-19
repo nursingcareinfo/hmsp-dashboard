@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase'
-import type { PatientInvoice } from '../types'
+import type { InvoiceStatus, PatientInvoice } from '../types'
 
 export interface Patient {
   id?: string
@@ -17,6 +17,9 @@ export interface Patient {
   status: 'Active' | 'Pending' | 'Completed' | 'Cancelled'
   start_date?: string
   end_date?: string
+  service_end_date?: string | null
+  service_end_reason?: string | null
+  service_end_notes?: string | null
 }
 
 export const patientService = {
@@ -178,6 +181,30 @@ export const patientInvoiceService = {
 
     if (error) throw error
     return data as PatientInvoice
+  },
+
+  async updateInvoiceStatus(invoiceId: string, status: InvoiceStatus) {
+    const { data, error } = await supabase
+      .from('patient_invoices')
+      .update({ status })
+      .eq('id', invoiceId)
+      .select()
+      .single()
+
+    if (error) throw error
+    return data as PatientInvoice
+  },
+
+  async cancelUnpaidInvoices(patientId: string) {
+    const { data, error } = await supabase
+      .from('patient_invoices')
+      .update({ status: 'Cancelled' })
+      .eq('patient_id', patientId)
+      .eq('status', 'Unpaid')
+      .select()
+
+    if (error) throw error
+    return data as PatientInvoice[]
   },
 }
 

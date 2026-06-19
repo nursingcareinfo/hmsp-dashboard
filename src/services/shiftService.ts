@@ -74,6 +74,34 @@ export const shiftService = {
     return data as ManualShift[]
   },
 
+  async getShiftsByPatient(patientId: string) {
+    const { data, error } = await supabase
+      .from('manual_shifts')
+      .select('*, employee:employee_id(id, is_available)')
+      .eq('patient_id', patientId)
+      .in('attendance_status', ['Scheduled'])
+
+    if (error) throw error
+    return data || []
+  },
+
+  async unassignPatientShifts(patientId: string) {
+    const shifts = await this.getShiftsByPatient(patientId)
+    for (const shift of shifts) {
+      await supabase
+        .from('manual_shifts')
+        .update({ attendance_status: 'Abandoned' })
+        .eq('id', shift.id)
+
+      if (shift.employee?.id) {
+        await supabase
+          .from('employees')
+          .update({ is_available: true })
+          .eq('id', shift.employee.id)
+      }
+    }
+  },
+
   async getPatientAssignments(patientIds: string[]) {
     if (patientIds.length === 0) return []
     const today = new Date().toISOString().split('T')[0]
