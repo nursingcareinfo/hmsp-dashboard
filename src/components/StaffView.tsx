@@ -54,7 +54,7 @@ export default function StaffView({
     phone_primary: '',
     gender: '',
     marital_status: '',
-    date_of_birth: '',
+    dob: '',
     district: '',
     category: 'Nurse',
     position_applied: '',
@@ -208,7 +208,7 @@ export default function StaffView({
         phone_primary: '',
         gender: '',
         marital_status: '',
-        date_of_birth: '',
+        dob: '',
         district: '',
         category: 'Nurse',
         position_applied: '',
@@ -471,8 +471,8 @@ export default function StaffView({
               </label>
               <input
                 type="date"
-                value={formData.date_of_birth}
-                onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                value={formData.dob}
+                onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
                 className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -483,9 +483,9 @@ export default function StaffView({
               <input
                 readOnly
                 value={
-                  formData.date_of_birth
+                  formData.dob
                     ? (() => {
-                        const b = new Date(formData.date_of_birth)
+                        const b = new Date(formData.dob)
                         const t = new Date()
                         let a = t.getFullYear() - b.getFullYear()
                         const m = t.getMonth() - b.getMonth()
