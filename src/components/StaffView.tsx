@@ -54,6 +54,7 @@ export default function StaffView({
     phone_primary: '',
     gender: '',
     marital_status: '',
+    religion: '',
     dob: '',
     district: '',
     category: 'Nurse',
@@ -196,6 +197,7 @@ export default function StaffView({
     try {
       await staffService.createStaff({
         ...formData,
+        dob: formData.dob || null,
         rating: 5.0,
         critical_missing_info:
           !formData.full_name || !formData.cnic_number || !formData.phone_primary,
@@ -208,6 +210,7 @@ export default function StaffView({
         phone_primary: '',
         gender: '',
         marital_status: '',
+        religion: '',
         dob: '',
         district: '',
         category: 'Nurse',
@@ -463,6 +466,22 @@ export default function StaffView({
                 <option value="Married">Married</option>
                 <option value="Divorced">Divorced</option>
                 <option value="Widowed">Widowed</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest text-left block">
+                Religion
+              </label>
+              <select
+                value={formData.religion}
+                onChange={(e) => setFormData({ ...formData, religion: e.target.value })}
+                className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40"
+              >
+                <option value="">Select Religion</option>
+                <option value="Christian">Christian</option>
+                <option value="Muslim">Muslim</option>
+                <option value="Hindu">Hindu</option>
+                <option value="Other">Other</option>
               </select>
             </div>
             <div className="space-y-2">
