@@ -333,10 +333,10 @@ export default function StaffAttendanceCalendarModal({
           <div className="flex items-center justify-between text-[10px]">
             <div className="flex items-center gap-4">
               <div>
-                <span className="text-emerald-600 dark:text-emerald-300 font-bold">
-                  {summary.paidDays}
-                </span>
-                <span className="text-gray-400 dark:text-neutral-500 ml-1">paid</span>
+<span className="text-emerald-600 dark:text-emerald-300 font-bold">
+  {summary.paidDays}
+</span>
+<span className="text-gray-400 dark:text-neutral-500 ml-1">Total Working Days</span>
               </div>
               <div className="flex items-center gap-3">
                 <div>

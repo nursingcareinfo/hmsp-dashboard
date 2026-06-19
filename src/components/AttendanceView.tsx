@@ -66,6 +66,13 @@ export default function AttendanceView() {
     loadData()
   }
 
+  const getWorkingDays = (staffId: string) => {
+    const staffAttendance = attendance.filter((a) => a.employee_id === staffId)
+    const present = staffAttendance.filter((a) => a.status === 'Present').length
+    const halfDay = staffAttendance.filter((a) => a.status === 'Half-Day').length
+    return present + halfDay * 0.5
+  }
+
   const getStatusColor = (status: string | undefined) => {
     switch (status) {
       case 'Present':
@@ -144,7 +151,7 @@ export default function AttendanceView() {
         ) : (
           <div className="min-w-[800px]">
             {/* Header Row */}
-            <div className="grid grid-cols-[200px_repeat(31,1fr)] gap-1 mb-2">
+            <div className="grid grid-cols-[200px_repeat(31,1fr)_80px] gap-1 mb-2">
               <div className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-neutral-400 py-2">
                 Staff Member
               </div>
@@ -156,11 +163,14 @@ export default function AttendanceView() {
                   {i + 1}
                 </div>
               ))}
+              <div className="text-[8px] text-center font-bold text-gray-400 dark:text-neutral-500 py-2 border-b border-gray-200 dark:border-neutral-700">
+                Work
+              </div>
             </div>
 
             {/* Staff Rows */}
             {staff.map((s) => (
-              <div key={s.id} className="grid grid-cols-[200px_repeat(31,1fr)] gap-1 mb-1">
+              <div key={s.id} className="grid grid-cols-[200px_repeat(31,1fr)_80px] gap-1 mb-1">
                 <div className="text-[10px] font-bold text-gray-800 dark:text-neutral-100 py-2 truncate pr-2">
                   {s.full_name}
                 </div>
@@ -179,6 +189,9 @@ export default function AttendanceView() {
                     </button>
                   )
                 })}
+                <div className="h-8 rounded flex items-center justify-center text-[10px] font-bold text-emerald-600 dark:text-emerald-300 bg-emerald-500/10 dark:bg-emerald-950 border border-emerald-500/20">
+                  {getWorkingDays(s.id)}
+                </div>
               </div>
             ))}
           </div>
