@@ -10,6 +10,7 @@ coverage/
 .secrets.baseline
 
 .gemini/
+.worktrees/
 gha-creds-*.json
 
 # Supabase CLI auto-generated metadata
