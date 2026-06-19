@@ -23,6 +23,8 @@ import {
   Calendar,
   Ban,
   Receipt,
+  UserX,
+  Undo2,
 } from 'lucide-react'
 import { Staff } from '../types'
 import { cn, formatPKR, formatNameInput, formatCNICInput, formatPhoneInput } from '../lib/utils'
@@ -99,6 +101,12 @@ export default function StaffView({
   const [assignPatientId, setAssignPatientId] = useState('')
   const [assignShiftType, setAssignShiftType] = useState<'Morning' | 'Night'>('Morning')
   const [isAssigningShift, setIsAssigningShift] = useState(false)
+  const [selectedStaffForEndService, setSelectedStaffForEndService] = useState<any | null>(null)
+  const [endServiceDate, setEndServiceDate] = useState('')
+  const [endServiceReason, setEndServiceReason] = useState('')
+  const [endServiceNotes, setEndServiceNotes] = useState('')
+  const [isEndingService, setIsEndingService] = useState(false)
+  const [isReinstating, setIsReinstating] = useState(false)
 
   const calculateAge = (dob: string | undefined) => {
     if (!dob) return null
@@ -349,9 +357,10 @@ export default function StaffView({
 
     const matchesAvailability =
       availabilityFilter === 'All' ||
-      (availabilityFilter === 'Available' && s.is_available) ||
-      (availabilityFilter === 'On Duty' && !s.is_available) ||
-      (availabilityFilter === 'Blacklisted' && s.is_blacklisted)
+      (availabilityFilter === 'Available' && s.is_available && !s.service_end_date) ||
+      (availabilityFilter === 'On Duty' && !s.is_available && !s.service_end_date) ||
+      (availabilityFilter === 'Blacklisted' && s.is_blacklisted && !s.service_end_date) ||
+      (availabilityFilter === 'Service Ended' && s.service_end_date)
 
     return matchesSearch && matchesCategory && matchesAvailability
   })
@@ -629,7 +638,7 @@ export default function StaffView({
         </div>
 
         <div className="flex gap-2 w-full overflow-x-auto pb-2 scrollbar-hide">
-          {['All', 'Available', 'On Duty', 'Blacklisted'].map((filter) => (
+          {['All', 'Available', 'On Duty', 'Blacklisted', 'Service Ended'].map((filter) => (
             <button
               key={filter}
               onClick={() => setAvailabilityFilter(filter)}
@@ -640,7 +649,9 @@ export default function StaffView({
                     ? 'bg-red-500/20 dark:bg-red-950 text-red-600 dark:text-red-400 border border-red-500/30 dark:border-red-800'
                     : filter === 'On Duty'
                       ? 'bg-amber-500/20 dark:bg-amber-950 text-amber-600 dark:text-amber-400 border border-amber-500/30 dark:border-amber-800'
-                      : 'bg-emerald-500/20 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30 dark:border-emerald-800'
+                      : filter === 'Service Ended'
+                        ? 'bg-red-500/20 dark:bg-red-950 text-red-600 dark:text-red-400 border border-red-500/30 dark:border-red-800'
+                        : 'bg-emerald-500/20 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30 dark:border-emerald-800'
                   : 'bg-gray-100 dark:bg-neutral-800/50 text-gray-500 dark:text-neutral-400 hover:text-gray-600 dark:text-neutral-300 border border-gray-200 dark:border-neutral-700'
               )}
             >
@@ -648,7 +659,9 @@ export default function StaffView({
                 ? '✓ Available'
                 : filter === 'Blacklisted'
                   ? '✕ Blacklisted'
-                  : filter}
+                  : filter === 'Service Ended'
+                    ? 'Service Ended'
+                    : filter}
             </button>
           ))}
         </div>
@@ -684,7 +697,9 @@ export default function StaffView({
                 staff.critical_missing_info &&
                   'border-red-500/30 dark:border-red-800 ring-1 ring-red-500/20 dark:ring-red-900/50',
                 staff.is_blacklisted &&
-                  'border-rose-500/40 dark:border-rose-800 ring-1 ring-rose-500/20 opacity-70'
+                  'border-rose-500/40 dark:border-rose-800 ring-1 ring-rose-500/20 opacity-70',
+                staff.service_end_date &&
+                  'border-red-500/40 dark:border-red-800 ring-1 ring-red-500/20 opacity-70'
               )}
             >
               {/* Header - Avatar + Name + Quick Actions */}
@@ -741,6 +756,47 @@ export default function StaffView({
                   >
                     <Ban size={14} />
                   </button>
+                  {!staff.service_end_date ? (
+                    <button
+                      onClick={() => {
+                        setSelectedStaffForEndService(staff)
+                        setEndServiceDate(new Date().toISOString().split('T')[0])
+                        setEndServiceReason('')
+                        setEndServiceNotes('')
+                      }}
+                      className="p-1.5 hover:bg-gray-50 dark:bg-neutral-800/80 rounded-lg transition-colors text-gray-500 dark:text-neutral-400 hover:text-red-600 dark:text-red-400"
+                      title="End Service"
+                    >
+                      <UserX size={14} />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        if (!confirm('Reinstate this staff member?')) return
+                        setIsReinstating(true)
+                        try {
+                          await staffService.updateStaff(staff.id, {
+                            service_end_date: null,
+                            service_end_reason: null,
+                            service_end_notes: null,
+                            is_active: true,
+                            is_available: true,
+                          })
+                          loadStaff()
+                        } catch (err) {
+                          console.error('Error reinstating staff:', err)
+                          alert('Failed to reinstate staff')
+                        } finally {
+                          setIsReinstating(false)
+                        }
+                      }}
+                      disabled={isReinstating}
+                      className="p-1.5 hover:bg-gray-50 dark:bg-neutral-800/80 rounded-lg transition-colors text-gray-500 dark:text-neutral-400 hover:text-emerald-600 dark:text-emerald-300"
+                      title="Reinstate"
+                    >
+                      <Undo2 size={14} />
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -780,6 +836,11 @@ export default function StaffView({
                 {staff.marital_status && (
                   <span className="text-purple-600 dark:text-purple-400/80">
                     • {staff.marital_status}
+                  </span>
+                )}
+                {staff.service_end_date && (
+                  <span className="text-red-500 dark:text-red-400 font-bold">
+                    • Service Ended {new Date(staff.service_end_date).toLocaleDateString('en-GB')}
                   </span>
                 )}
               </div>
@@ -1521,6 +1582,128 @@ export default function StaffView({
           staff={selectedStaffForLedger}
           onClose={() => setSelectedStaffForLedger(null)}
         />
+      )}
+
+      {/* End Service Modal */}
+      {selectedStaffForEndService && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-2xl shadow-2xl dark:shadow-none overflow-hidden p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-sm font-black text-red-600 dark:text-red-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                <UserX size={20} /> End Service
+              </h3>
+              <button
+                onClick={() => setSelectedStaffForEndService(null)}
+                className="text-gray-500 dark:text-neutral-400 hover:text-gray-800 dark:text-neutral-100"
+              >
+                <XCircle size={20} />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="bg-gray-50 dark:bg-neutral-800/80 rounded-xl p-4 border border-gray-200 dark:border-neutral-700">
+                <p className="text-sm font-bold text-gray-800 dark:text-neutral-100">
+                  {selectedStaffForEndService.full_name}
+                </p>
+                <p className="text-[10px] font-mono text-gray-500 dark:text-neutral-400">
+                  {selectedStaffForEndService.emp_no}
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
+                  Date of Leaving
+                </label>
+                <input
+                  type="date"
+                  value={endServiceDate}
+                  onChange={(e) => setEndServiceDate(e.target.value)}
+                  className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-red-500/40"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
+                  Reason
+                </label>
+                <select
+                  value={endServiceReason}
+                  onChange={(e) => setEndServiceReason(e.target.value)}
+                  className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-red-500/40"
+                >
+                  <option value="">Select a reason...</option>
+                  <option value="Resignation">Resignation</option>
+                  <option value="Termination">Termination</option>
+                  <option value="Contract Ended">Contract Ended</option>
+                  <option value="Retirement">Retirement</option>
+                  <option value="Deceased">Deceased</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
+                  Notes (optional)
+                </label>
+                <textarea
+                  value={endServiceNotes}
+                  onChange={(e) => setEndServiceNotes(e.target.value)}
+                  rows={3}
+                  className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-red-500/40"
+                />
+              </div>
+
+              <div className="bg-red-50 dark:bg-red-950 border border-red-500/20 rounded-xl p-4">
+                <p className="text-[10px] text-red-600 dark:text-red-400 font-bold uppercase tracking-widest leading-relaxed">
+                  This will mark the staff member as inactive and remove them from available staff
+                  assignments.
+                </p>
+              </div>
+
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setSelectedStaffForEndService(null)}
+                  className="flex-1 py-4 bg-gray-200 hover:bg-gray-300 text-gray-800 dark:text-neutral-100 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!endServiceDate || !endServiceReason) {
+                      alert('Please fill in date and reason')
+                      return
+                    }
+                    setIsEndingService(true)
+                    try {
+                      await staffService.updateStaff(selectedStaffForEndService.id, {
+                        service_end_date: endServiceDate,
+                        service_end_reason: endServiceReason,
+                        service_end_notes: endServiceNotes || null,
+                        is_active: false,
+                        is_available: false,
+                      })
+                      setSelectedStaffForEndService(null)
+                      loadStaff()
+                    } catch (err) {
+                      console.error('Error ending service:', err)
+                      alert('Failed to end service')
+                    } finally {
+                      setIsEndingService(false)
+                    }
+                  }}
+                  disabled={!endServiceDate || !endServiceReason || isEndingService}
+                  className="flex-1 py-4 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white text-[10px] uppercase tracking-widest rounded-xl shadow-lg shadow-red-500/20 flex items-center justify-center gap-2"
+                >
+                  {isEndingService ? (
+                    <Loader2 className="animate-spin" size={16} />
+                  ) : (
+                    <>End Service</>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

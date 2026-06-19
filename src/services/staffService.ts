@@ -40,6 +40,9 @@ export interface Staff {
   rating: number
   category?: string
   is_blacklisted?: boolean
+  service_end_date?: string | null
+  service_end_reason?: string | null
+  service_end_notes?: string | null
   created_at?: string
   updated_at?: string
 }

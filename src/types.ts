@@ -35,6 +35,9 @@ export interface Staff {
   dayShiftRate?: number
   nightShiftRate?: number
   acknowledgmentSigned: boolean
+  service_end_date?: string | null
+  service_end_reason?: string | null
+  service_end_notes?: string | null
   createdAt: any
   updatedAt: any
 }
