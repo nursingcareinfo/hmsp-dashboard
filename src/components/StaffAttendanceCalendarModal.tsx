@@ -27,7 +27,7 @@ function getPaidDaysCount(
       a.employee_id === staffId &&
       day >= range.start &&
       day <= range.end &&
-      (a.status === 'Day' || a.status === 'Night')
+      (a.status === 'Day' || a.status === 'Night' || a.status === 'Present')
     )
   }).length
 }
