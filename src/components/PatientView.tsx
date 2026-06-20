@@ -265,6 +265,8 @@ export default function PatientView({
         ...patientData,
         date_of_birth: formData.date_of_birth || null,
         billing_rate: parseFloat(formData.billing_rate) || 0,
+        guardian_name: formData.guardian_name || '',
+        guardian_contact: formData.guardian_contact || '',
       })
       alert('Patient registered successfully!')
       setShowForm(false)

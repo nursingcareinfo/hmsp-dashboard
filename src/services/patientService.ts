@@ -15,6 +15,8 @@ export interface Patient {
   service_duration?: string
   billing_rate: number
   status: 'Active' | 'Pending' | 'Completed' | 'Cancelled'
+  guardian_name?: string
+  guardian_contact?: string
   start_date?: string
   end_date?: string
   service_end_date?: string | null
