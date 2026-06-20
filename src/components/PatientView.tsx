@@ -262,6 +262,7 @@ export default function PatientView({
       const { start_date, ...patientData } = formData
       await patientService.createPatient({
         ...patientData,
+        date_of_birth: formData.date_of_birth || null,
         billing_rate: parseFloat(formData.billing_rate) || 0,
       })
       alert('Patient registered successfully!')
