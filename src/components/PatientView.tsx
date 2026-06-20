@@ -102,6 +102,7 @@ export default function PatientView({
     address: '',
     service_type: '12h_day',
     billing_rate: '',
+    guardian_name: '',
     status: 'Pending' as 'Active' | 'Pending' | 'Completed' | 'Cancelled',
   })
 
@@ -276,6 +277,7 @@ export default function PatientView({
         address: '',
         service_type: '12h_day',
         billing_rate: '',
+        guardian_name: '',
         status: 'Pending',
       })
       loadPatients()
