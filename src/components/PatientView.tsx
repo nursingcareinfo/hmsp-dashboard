@@ -103,7 +103,6 @@ export default function PatientView({
     service_type: '12h_day',
     billing_rate: '',
     status: 'Pending' as 'Active' | 'Pending' | 'Completed' | 'Cancelled',
-    start_date: new Date().toISOString().split('T')[0],
   })
 
   const [selectedPatientForEndService, setSelectedPatientForEndService] = useState<any | null>(null)
@@ -259,8 +258,9 @@ export default function PatientView({
     e.preventDefault()
     setIsSubmitting(true)
     try {
+      const { start_date, ...patientData } = formData
       await patientService.createPatient({
-        ...formData,
+        ...patientData,
         billing_rate: parseFloat(formData.billing_rate) || 0,
       })
       alert('Patient registered successfully!')
@@ -277,7 +277,6 @@ export default function PatientView({
         service_type: '12h_day',
         billing_rate: '',
         status: 'Pending',
-        start_date: new Date().toISOString().split('T')[0],
       })
       loadPatients()
     } catch (error) {
@@ -692,10 +691,8 @@ export default function PatientView({
         {(() => {
           const filteredPatients = patients.filter((p: any) => {
             if (statusFilter === 'All') return true
-            if (statusFilter === 'Discontinued')
-              return p.service_end_date != null
-            if (statusFilter === 'Active')
-              return p.status === 'Active' && !p.service_end_date
+            if (statusFilter === 'Discontinued') return p.service_end_date != null
+            if (statusFilter === 'Active') return p.status === 'Active' && !p.service_end_date
             return p.status === statusFilter
           })
           return filteredPatients.length === 0 ? (
@@ -1633,7 +1630,8 @@ export default function PatientView({
 
               <div className="bg-red-50 dark:bg-red-950 border border-red-500/20 rounded-xl p-4">
                 <p className="text-[10px] text-red-600 dark:text-red-400 font-bold uppercase tracking-widest leading-relaxed">
-                  This will mark the patient as discontinued, unassign all staff shifts, and cancel unpaid invoices.
+                  This will mark the patient as discontinued, unassign all staff shifts, and cancel
+                  unpaid invoices.
                 </p>
               </div>
 
@@ -1659,7 +1657,9 @@ export default function PatientView({
                         service_end_notes: endServiceNotes || null,
                       })
                       await shiftService.unassignPatientShifts(selectedPatientForEndService.id)
-                      await patientInvoiceService.cancelUnpaidInvoices(selectedPatientForEndService.id)
+                      await patientInvoiceService.cancelUnpaidInvoices(
+                        selectedPatientForEndService.id
+                      )
                       setSelectedPatientForEndService(null)
                       loadPatients()
                     } catch (err) {
