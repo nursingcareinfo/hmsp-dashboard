@@ -28,6 +28,7 @@ import {
 } from 'lucide-react'
 import { Staff } from '../types'
 import { cn, formatPKR, formatNameInput, formatCNICInput, formatPhoneInput } from '../lib/utils'
+import { fillRandomStaff } from '../lib/randomData'
 import { STAFF_CATEGORIES, KARACHI_AREAS } from '../constants'
 import { staffService } from '../services/staffService'
 import { advanceService } from '../services/advanceService'
@@ -403,9 +404,18 @@ export default function StaffView({
 
       {showForm && (
         <div className="bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 p-8 rounded-xl shadow-2xl dark:shadow-none animate-in fade-in slide-in-from-top-4 duration-300">
-          <h3 className="text-sm font-black text-blue-600 dark:text-blue-300 uppercase tracking-[0.2em] mb-6">
-            Staff Registration Form
-          </h3>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-sm font-black text-blue-600 dark:text-blue-300 uppercase tracking-[0.2em]">
+              Staff Registration Form
+            </h3>
+            <button
+              type="button"
+              onClick={() => setFormData(fillRandomStaff(formData))}
+              className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border border-amber-300 dark:border-amber-700 text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-950 transition-colors"
+            >
+              Fill Random
+            </button>
+          </div>
           <form onSubmit={handleRegisterStaff} className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest text-left block">

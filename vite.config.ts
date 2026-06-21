@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
       environment: 'jsdom',
       globals: true,
       setupFiles: './src/test/setup.ts',
-      exclude: ['node_modules', 'tests', 'dist'],
+      exclude: ['node_modules', 'tests', 'dist', '.kilo', '.worktrees'],
     },
   }
 })
