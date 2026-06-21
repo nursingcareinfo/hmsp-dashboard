@@ -51,6 +51,7 @@ import PatientIntakesView from './components/PatientIntakesView'
 import StaffIntakesView from './components/StaffIntakesView'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import ShareIntakeModal from './components/ShareIntakeModal'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 function AppContent() {
   const { user, loading, signOut } = useAuth()
@@ -189,86 +190,127 @@ function AppContent() {
 
       {/* Main Content */}
       <main className="flex-1 relative overflow-auto pb-24 md:pb-8 p-4 md:p-8">
-        <header className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center border-b border-[var(--color-border)] pb-6 gap-4">
-          <div>
-            <h1 className="text-xl md:text-2xl font-black tracking-tighter text-gray-800 dark:text-neutral-100">
-              HMSP{' '}
-              <span className="text-emerald-600 dark:text-emerald-300 uppercase">
-                High-Performance
-              </span>{' '}
-              Ledger
-            </h1>
-            <p className="text-[10px] text-[var(--color-ink-dim)] uppercase tracking-widest mt-1 font-bold flex items-center gap-2">
-              Manual Management • Karachi HQ • Karachi-S1
-              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-300 text-[8px] font-black tracking-[0.2em]">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                DEMO
-              </span>
-            </p>
-          </div>
-
-          <div className="flex gap-4 md:gap-8 items-center justify-between md:justify-end">
-            <div className="text-right">
-              <p className="text-[10px] text-[var(--color-ink-dim)] uppercase tracking-widest font-black mb-1">
-                Estimated MTD Margin
-              </p>
-              <p className="text-xl md:text-2xl font-mono text-emerald-600 dark:text-emerald-300 font-bold tracking-tighter">
-                PKR {mtdMargin.toLocaleString()}
+        <ErrorBoundary>
+          <header className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center border-b border-[var(--color-border)] pb-6 gap-4">
+            <div>
+              <h1 className="text-xl md:text-2xl font-black tracking-tighter text-gray-800 dark:text-neutral-100">
+                HMSP{' '}
+                <span className="text-emerald-600 dark:text-emerald-300 uppercase">
+                  High-Performance
+                </span>{' '}
+                Ledger
+              </h1>
+              <p className="text-[10px] text-[var(--color-ink-dim)] uppercase tracking-widest mt-1 font-bold flex items-center gap-2">
+                Manual Management • Karachi HQ • Karachi-S1
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-emerald-600 dark:text-emerald-300 text-[8px] font-black tracking-[0.2em]">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  DEMO
+                </span>
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center">
-                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(5,150,105,0.4)]"></div>
+
+            <div className="flex gap-4 md:gap-8 items-center justify-between md:justify-end">
+              <div className="text-right">
+                <p className="text-[10px] text-[var(--color-ink-dim)] uppercase tracking-widest font-black mb-1">
+                  Estimated MTD Margin
+                </p>
+                <p className="text-xl md:text-2xl font-mono text-emerald-600 dark:text-emerald-300 font-bold tracking-tighter">
+                  PKR {mtdMargin.toLocaleString()}
+                </p>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 flex items-center justify-center">
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(5,150,105,0.4)]"></div>
+                </div>
               </div>
             </div>
+          </header>
+
+          <div className="mb-8 flex justify-between items-center">
+            <div>
+              <h2 className="text-sm font-bold text-[var(--color-ink-dim)] uppercase tracking-widest flex items-center gap-2">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                {activeView.replace('-', ' ')}
+              </h2>
+            </div>
           </div>
-        </header>
 
-        <div className="mb-8 flex justify-between items-center">
-          <div>
-            <h2 className="text-sm font-bold text-[var(--color-ink-dim)] uppercase tracking-widest flex items-center gap-2">
-              <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-              {activeView.replace('-', ' ')}
-            </h2>
-          </div>
-        </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeView}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="h-full"
+            >
+              {activeView === 'dashboard' && (
+                <ErrorBoundary>
+                  <DashboardView setActiveView={setActiveView} />
+                </ErrorBoundary>
+              )}
+              {activeView === 'staff' && (
+                <ErrorBoundary>
+                  <StaffView
+                    setActiveView={setActiveView}
+                    onSelectPatient={setHighlightedPatientId}
+                  />
+                </ErrorBoundary>
+              )}
+              {activeView === 'ocr' && (
+                <ErrorBoundary>
+                  <OCRView />
+                </ErrorBoundary>
+              )}
+              {activeView === 'patients' && (
+                <ErrorBoundary>
+                  <PatientView
+                    highlightedPatientId={highlightedPatientId}
+                    onClearHighlight={() => setHighlightedPatientId(null)}
+                  />
+                </ErrorBoundary>
+              )}
+              {activeView === 'matchmaker' && (
+                <ErrorBoundary>
+                  <MatchmakerView />
+                </ErrorBoundary>
+              )}
+              {activeView === 'attendance' && (
+                <ErrorBoundary>
+                  <AttendanceView />
+                </ErrorBoundary>
+              )}
+              {activeView === 'memory' && (
+                <ErrorBoundary>
+                  <MemoryView />
+                </ErrorBoundary>
+              )}
+              {activeView === 'patient_intakes' && (
+                <ErrorBoundary>
+                  <PatientIntakesView />
+                </ErrorBoundary>
+              )}
+              {activeView === 'staff_intakes' && (
+                <ErrorBoundary>
+                  <StaffIntakesView />
+                </ErrorBoundary>
+              )}
+              {activeView === 'finance' && (
+                <ErrorBoundary>
+                  <FinanceView />
+                </ErrorBoundary>
+              )}
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeView}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="h-full"
-          >
-            {activeView === 'dashboard' && <DashboardView setActiveView={setActiveView} />}
-            {activeView === 'staff' && (
-              <StaffView setActiveView={setActiveView} onSelectPatient={setHighlightedPatientId} />
-            )}
-            {activeView === 'ocr' && <OCRView />}
-            {activeView === 'patients' && (
-              <PatientView
-                highlightedPatientId={highlightedPatientId}
-                onClearHighlight={() => setHighlightedPatientId(null)}
-              />
-            )}
-            {activeView === 'matchmaker' && <MatchmakerView />}
-            {activeView === 'attendance' && <AttendanceView />}
-            {activeView === 'memory' && <MemoryView />}
-            {activeView === 'patient_intakes' && <PatientIntakesView />}
-            {activeView === 'staff_intakes' && <StaffIntakesView />}
-            {activeView === 'finance' && <FinanceView />}
-
-            {activeView === 'whatsapp' && (
-              <div className="glass-card p-12 text-center opacity-50">
-                <MessageSquare size={48} className="mx-auto mb-4" />
-                <h2 className="text-xl font-medium">WhatsApp Analytics</h2>
-                <p>Broadcast engagement and contact label tracking coming in Phase 2.</p>
-              </div>
-            )}
-          </motion.div>
-        </AnimatePresence>
+              {activeView === 'whatsapp' && (
+                <div className="glass-card p-12 text-center opacity-50">
+                  <MessageSquare size={48} className="mx-auto mb-4" />
+                  <h2 className="text-xl font-medium">WhatsApp Analytics</h2>
+                  <p>Broadcast engagement and contact label tracking coming in Phase 2.</p>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </ErrorBoundary>
 
         {/* Mobile Bottom Navigation */}
         <div className="fixed bottom-0 left-0 right-0 h-20 bg-white dark:bg-neutral-900/80 backdrop-blur-xl border-t border-[var(--color-border)] flex items-center justify-around px-2 z-50 md:hidden pb-safe">
