@@ -260,11 +260,17 @@ export default function PatientView({
     e.preventDefault()
     setIsSubmitting(true)
     try {
+      const billingRate = parseFloat(formData.billing_rate)
+      if (billingRate > 99_999_999) {
+        alert('Monthly package too large. Maximum is 99,999,999 PKR.')
+        setIsSubmitting(false)
+        return
+      }
       const { start_date, ...patientData } = formData
       await patientService.createPatient({
         ...patientData,
         date_of_birth: formData.date_of_birth || null,
-        billing_rate: parseFloat(formData.billing_rate) || 0,
+        billing_rate: billingRate || 0,
         guardian_name: formData.guardian_name || '',
         guardian_contact: formData.guardian_contact || '',
       })
