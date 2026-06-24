@@ -27,95 +27,119 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
   ])
 
   const [fulfillmentRate, setFulfillmentRate] = useState(0)
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  async function loadStats() {
+    try {
+      const [activeStaff, availableStaff, activePatients, allStaff] = await Promise.all([
+        staffService.getActiveStaffCount(),
+        staffService.getAvailableStaffCount(),
+        patientService.getActivePatientsCount(),
+        staffService.getAllStaff(),
+      ])
+
+      let dailyMargin = 0
+      let patientsWithShifts = 0
+
+      try {
+        const { data: marginsData } = await supabase
+          .from('real_time_margin_view')
+          .select('daily_margin, daily_cost')
+        if (marginsData) {
+          dailyMargin = marginsData.reduce((acc, curr) => acc + Number(curr.daily_margin), 0)
+          patientsWithShifts = marginsData.filter((m) => Number(m.daily_cost) > 0).length
+        }
+      } catch (marginError) {
+        console.warn('Margin view not available yet:', marginError)
+      }
+
+      const mtdProjected = dailyMargin * 30
+
+      // More accurate Fulfillment Rate: (Patients with active shifts / Total Active Patients)
+      const rate = activePatients > 0 ? (patientsWithShifts / activePatients) * 100 : 0
+      setFulfillmentRate(Math.min(100, Math.round(rate * 10) / 10))
+
+      setStats([
+        { label: 'Active Staff', value: activeStaff.toString(), trend: '+2%', color: 'blue' },
+        {
+          label: 'Available Now',
+          value: availableStaff.toString(),
+          trend: '+5%',
+          color: 'green',
+        },
+        {
+          label: 'Active Patients',
+          value: activePatients.toString(),
+          trend: '+12%',
+          color: 'purple',
+        },
+        {
+          label: 'Est. MTD Margin',
+          value: mtdProjected > 0 ? mtdProjected.toLocaleString() : '---',
+          trend: '+18%',
+          color: 'emerald',
+          isCurrency: true,
+        },
+      ])
+
+      // Calculate distribution
+      const distribution = allStaff.reduce((acc: any, s) => {
+        const category = s.category || s.position_applied || 'Nurse'
+        acc[category] = (acc[category] || 0) + 1
+        return acc
+      }, {})
+
+      // Combine categories for charts
+      const categories = [
+        {
+          name: 'Nurse',
+          total:
+            (distribution['Nurse'] || 0) +
+            (distribution['R/N'] || 0) +
+            (distribution['BSN'] || 0) +
+            (distribution['Aid Nurse'] || 0),
+          color: '#3B82F6',
+        },
+        {
+          name: 'Care Taker',
+          total: distribution['Care Taker'] || distribution['Caretaker'] || 0,
+          color: '#60A5FA',
+        },
+        { name: 'Attendant', total: distribution['Attendant'] || 0, color: '#10B981' },
+        { name: 'Babysitter', total: distribution['Babysitter'] || 0, color: '#F59E0B' },
+      ]
+      setChartData(categories)
+
+      // Set recent staff
+      setRecentStaff(allStaff.slice(0, 5))
+    } catch (error) {
+      console.error('Error loading dashboard stats:', error)
+    }
+  }
+
+  async function handleForceRefresh() {
+    setIsRefreshing(true)
+
+    setStats([
+      { label: 'Active Staff', value: '...', trend: '+0%', color: 'blue' },
+      { label: 'Available Now', value: '...', trend: '+0%', color: 'green' },
+      { label: 'Active Patients', value: '...', trend: '+0%', color: 'purple' },
+      { label: 'Est. MTD Margin', value: '...', trend: '+0%', color: 'emerald', isCurrency: true },
+    ])
+    setChartData([
+      { name: 'Nurse', total: 0, color: '#3B82F6' },
+      { name: 'Care Taker', total: 0, color: '#60A5FA' },
+      { name: 'Attendant', total: 0, color: '#10B981' },
+      { name: 'Babysitter', total: 0, color: '#F59E0B' },
+    ])
+    setFulfillmentRate(0)
+    setRecentStaff([])
+
+    await loadStats()
+    setIsRefreshing(false)
+  }
 
   useEffect(() => {
-    async function loadStats() {
-      try {
-        const [activeStaff, availableStaff, activePatients, allStaff] = await Promise.all([
-          staffService.getActiveStaffCount(),
-          staffService.getAvailableStaffCount(),
-          patientService.getActivePatientsCount(),
-          staffService.getAllStaff(),
-        ])
-
-        let dailyMargin = 0
-        let patientsWithShifts = 0
-
-        try {
-          const { data: marginsData } = await supabase
-            .from('real_time_margin_view')
-            .select('daily_margin, daily_cost')
-          if (marginsData) {
-            dailyMargin = marginsData.reduce((acc, curr) => acc + Number(curr.daily_margin), 0)
-            patientsWithShifts = marginsData.filter((m) => Number(m.daily_cost) > 0).length
-          }
-        } catch (marginError) {
-          console.warn('Margin view not available yet:', marginError)
-        }
-
-        const mtdProjected = dailyMargin * 30
-
-        // More accurate Fulfillment Rate: (Patients with active shifts / Total Active Patients)
-        const rate = activePatients > 0 ? (patientsWithShifts / activePatients) * 100 : 0
-        setFulfillmentRate(Math.min(100, Math.round(rate * 10) / 10))
-
-        setStats([
-          { label: 'Active Staff', value: activeStaff.toString(), trend: '+2%', color: 'blue' },
-          {
-            label: 'Available Now',
-            value: availableStaff.toString(),
-            trend: '+5%',
-            color: 'green',
-          },
-          {
-            label: 'Active Patients',
-            value: activePatients.toString(),
-            trend: '+12%',
-            color: 'purple',
-          },
-          {
-            label: 'Est. MTD Margin',
-            value: mtdProjected > 0 ? mtdProjected.toLocaleString() : '---',
-            trend: '+18%',
-            color: 'emerald',
-            isCurrency: true,
-          },
-        ])
-
-        // Calculate distribution
-        const distribution = allStaff.reduce((acc: any, s) => {
-          const category = s.category || s.position_applied || 'Nurse'
-          acc[category] = (acc[category] || 0) + 1
-          return acc
-        }, {})
-
-        // Combine categories for charts
-        const categories = [
-          {
-            name: 'Nurse',
-            total:
-              (distribution['Nurse'] || 0) +
-              (distribution['R/N'] || 0) +
-              (distribution['BSN'] || 0) +
-              (distribution['Aid Nurse'] || 0),
-            color: '#3B82F6',
-          },
-          {
-            name: 'Care Taker',
-            total: distribution['Care Taker'] || distribution['Caretaker'] || 0,
-            color: '#60A5FA',
-          },
-          { name: 'Attendant', total: distribution['Attendant'] || 0, color: '#10B981' },
-          { name: 'Babysitter', total: distribution['Babysitter'] || 0, color: '#F59E0B' },
-        ]
-        setChartData(categories)
-
-        // Set recent staff
-        setRecentStaff(allStaff.slice(0, 5))
-      } catch (error) {
-        console.error('Error loading dashboard stats:', error)
-      }
-    }
     loadStats()
     const interval = setInterval(loadStats, 5 * 60 * 1000)
     return () => clearInterval(interval)
@@ -151,10 +175,28 @@ export default function DashboardView({ setActiveView }: { setActiveView: (view:
           </p>
         </div>
         <button
-          onClick={() => window.location.reload()}
-          className="px-4 py-2 bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200 dark:hover:bg-neutral-700 text-gray-600 dark:text-neutral-300 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors border border-gray-200 dark:border-neutral-700"
+          onClick={handleForceRefresh}
+          disabled={isRefreshing}
+          className="px-4 py-2 bg-gray-100 dark:bg-neutral-800 hover:bg-gray-200 dark:hover:bg-neutral-700 disabled:opacity-50 text-gray-600 dark:text-neutral-300 text-[10px] font-black uppercase tracking-widest rounded-lg transition-colors border border-gray-200 dark:border-neutral-700 flex items-center gap-2"
         >
-          Force Refresh
+          {isRefreshing && (
+            <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24" fill="none">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
+            </svg>
+          )}
+          {isRefreshing ? 'Refreshing...' : 'Force Refresh'}
         </button>
       </div>
 
