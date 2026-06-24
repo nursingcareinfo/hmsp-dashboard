@@ -197,7 +197,12 @@ export default function StaffView({
 
   useEffect(() => {
     loadStaff()
-    patientService.getAllPatients().then(setPatients).catch(console.error)
+    patientService
+      .getAllPatients()
+      .then(setPatients)
+      .catch((err) => {
+        console.error('Error fetching patients:', err)
+      })
   }, [])
 
   const handleRegisterStaff = async (e: React.FormEvent) => {

@@ -26,7 +26,7 @@ import {
   X,
   XCircle,
 } from 'lucide-react'
-import type { Patient, PatientInvoice } from '../types'
+import type { Patient, PatientInvoice, PatientStatus } from '../types'
 import { cn, formatPKR, formatNameInput, formatCNICInput, formatPhoneInput } from '../lib/utils'
 import { fillRandomPatient } from '../lib/randomData'
 import {
@@ -205,7 +205,12 @@ export default function PatientView({
 
   useEffect(() => {
     loadPatients()
-    staffService.getAvailableStaff().then(setAvailableStaff).catch(console.error)
+    staffService
+      .getAvailableStaff()
+      .then(setAvailableStaff)
+      .catch((err) => {
+        console.error('Error fetching available staff:', err)
+      })
   }, [])
 
   // Scroll to highlighted patient when navigating from staff card
@@ -670,7 +675,7 @@ export default function PatientView({
                 <select
                   value={editFormData.status}
                   onChange={(e) =>
-                    setEditFormData({ ...editFormData, status: e.target.value as any })
+                    setEditFormData({ ...editFormData, status: e.target.value as PatientStatus })
                   }
                   className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40"
                 >
@@ -997,7 +1002,9 @@ export default function PatientView({
                                     staffService
                                       .getAvailableStaff()
                                       .then(setAvailableStaff)
-                                      .catch(console.error)
+                                      .catch((err) => {
+                                        console.error('Error refreshing available staff:', err)
+                                      })
                                     setAssigningSlot(null)
                                     setAssigningStaffId('')
                                   } catch (err) {
@@ -1130,7 +1137,9 @@ export default function PatientView({
                                       staffService
                                         .getAvailableStaff()
                                         .then(setAvailableStaff)
-                                        .catch(console.error)
+                                        .catch((err) => {
+                                          console.error('Error refreshing available staff:', err)
+                                        })
                                       setAssigningSlot(null)
                                       setAssigningStaffId('')
                                     } catch (err) {

@@ -4,7 +4,7 @@ export interface AttendanceRecord {
   id: string
   employee_id: string
   attendance_date: string
-  status: 'Present' | 'Absent' | 'Late' | 'Half-Day'
+  status: 'Present' | 'Absent' | 'Late' | 'Half-Day' | 'Day' | 'Night'
   notes?: string
 }
 

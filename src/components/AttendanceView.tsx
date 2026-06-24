@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Calendar, ChevronLeft, ChevronRight, DollarSign, Download } from 'lucide-react'
-import { attendanceService } from '../services/attendanceService'
+import { attendanceService, type AttendanceRecord } from '../services/attendanceService'
 import { staffService } from '../services/staffService'
 import { cn } from '../lib/utils'
 
@@ -43,7 +43,7 @@ export default function AttendanceView() {
 
   const cycleStatus = async (staffId: string, day: number) => {
     const current = getStatusForStaffDay(staffId, day)
-    const cycle: Record<string, string | undefined> = {
+    const cycle: Record<string, AttendanceRecord['status'] | undefined> = {
       undefined: 'Present',
       Present: 'Absent',
       Absent: 'Late',
@@ -58,7 +58,7 @@ export default function AttendanceView() {
       await attendanceService.upsertAttendance({
         employee_id: staffId,
         attendance_date: dateStr,
-        status: next as any,
+        status: next,
       })
     } else {
       await attendanceService.deleteAttendance(staffId, dateStr)

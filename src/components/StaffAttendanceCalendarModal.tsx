@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, X, Calendar, DollarSign, Minus, Equal } from 'lucide-react'
-import { attendanceService } from '../services/attendanceService'
+import { attendanceService, type AttendanceRecord } from '../services/attendanceService'
 import { advanceService } from '../services/advanceService'
 import type { SalaryAdvance } from '../services/advanceService'
 import { cn, formatPKR } from '../lib/utils'
@@ -144,7 +144,7 @@ export default function StaffAttendanceCalendarModal({
     const current = getStatusForDay(day)
 
     // Determine the cycle based on available rates
-    let statuses: (string | undefined)[] = []
+    let statuses: (AttendanceRecord['status'] | undefined)[] = []
 
     if (dayRate && !nightRate) {
       statuses = [undefined, 'Day', 'Absent', 'Late', 'Half-Day']
@@ -165,7 +165,7 @@ export default function StaffAttendanceCalendarModal({
       await attendanceService.upsertAttendance({
         employee_id: staffId,
         attendance_date: dateStr,
-        status: next as any,
+        status: next,
       })
     } else {
       await attendanceService.deleteAttendance(staffId, dateStr)
@@ -333,10 +333,10 @@ export default function StaffAttendanceCalendarModal({
           <div className="flex items-center justify-between text-[10px]">
             <div className="flex items-center gap-4">
               <div>
-<span className="text-emerald-600 dark:text-emerald-300 font-bold">
-  {summary.paidDays}
-</span>
-<span className="text-gray-400 dark:text-neutral-500 ml-1">Total Working Days</span>
+                <span className="text-emerald-600 dark:text-emerald-300 font-bold">
+                  {summary.paidDays}
+                </span>
+                <span className="text-gray-400 dark:text-neutral-500 ml-1">Total Working Days</span>
               </div>
               <div className="flex items-center gap-3">
                 <div>

@@ -47,9 +47,12 @@ export default function OCRView() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: { 'image/*': ['.jpeg', '.jpg', '.png'] } as any,
+    accept: { 'image/*': ['.jpeg', '.jpg', '.png'] },
     multiple: true,
-  } as any)
+    onDragEnter: undefined,
+    onDragOver: undefined,
+    onDragLeave: undefined,
+  })
 
   const handleStartExtraction = async () => {
     if (files.length === 0) return
@@ -206,9 +209,9 @@ export default function OCRView() {
         complete_address: geographic_data.completeAddress,
         position_applied: professional_profile.positionApplied || 'Nurse',
         category: getCategory(professional_profile.positionApplied),
-        experience_years: parseFloat(professional_profile.experienceYears as any) || 0,
+        experience_years: parseFloat(String(professional_profile.experienceYears ?? '')) || 0,
         shift_preference: professional_profile.shiftPreference,
-        expected_salary_pkr: parseFloat(financial_reference.expectedSalaryPKR as any) || 0,
+        expected_salary_pkr: parseFloat(String(financial_reference.expectedSalaryPKR ?? '')) || 0,
         preferred_payment_method: financial_reference.preferredPayment,
         bank_info: financial_reference.bankDetails,
         pnc_registration_number: extractedData.pncRegistrationNumber || null,
