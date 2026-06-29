@@ -175,10 +175,8 @@ export default function StaffAttendanceCalendarModal({
 
   const getStatusColor = (status: string | undefined) => {
     switch (status) {
-      case 'Day':
+      case 'Present':
         return 'bg-emerald-500/20 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 border-emerald-500/30 dark:border-emerald-800'
-      case 'Night':
-        return 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30'
       case 'Absent':
         return 'bg-red-500/20 dark:bg-red-950 text-red-600 dark:text-red-400 border-red-500/30 dark:border-red-800'
       case 'Late':
