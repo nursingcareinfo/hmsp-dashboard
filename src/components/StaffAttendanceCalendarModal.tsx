@@ -147,12 +147,12 @@ export default function StaffAttendanceCalendarModal({
     let statuses: (AttendanceRecord['status'] | undefined)[] = []
 
     if (dayRate && !nightRate) {
-      statuses = [undefined, 'Day', 'Absent', 'Late', 'Half-Day']
+      statuses = [undefined, 'Present', 'Absent', 'Late', 'Half-Day']
     } else if (nightRate && !dayRate) {
-      statuses = [undefined, 'Night', 'Absent', 'Late', 'Half-Day']
+      statuses = [undefined, 'Present', 'Absent', 'Late', 'Half-Day']
     } else {
-      // Both or neither set - show both options
-      statuses = [undefined, 'Day', 'Night', 'Absent', 'Late', 'Half-Day']
+      // Both or neither set — use Present for paid attendance
+      statuses = [undefined, 'Present', 'Absent', 'Late', 'Half-Day']
     }
 
     const currentIndex = statuses.indexOf(current)
@@ -298,7 +298,7 @@ export default function StaffAttendanceCalendarModal({
                     ? Math.round(expectedSalary / 30)
                     : dayRate || nightRate || 0
                   const showRate =
-                    active && (status === 'Day' || status === 'Night') && singleRate > 0
+                    active && status === 'Present' && singleRate > 0
                   return (
                     <button
                       key={day}
@@ -316,7 +316,7 @@ export default function StaffAttendanceCalendarModal({
                       <span>{day}</span>
                       {showRate && (
                         <span className="text-[7px] font-medium leading-none mt-px opacity-80">
-                          {status === 'Day' ? '☀' : '🌙'}
+                          {status === 'Present' ? '✓' : '?'}
                           {formatRate(singleRate)}
                         </span>
                       )}
