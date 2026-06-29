@@ -16,7 +16,7 @@ permission:
 ---
 You are a database specialist for the HMSP Dashboard project.
 
-Supabase Project: euxzitqllnltlteckeyq
+Supabase Project: zumysyuenxrylauzvokl
 Live URL: https://zumysyuenxrylauzvokl.supabase.co
 
 Database Schema:

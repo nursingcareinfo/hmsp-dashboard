@@ -20,7 +20,7 @@ Infrastructure:
 - CI/CD: GitHub Actions (.github/workflows/deploy.yml)
 - Domain: https://nursingcareinfo.github.io/hmsp-dashboard/
 - Build system: Vite 6 + npm
-- Backend: Supabase Cloud (euxzitqllnltlteckeyq)
+- Backend: Supabase Cloud (zumysyuenxrylauzvokl)
 
 Deployment Pipeline:
 - Trigger: push to main branch OR manual via /deploy command
