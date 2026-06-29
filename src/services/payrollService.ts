@@ -26,7 +26,13 @@ export const payrollService = {
       .eq('staff_id', staffId)
       .order('period_start', { ascending: false })
 
-    if (error) throw error
+    if (error) {
+      // Table may not exist yet (schema cache / missing migration)
+      if (error.code === '42P01' || error.message?.includes('schema cache') || error.message?.includes('Could not find the table')) {
+        return []
+      }
+      throw error
+    }
     return data as PayrollRecord[]
   },
 }
