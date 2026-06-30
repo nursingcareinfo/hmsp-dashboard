@@ -67,7 +67,7 @@ export default function PatientView({
 
   const [editPatient, setEditPatient] = useState<any | null>(null)
   const [editFormData, setEditFormData] = useState({
-    full_name: '',
+    patient_name: '',
     cnic: '',
     mobile_number: '',
     district: '',
@@ -227,8 +227,9 @@ export default function PatientView({
     if (!editPatient) return
     setIsSavingEdit(true)
     try {
+      const { full_name, ...updateData } = editFormData
       await patientService.updatePatient(editPatient.id, {
-        ...editFormData,
+        ...updateData,
         monthly_package_pkr: parseFloat(editFormData.monthly_package_pkr) || 0,
       })
       setEditPatient(null)
@@ -244,7 +245,7 @@ export default function PatientView({
   function openEditModal(patient: any) {
     setEditPatient(patient)
     setEditFormData({
-      full_name: patient.full_name || patient.patient_name || '',
+      patient_name: patient.patient_name || patient.full_name || '',
       cnic: patient.cnic || '',
       mobile_number: patient.mobile_number || '',
       district: patient.district || '',
@@ -499,8 +500,8 @@ export default function PatientView({
                 </label>
                 <input
                   required
-                  value={editFormData.full_name}
-                  onChange={(e) => setEditFormData({ ...editFormData, full_name: e.target.value })}
+                  value={editFormData.patient_name}
+                  onChange={(e) => setEditFormData({ ...editFormData, patient_name: e.target.value })}
                   className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40"
                 />
               </div>
