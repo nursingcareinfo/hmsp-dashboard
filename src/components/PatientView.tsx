@@ -69,12 +69,11 @@ export default function PatientView({
   const [editFormData, setEditFormData] = useState({
     full_name: '',
     cnic: '',
-    contact: '',
-    gender: '',
+    mobile_number: '',
     district: '',
-    address: '',
+    complete_address: '',
     service_type: '24hr',
-    billing_rate: '',
+    monthly_package_pkr: '',
     status: 'Active' as 'Active' | 'Pending' | 'Completed' | 'Cancelled',
   })
   const [isSavingEdit, setIsSavingEdit] = useState(false)
@@ -95,16 +94,11 @@ export default function PatientView({
   const [formData, setFormData] = useState({
     full_name: '',
     cnic: '',
-    contact: '',
-    gender: '',
-    marital_status: '',
-    date_of_birth: '',
+    mobile_number: '',
     district: '',
-    address: '',
+    complete_address: '',
     service_type: '12h_day',
-    billing_rate: '',
-    guardian_name: '',
-    guardian_contact: '',
+    monthly_package_pkr: '',
     status: 'Pending' as 'Active' | 'Pending' | 'Completed' | 'Cancelled',
   })
 
@@ -146,14 +140,14 @@ export default function PatientView({
 
   async function loadIntakeStatus(patientsList: any[]) {
     try {
-      const phones = patientsList.map((p: any) => p.contact).filter(Boolean)
+      const phones = patientsList.map((p: any) => p.mobile_number).filter(Boolean)
       const cnics = patientsList.map((p: any) => p.cnic).filter(Boolean)
       const intakes = await patientIntakeService.getIntakeStatusByPhone(phones, cnics)
       const status: Record<string, boolean> = {}
       for (const intake of intakes) {
         const match = patientsList.find(
           (p: any) =>
-            (p.contact && intake.mobile === p.contact) || (p.cnic && intake.cnic === p.cnic)
+            (p.mobile_number && intake.mobile === p.mobile_number) || (p.cnic && intake.cnic === p.cnic)
         )
         if (match && intake.terms_accepted) {
           status[match.id] = true
@@ -189,7 +183,7 @@ export default function PatientView({
       const existing = await patientInvoiceService.getInvoicesForPatient(patient.id)
       const hasInvoice = existing.some((inv) => inv.period_start === periodStart)
       if (!hasInvoice) {
-        await patientInvoiceService.generateInvoice(patient.id, patient.billing_rate)
+        await patientInvoiceService.generateInvoice(patient.id, patient.monthly_package_pkr)
       }
     }
 
@@ -235,7 +229,7 @@ export default function PatientView({
     try {
       await patientService.updatePatient(editPatient.id, {
         ...editFormData,
-        billing_rate: parseFloat(editFormData.billing_rate) || 0,
+        monthly_package_pkr: parseFloat(editFormData.monthly_package_pkr) || 0,
       })
       setEditPatient(null)
       loadPatients()
@@ -250,14 +244,13 @@ export default function PatientView({
   function openEditModal(patient: any) {
     setEditPatient(patient)
     setEditFormData({
-      full_name: patient.full_name || '',
+      full_name: patient.full_name || patient.patient_name || '',
       cnic: patient.cnic || '',
-      contact: patient.contact || '',
-      gender: patient.gender || '',
+      mobile_number: patient.mobile_number || '',
       district: patient.district || '',
-      address: patient.address || '',
+      complete_address: patient.complete_address || '',
       service_type: patient.service_type || '24hr',
-      billing_rate: (patient.billing_rate || 0).toString(),
+      monthly_package_pkr: (patient.monthly_package_pkr || 0).toString(),
       status: patient.status || 'Active',
     })
   }
@@ -266,8 +259,8 @@ export default function PatientView({
     e.preventDefault()
     setIsSubmitting(true)
     try {
-      const billingRate = parseFloat(formData.billing_rate)
-      if (billingRate > 99_999_999) {
+      const monthlyPkg = parseFloat(formData.monthly_package_pkr)
+      if (monthlyPkg > 99_999_999) {
         alert('Monthly package too large. Maximum is 99,999,999 PKR.')
         setIsSubmitting(false)
         return
@@ -275,26 +268,18 @@ export default function PatientView({
       const { start_date, ...patientData } = formData
       await patientService.createPatient({
         ...patientData,
-        date_of_birth: formData.date_of_birth || null,
-        billing_rate: billingRate || 0,
-        guardian_name: formData.guardian_name || '',
-        guardian_contact: formData.guardian_contact || '',
+        monthly_package_pkr: monthlyPkg || 0,
       })
       alert('Patient registered successfully!')
       setShowForm(false)
       setFormData({
         full_name: '',
         cnic: '',
-        contact: '',
-        gender: '',
-        marital_status: '',
-        date_of_birth: '',
+        mobile_number: '',
         district: '',
-        address: '',
+        complete_address: '',
         service_type: '12h_day',
-        billing_rate: '',
-        guardian_name: '',
-        guardian_contact: '',
+        monthly_package_pkr: '',
         status: 'Pending',
       })
       loadPatients()
@@ -409,75 +394,14 @@ export default function PatientView({
               </label>
               <input
                 required
-                value={formData.contact}
+                value={formData.mobile_number}
                 onChange={(e) =>
-                  setFormData({ ...formData, contact: formatPhoneInput(e.target.value) })
+                  setFormData({ ...formData, mobile_number: formatPhoneInput(e.target.value) })
                 }
                 className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
-                Gender
-              </label>
-              <select
-                value={formData.gender}
-                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40"
-              >
-                <option value="">Select Gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
-                Marital Status
-              </label>
-              <select
-                value={formData.marital_status}
-                onChange={(e) => setFormData({ ...formData, marital_status: e.target.value })}
-                className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40"
-              >
-                <option value="">Select...</option>
-                <option value="Single">Single</option>
-                <option value="Married">Married</option>
-                <option value="Divorced">Divorced</option>
-                <option value="Widowed">Widowed</option>
-              </select>
-            </div>
-            <div className="space-y-2">
-              <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                value={formData.date_of_birth}
-                onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
-                className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
-                Age
-              </label>
-              <input
-                readOnly
-                value={
-                  formData.date_of_birth
-                    ? (() => {
-                        const b = new Date(formData.date_of_birth)
-                        const t = new Date()
-                        let a = t.getFullYear() - b.getFullYear()
-                        const m = t.getMonth() - b.getMonth()
-                        if (m < 0 || (m === 0 && t.getDate() < b.getDate())) a--
-                        return a + ' years'
-                      })()
-                    : ''
-                }
-                className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-400 dark:text-neutral-500 text-sm font-mono outline-none"
-              />
-            </div>
+
             <div className="space-y-2">
               <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
                 District (Karachi)
@@ -503,8 +427,8 @@ export default function PatientView({
                 Complete Address
               </label>
               <textarea
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                value={formData.complete_address}
+                onChange={(e) => setFormData({ ...formData, complete_address: e.target.value })}
                 className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40 h-24"
               />
             </div>
@@ -529,8 +453,10 @@ export default function PatientView({
               <input
                 type="number"
                 required
-                value={formData.billing_rate}
-                onChange={(e) => setFormData({ ...formData, billing_rate: e.target.value })}
+                value={formData.monthly_package_pkr}
+                onChange={(e) =>
+                  setFormData({ ...formData, monthly_package_pkr: e.target.value })
+                }
                 className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-emerald-600 dark:text-emerald-300 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -594,25 +520,12 @@ export default function PatientView({
                 </label>
                 <input
                   required
-                  value={editFormData.contact}
-                  onChange={(e) => setEditFormData({ ...editFormData, contact: e.target.value })}
+                  value={editFormData.mobile_number}
+                  onChange={(e) => setEditFormData({ ...editFormData, mobile_number: e.target.value })}
                   className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm font-mono outline-none focus:border-emerald-500/40"
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
-                  Gender
-                </label>
-                <select
-                  value={editFormData.gender}
-                  onChange={(e) => setEditFormData({ ...editFormData, gender: e.target.value })}
-                  className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40"
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
+
               <div className="space-y-2">
                 <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
                   District
@@ -661,9 +574,9 @@ export default function PatientView({
                 <input
                   type="number"
                   required
-                  value={editFormData.billing_rate}
+                  value={editFormData.monthly_package_pkr}
                   onChange={(e) =>
-                    setEditFormData({ ...editFormData, billing_rate: e.target.value })
+                    setEditFormData({ ...editFormData, monthly_package_pkr: e.target.value })
                   }
                   className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-emerald-600 dark:text-emerald-300 text-sm font-mono outline-none focus:border-emerald-500/40"
                 />
@@ -687,11 +600,11 @@ export default function PatientView({
               </div>
               <div className="space-y-2 md:col-span-2">
                 <label className="text-[9px] text-gray-500 dark:text-neutral-400 uppercase font-black tracking-widest">
-                  Address
+                  Complete Address
                 </label>
                 <textarea
-                  value={editFormData.address}
-                  onChange={(e) => setEditFormData({ ...editFormData, address: e.target.value })}
+                  value={editFormData.complete_address}
+                  onChange={(e) => setEditFormData({ ...editFormData, complete_address: e.target.value })}
                   className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40 h-24"
                 />
               </div>
@@ -719,8 +632,8 @@ export default function PatientView({
         {(() => {
           const filteredPatients = patients.filter((p: any) => {
             if (statusFilter === 'All') return true
-            if (statusFilter === 'Discontinued') return p.service_end_date != null
-            if (statusFilter === 'Active') return p.status === 'Active' && !p.service_end_date
+            if (statusFilter === 'Discontinued') return p.end_date != null
+            if (statusFilter === 'Active') return p.status === 'Active' && !p.end_date
             return p.status === statusFilter
           })
           return filteredPatients.length === 0 ? (
@@ -757,7 +670,7 @@ export default function PatientView({
                         >
                           <Pencil size={14} />
                         </button>
-                        {!patient.service_end_date ? (
+                        {!patient.end_date ? (
                           <button
                             onClick={() => {
                               setSelectedPatientForEndService(patient)
@@ -777,9 +690,9 @@ export default function PatientView({
                               try {
                                 await patientService.updatePatient(patient.id, {
                                   status: 'Active',
-                                  service_end_date: null,
-                                  service_end_reason: null,
-                                  service_end_notes: null,
+                                  end_date: null,
+                                  end_reason: null,
+                                  end_notes: null,
                                 })
                                 loadPatients()
                               } catch (err) {
@@ -810,14 +723,14 @@ export default function PatientView({
                         <span
                           className={cn(
                             'px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest border',
-                            patient.service_end_date
+                            patient.end_date
                               ? 'bg-red-50 dark:bg-red-950 text-red-600 dark:text-red-400 border-red-500/30 dark:border-red-800'
                               : patient.status === 'Active'
                                 ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
                                 : 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-300 border-blue-200 dark:border-blue-800'
                           )}
                         >
-                          {patient.service_end_date ? 'DISCONTINUED' : patient.status}
+                          {patient.end_date ? 'DISCONTINUED' : patient.status}
                         </span>
                       </div>
                     </div>
@@ -829,7 +742,7 @@ export default function PatientView({
                         Monthly Package
                       </p>
                       <p className="text-lg font-mono font-bold text-emerald-600 dark:text-emerald-300 tracking-tighter">
-                        PKR {(patient.billing_rate || 0).toLocaleString()}
+                        PKR {(patient.monthly_package_pkr || 0).toLocaleString()}
                       </p>
                     </div>
                     <div className="h-8 w-px bg-gray-50 dark:bg-neutral-800/80 hidden md:block"></div>
@@ -1221,7 +1134,7 @@ export default function PatientView({
                         e.stopPropagation()
                         await patientInvoiceService.generateInvoice(
                           patient.id,
-                          patient.billing_rate
+                          patient.monthly_package_pkr
                         )
                         const refreshed = await patientInvoiceService.getInvoicesForPatient(
                           patient.id
@@ -1684,9 +1597,9 @@ export default function PatientView({
                     try {
                       await patientService.updatePatient(selectedPatientForEndService.id, {
                         status: 'Cancelled',
-                        service_end_date: endServiceDate,
-                        service_end_reason: endServiceReason,
-                        service_end_notes: endServiceNotes || null,
+                        end_date: endServiceDate,
+                        end_reason: endServiceReason,
+                        end_notes: endServiceNotes || null,
                       })
                       await shiftService.unassignPatientShifts(selectedPatientForEndService.id)
                       await patientInvoiceService.cancelUnpaidInvoices(

@@ -3,25 +3,20 @@ import type { InvoiceStatus, PatientInvoice } from '../types'
 
 export interface Patient {
   id?: string
-  full_name: string
+  patient_name: string
   cnic?: string
-  contact: string
-  gender?: string
-  marital_status?: string
-  date_of_birth?: string
+  mobile_number?: string
   district: string
-  address?: string
+  complete_address?: string
   service_type: string
   service_duration?: string
-  billing_rate: number
+  monthly_package_pkr: number
   status: 'Active' | 'Pending' | 'Completed' | 'Cancelled'
-  guardian_name?: string
-  guardian_contact?: string
+  full_name?: string
   start_date?: string
   end_date?: string
-  service_end_date?: string | null
-  service_end_reason?: string | null
-  service_end_notes?: string | null
+  end_reason?: string | null
+  end_notes?: string | null
 }
 
 export const patientService = {
