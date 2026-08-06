@@ -1125,7 +1125,7 @@ export default function PatientView({
                         const unpaid = patientInvs.find((i) => i.status === 'Unpaid')
                         return unpaid ? (
                           <span className="text-amber-600 dark:text-amber-400 ml-2">
-                            — PKR {unpaid.amount.toLocaleString()} • Unpaid
+                            — PKR {(unpaid.amount ?? 0).toLocaleString()} • Unpaid
                           </span>
                         ) : null
                       })()}
@@ -1133,14 +1133,20 @@ export default function PatientView({
                     <button
                       onClick={async (e) => {
                         e.stopPropagation()
-                        await patientInvoiceService.generateInvoice(
-                          patient.id,
-                          patient.monthly_package_pkr
-                        )
-                        const refreshed = await patientInvoiceService.getInvoicesForPatient(
-                          patient.id
-                        )
-                        setInvoices((prev) => ({ ...prev, [patient.id]: refreshed }))
+                        try {
+                          await patientInvoiceService.generateInvoice(
+                            patient.id,
+                            patient.monthly_package_pkr
+                          )
+                          const refreshed = await patientInvoiceService.getInvoicesForPatient(
+                            patient.id
+                          )
+                          setInvoices((prev) => ({ ...prev, [patient.id]: refreshed }))
+                        } catch (err) {
+                          alert(
+                            err instanceof Error ? err.message : 'Failed to generate invoice'
+                          )
+                        }
                       }}
                       className="text-[9px] px-3 py-1.5 bg-gray-50 dark:bg-neutral-800/80 hover:bg-gray-100 dark:hover:bg-neutral-800 dark:bg-neutral-800 rounded-lg border border-gray-200 dark:border-neutral-700 transition-colors"
                     >
@@ -1165,7 +1171,7 @@ export default function PatientView({
                                 {formatPeriod(inv.period_start, inv.period_end)}
                               </span>
                               <span className="font-mono font-bold text-emerald-600 dark:text-emerald-300">
-                                PKR {inv.amount.toLocaleString()}
+                                PKR {(inv.amount ?? 0).toLocaleString()}
                               </span>
                             </div>
                             <div className="flex items-center gap-3">
@@ -1184,11 +1190,11 @@ export default function PatientView({
                                   </span>
                                   <button
                                     onClick={async () => {
-                                      if (
-                                        !confirm(
-                                          `Mark invoice for PKR ${inv.amount.toLocaleString()} as PAID?`
+                                        if (
+                                          !confirm(
+                                            `Mark invoice for PKR ${(inv.amount ?? 0).toLocaleString()} as PAID?`
+                                          )
                                         )
-                                      )
                                         return
                                       await patientInvoiceService.markAsPaid(inv.id)
                                       const refreshed =
@@ -1212,7 +1218,7 @@ export default function PatientView({
                                       const msg = encodeURIComponent(
                                         `HMSP Digital Invoice — #${inv.id.slice(0, 8).toUpperCase()}\n\n` +
                                           `Dear ${patient.full_name}, your invoice for home medical services is ready.\n\n` +
-                                          `Amount: PKR ${inv.amount.toLocaleString()}\n` +
+                                          `Amount: PKR ${(inv.amount ?? 0).toLocaleString()}\n` +
                                           `Period: ${new Date(inv.period_start).toLocaleDateString()} to ${new Date(inv.period_end).toLocaleDateString()}\n\n` +
                                           `View & Download: ${invoiceUrl}\n\n` +
                                           `Please settle the payment and notify the agency.`

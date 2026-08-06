@@ -148,6 +148,9 @@ export const patientInvoiceService = {
   },
 
   async generateInvoice(patientId: string, patientBillingRate: number) {
+    if (!patientBillingRate || isNaN(patientBillingRate)) {
+      throw new Error('Patient has no monthly package rate — set it before generating an invoice')
+    }
     const { periodStart, periodEnd } = getCurrentPeriod()
     const amount = patientBillingRate / 2
 
