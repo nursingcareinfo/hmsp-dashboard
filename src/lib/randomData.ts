@@ -59,6 +59,16 @@ const districts = [
   'FB AREA',
   'GULISTAN-E-JAUHAR',
 ]
+// Karachi district divisions as used by the PatientView register form select.
+const PATIENT_DISTRICTS = [
+  'South',
+  'East',
+  'West',
+  'Central',
+  'Malir',
+  'Korangi',
+  'Keamari',
+]
 const categories: Array<'Nurse' | 'Care Taker' | 'Attendant' | 'Babysitter'> = [
   'Nurse',
   'Care Taker',
@@ -164,7 +174,9 @@ export function fillRandomPatient(formData: Record<string, unknown>): Record<str
     full_name: randomName(),
     cnic: randomCNIC(),
     mobile_number: randomPhone(),
-    district: pick(districts),
+    // Must match the register form's <select> options (Karachi divisions) —
+    // the legacy UPPERCASE names left the required district select empty.
+    district: pick(PATIENT_DISTRICTS),
     complete_address: randomAddress(),
     service_type: pick(['12h_day', '12h_night', '24h']),
     monthly_package_pkr: String(randInt(15, 60) * 500),
