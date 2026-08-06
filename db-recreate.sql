@@ -39,8 +39,6 @@ CREATE TABLE employees (
   experience_years NUMERIC(4, 2),
   shift_preference TEXT,
   expected_salary_pkr NUMERIC(12, 2),
-  day_shift_rate NUMERIC(12, 2) DEFAULT 0,
-  night_shift_rate NUMERIC(12, 2) DEFAULT 0,
   preferred_payment_method TEXT,
   bank_info JSONB,
   is_active BOOLEAN DEFAULT true,

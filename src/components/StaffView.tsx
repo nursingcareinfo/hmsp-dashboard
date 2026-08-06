@@ -64,8 +64,6 @@ export default function StaffView({
     position_applied: '',
     experience_years: 0,
     expected_salary_pkr: 0,
-    day_shift_rate: 0,
-    night_shift_rate: 0,
     is_active: true,
     is_available: true,
   })
@@ -85,8 +83,6 @@ export default function StaffView({
     position_applied: '',
     experience_years: 0,
     expected_salary_pkr: 0,
-    day_shift_rate: 0,
-    night_shift_rate: 0,
     is_active: true,
     is_available: true,
   })
@@ -1584,8 +1580,8 @@ export default function StaffView({
           staffId={selectedStaffForAttendance.id}
           staffName={selectedStaffForAttendance.full_name}
           empNo={selectedStaffForAttendance.emp_no}
-          dayRate={selectedStaffForAttendance.day_shift_rate}
-          nightRate={selectedStaffForAttendance.night_shift_rate}
+          dayRate={undefined}
+          nightRate={undefined}
           expectedSalary={selectedStaffForAttendance.expected_salary_pkr}
           onClose={() => setSelectedStaffForAttendance(null)}
         />

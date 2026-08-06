@@ -123,10 +123,6 @@ function randomSalary(): number {
   return randInt(5, 18) * 5000 // 10k - 90k
 }
 
-function randomShiftRate(): number {
-  return randInt(6, 15) * 500 // 3k - 7.5k
-}
-
 /** Fill the Staff Registration form state with random test data. */
 export function fillRandomStaff(formData: Record<string, unknown>): Record<string, unknown> {
   const name = randomName()
@@ -144,8 +140,6 @@ export function fillRandomStaff(formData: Record<string, unknown>): Record<strin
     position_applied: pick(positions),
     experience_years: randInt(1, 15),
     expected_salary_pkr: randomSalary(),
-    day_shift_rate: randomShiftRate(),
-    night_shift_rate: randomShiftRate(),
     is_active: true,
     is_available: true,
   }
