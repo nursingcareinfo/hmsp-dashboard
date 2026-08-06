@@ -92,6 +92,22 @@ export const staffService = {
   },
 
   async createStaff(staffData: Partial<Staff>) {
+    // Normalize phone numbers to the employees.phone_primary CHECK format
+    // (+92 3XX XXXXXXX). The UI formatter produces 03XX-XXXXXXX which fails it.
+    const phoneDigits = String(staffData.phone_primary || '').replace(/\D/g, '')
+    if (phoneDigits.length === 11 && phoneDigits.startsWith('03')) {
+      staffData.phone_primary = `+92 ${phoneDigits.slice(1, 4)} ${phoneDigits.slice(4)}`
+    } else if (phoneDigits.length === 12 && phoneDigits.startsWith('92')) {
+      staffData.phone_primary = `+92 ${phoneDigits.slice(2, 5)} ${phoneDigits.slice(5)}`
+    }
+    if (staffData.whatsapp_number && !staffData.whatsapp_number.startsWith('+')) {
+      const waDigits = String(staffData.whatsapp_number).replace(/\D/g, '')
+      staffData.whatsapp_number =
+        waDigits.length >= 11
+          ? `+92 ${waDigits.slice(-10, -7)} ${waDigits.slice(-7)}`
+          : staffData.whatsapp_number
+    }
+
     console.log('StaffService: createStaff called with data:', staffData)
     const cnic = staffData.cnic_number
     console.log('StaffService: CNIC to check:', cnic)
