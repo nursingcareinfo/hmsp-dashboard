@@ -125,7 +125,7 @@ export default function LoginView() {
         </div>
 
         <p className="text-[9px] text-gray-500 dark:text-neutral-400 text-center mt-6 uppercase tracking-widest font-bold">
-          HMSP Dashboard v2.0 &middot; Karachi
+          Home Care Nursing Agency Management System v2.0 &middot; Karachi
         </p>
       </motion.div>
     </div>

@@ -11,6 +11,7 @@ import {
   ClipboardList,
   Wallet,
   MessageSquare,
+  MessageCircle,
   Brain,
   ChevronRight,
   Menu,
@@ -23,6 +24,13 @@ import {
 import { motion, AnimatePresence } from 'motion/react'
 import { cn } from './lib/utils'
 import { supabase } from './lib/supabase'
+
+// Direct WhatsApp contact for clients/prospects.
+const WHATSAPP_NUMBER = '923433536953'
+const WHATSAPP_MESSAGE =
+  'Only for home care agency owners! No more manual entries on register, no more mistakes. ' +
+  'Patient billing and invoices, equipment rental management, nursing staff duties ' +
+  'assignment, attendance, salaries — everything is automated. And this system is FREE.'
 
 type View =
   | 'dashboard'
@@ -135,7 +143,13 @@ function AppContent() {
               animate={{ opacity: 1 }}
               className="font-black text-xl tracking-tighter text-gray-800 dark:text-neutral-100"
             >
-              HMSP <span className="text-emerald-600 dark:text-emerald-300">HQ</span>
+              <span className="leading-tight">
+                Home Care{' '}
+                <span className="text-emerald-600 dark:text-emerald-300">Nursing Agency</span>
+                <span className="block text-[9px] uppercase tracking-[0.2em] text-[var(--color-ink-dim)] mt-0.5">
+                  Management System
+                </span>
+              </span>
             </motion.div>
           )}
           <button
@@ -194,11 +208,13 @@ function AppContent() {
           <header className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center border-b border-[var(--color-border)] pb-6 gap-4">
             <div>
               <h1 className="text-xl md:text-2xl font-black tracking-tighter text-gray-800 dark:text-neutral-100">
-                HMSP{' '}
+                Home Care{' '}
                 <span className="text-emerald-600 dark:text-emerald-300 uppercase">
-                  High-Performance
-                </span>{' '}
-                Ledger
+                  Nursing Agency
+                </span>
+                <span className="block text-sm md:text-base font-bold text-[var(--color-ink-dim)] mt-1 uppercase tracking-wide">
+                  Management System
+                </span>
               </h1>
               <p className="text-[10px] text-[var(--color-ink-dim)] uppercase tracking-widest mt-1 font-bold flex items-center gap-2">
                 Manual Management • Karachi HQ • Karachi-S1
@@ -339,6 +355,17 @@ function AppContent() {
           ))}
         </div>
       </main>
+
+      {/* WhatsApp Contact FAB */}
+      <a
+        href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-40 md:bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-[#25D366] hover:bg-[#1fb958] text-white shadow-lg dark:shadow-none shadow-emerald-600/20 flex items-center justify-center transition-all hover:scale-105"
+        aria-label="Contact the owner on WhatsApp"
+      >
+        <MessageCircle size={22} />
+      </a>
 
       {/* Share Intake FAB */}
       <button
