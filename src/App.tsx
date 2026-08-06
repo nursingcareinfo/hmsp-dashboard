@@ -140,6 +140,7 @@ function AppContent() {
           )}
           <button
             onClick={() => setSidebarOpen(!isSidebarOpen)}
+            aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
             className="p-2 hover:bg-gray-100 dark:hover:bg-neutral-800 rounded-lg transition-colors text-[var(--color-ink-dim)]"
           >
             {isSidebarOpen ? <X size={18} /> : <Menu size={18} />}
