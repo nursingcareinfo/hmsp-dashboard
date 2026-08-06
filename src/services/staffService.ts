@@ -128,16 +128,28 @@ export const staffService = {
       }
     }
 
-    // New staff: get next emp_no from the DB sequence (atomic, race-safe)
+    // New staff: get next emp_no from the DB sequence (atomic, race-safe).
+    // If the get_next_emp_no function is missing on this project (schema
+    // drift), fall back to computing the next number client-side.
     if (!staffData.emp_no) {
       const { data: nextNo, error: seqErr } = await supabase.rpc('get_next_emp_no')
 
       if (seqErr) {
-        console.error('StaffService: Error fetching next emp_no:', seqErr)
-        throw seqErr
+        console.warn('StaffService: get_next_emp_no unavailable, computing client-side:', seqErr)
+        const { data: latest, error: listErr } = await supabase
+          .from('employees')
+          .select('emp_no')
+          .order('emp_no', { ascending: false })
+          .limit(1)
+        if (!listErr && latest && latest.length > 0 && latest[0].emp_no) {
+          const m = String(latest[0].emp_no).match(/(\d+)$/)
+          staffData.emp_no = `NC-KHI-${String(m ? parseInt(m[1], 10) + 1 : 1).padStart(4, '0')}`
+        } else {
+          staffData.emp_no = 'NC-KHI-0001'
+        }
+      } else {
+        staffData.emp_no = (nextNo as string) || 'NC-KHI-0001'
       }
-
-      staffData.emp_no = (nextNo as string) || `NC-KHI-0001`
     }
 
     console.log('StaffService: Inserting new staff data:', staffData)
