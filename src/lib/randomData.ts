@@ -148,7 +148,8 @@ export function fillRandomStaff(formData: Record<string, unknown>): Record<strin
     position_applied: pick(positions),
     experience_years: randInt(1, 15),
     // The staff form edits the per-shift rate and stores monthly (×30).
-    perShiftRate: Math.round(randomSalary() / 30),
+    // Round to a clean multiple so the value passes any number-input step.
+    perShiftRate: Math.round(randomSalary() / 30 / 50) * 50,
     is_active: true,
     is_available: true,
   }

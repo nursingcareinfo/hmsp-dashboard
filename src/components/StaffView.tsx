@@ -788,7 +788,6 @@ export default function StaffView({ setActiveView, onSelectPatient }: StaffViewP
         <input
           type="number"
           min={0}
-          step={50}
           className={inputClass}
           value={data.perShiftRate || ''}
           onChange={(e) => set('perShiftRate', Number(e.target.value) || 0)}
