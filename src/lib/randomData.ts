@@ -72,12 +72,6 @@ const positions = [
   'Attendant',
   'Babysitter',
 ]
-const serviceTypes: Array<'12h_day' | '12h_night' | 'full_day'> = [
-  '12h_day',
-  '12h_night',
-  'full_day',
-]
-
 function pick<T>(arr: readonly T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
@@ -158,22 +152,18 @@ export function fillRandomStaff(formData: Record<string, unknown>): Record<strin
 }
 
 /** Fill the Patient Registration form state with random test data. */
+// NOTE: must only return columns that exist on the live `patients` table —
+// legacy keys (contact/address/billing_rate/guardian_name/...) made the
+// insert fail with PGRST204. Keep in sync with the register form state.
 export function fillRandomPatient(formData: Record<string, unknown>): Record<string, unknown> {
-  const name = randomName()
   return {
-    ...formData,
-    full_name: name,
+    full_name: randomName(),
     cnic: randomCNIC(),
-    contact: randomPhone(),
-    gender: Math.random() > 0.5 ? 'Male' : 'Female',
-    marital_status: pick(['Single', 'Married', 'Widowed']),
-    date_of_birth: randomDOB(),
+    mobile_number: randomPhone(),
     district: pick(districts),
-    address: randomAddress(),
-    service_type: pick(serviceTypes),
-    billing_rate: String(randInt(15, 60) * 500),
-    guardian_name: `${pick(surnames)} ${pick(surnames)}`,
-    guardian_contact: randomPhone(),
+    complete_address: randomAddress(),
+    service_type: pick(['12h_day', '12h_night', '24h']),
+    monthly_package_pkr: String(randInt(15, 60) * 500),
     status: 'Pending',
   }
 }
