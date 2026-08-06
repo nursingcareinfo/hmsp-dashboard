@@ -267,9 +267,12 @@ export default function PatientView({
         setIsSubmitting(false)
         return
       }
-      const { start_date, ...patientData } = formData
+      // patients.full_name is a GENERATED column (derived from patient_name) —
+      // inserts must target patient_name, not full_name (edit flow already does).
+      const { start_date, full_name, ...patientData } = formData
       await patientService.createPatient({
         ...patientData,
+        patient_name: full_name,
         monthly_package_pkr: monthlyPkg || 0,
       })
       alert('Patient registered successfully!')
