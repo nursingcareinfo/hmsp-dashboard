@@ -15,6 +15,21 @@ export default defineConfig(({ mode }) => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          // Cache-stable vendor chunks: framework code changes rarely, so it
+          // should not invalidate app-code caches (or vice versa). Heavy libs
+          // (recharts, @google/genai) already live in lazy view chunks.
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return
+            if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return 'react-vendor'
+            if (id.includes('node_modules/@supabase/')) return 'supabase'
+            if (id.includes('node_modules/motion/') || id.includes('node_modules/framer-motion/')) return 'motion'
+          },
+        },
+      },
+    },
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
     },

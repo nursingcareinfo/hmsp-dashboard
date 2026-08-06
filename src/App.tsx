@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react'
+import React, { lazy, Suspense, useState, useEffect } from 'react'
 import {
   LayoutDashboard,
   Users,
@@ -12,7 +12,6 @@ import {
   Wallet,
   MessageSquare,
   Brain,
-  Settings,
   ChevronRight,
   Menu,
   X,
@@ -37,18 +36,18 @@ type View =
   | 'patient_intakes'
   | 'staff_intakes'
 
-import StaffView from './components/StaffView'
-import OCRView from './components/OCRView'
-import PatientView from './components/PatientView'
-import MatchmakerView from './components/MatchmakerView'
-import LedgerView from './components/LedgerView'
-import DashboardView from './components/DashboardView'
-import CalendarView from './components/CalendarView'
-import FinanceView from './components/FinanceView'
-import MemoryView from './components/MemoryView'
-import AttendanceView from './components/AttendanceView'
-import PatientIntakesView from './components/PatientIntakesView'
-import StaffIntakesView from './components/StaffIntakesView'
+// Views are lazy-loaded so heavy deps (recharts, @google/genai) ship in
+// per-view chunks instead of one 1.5 MB initial bundle.
+const StaffView = lazy(() => import('./components/StaffView'))
+const OCRView = lazy(() => import('./components/OCRView'))
+const PatientView = lazy(() => import('./components/PatientView'))
+const MatchmakerView = lazy(() => import('./components/MatchmakerView'))
+const DashboardView = lazy(() => import('./components/DashboardView'))
+const FinanceView = lazy(() => import('./components/FinanceView'))
+const MemoryView = lazy(() => import('./components/MemoryView'))
+const AttendanceView = lazy(() => import('./components/AttendanceView'))
+const PatientIntakesView = lazy(() => import('./components/PatientIntakesView'))
+const StaffIntakesView = lazy(() => import('./components/StaffIntakesView'))
 import { AuthProvider, useAuth } from './context/AuthContext'
 import ShareIntakeModal from './components/ShareIntakeModal'
 import { ErrorBoundary } from './components/ErrorBoundary'
@@ -244,6 +243,13 @@ function AppContent() {
               transition={{ duration: 0.2 }}
               className="h-full"
             >
+              <Suspense
+                fallback={
+                  <div className="flex items-center justify-center py-24">
+                    <div className="w-6 h-6 border-2 border-emerald-500/30 dark:border-emerald-800 border-t-emerald-400 rounded-full animate-spin" />
+                  </div>
+                }
+              >
               {activeView === 'dashboard' && (
                 <ErrorBoundary>
                   <DashboardView setActiveView={setActiveView} />
@@ -308,6 +314,7 @@ function AppContent() {
                   <p>Broadcast engagement and contact label tracking coming in Phase 2.</p>
                 </div>
               )}
+              </Suspense>
             </motion.div>
           </AnimatePresence>
         </ErrorBoundary>
