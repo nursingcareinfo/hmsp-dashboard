@@ -1,3 +1,5 @@
+import { KARACHI_AREAS } from '../constants'
+
 /**
  * Temporary random test data generators for staff & patient forms.
  *
@@ -95,7 +97,10 @@ function randomCNIC(): string {
 
 function randomPhone(): string {
   const prefixes = ['300', '321', '333', '334', '345', '347', '348']
-  return `03${pick(prefixes)}-${randInt(1000000, 9999999)}`
+  // 11 digits total: 03XX-XXXXXXX — matches formatPhoneInput + DB CHECK after
+  // normalization. (`03${prefix}` would produce an invalid 12-digit 033XX...
+  // number that violates employees.phone_primary_check.)
+  return `0${pick(prefixes)}-${randInt(1000000, 9999999)}`
 }
 
 function randomDOB(): string {
@@ -135,7 +140,10 @@ export function fillRandomStaff(formData: Record<string, unknown>): Record<strin
     marital_status: pick(['Single', 'Married', 'Widowed']),
     religion: pick(religions),
     dob: randomDOB(),
-    district: pick(districts),
+    // Must be a KARACHI_AREAS value — the form <select> has no matching option
+    // for the legacy UPPERCASE names below, which left district empty and
+    // blocked submission with "required" validation.
+    district: pick(KARACHI_AREAS),
     category: pick(categories),
     position_applied: pick(positions),
     experience_years: randInt(1, 15),
