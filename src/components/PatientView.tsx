@@ -147,7 +147,8 @@ export default function PatientView({
       for (const intake of intakes) {
         const match = patientsList.find(
           (p: any) =>
-            (p.mobile_number && intake.mobile === p.mobile_number) || (p.cnic && intake.cnic === p.cnic)
+            (p.mobile_number && intake.mobile === p.mobile_number) ||
+            (p.cnic && intake.cnic === p.cnic)
         )
         if (match && intake.terms_accepted) {
           status[match.id] = true
@@ -455,9 +456,7 @@ export default function PatientView({
                 type="number"
                 required
                 value={formData.monthly_package_pkr}
-                onChange={(e) =>
-                  setFormData({ ...formData, monthly_package_pkr: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, monthly_package_pkr: e.target.value })}
                 className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-emerald-600 dark:text-emerald-300 text-sm font-mono outline-none focus:border-emerald-500/40"
               />
             </div>
@@ -501,7 +500,9 @@ export default function PatientView({
                 <input
                   required
                   value={editFormData.patient_name}
-                  onChange={(e) => setEditFormData({ ...editFormData, patient_name: e.target.value })}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, patient_name: e.target.value })
+                  }
                   className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40"
                 />
               </div>
@@ -522,7 +523,9 @@ export default function PatientView({
                 <input
                   required
                   value={editFormData.mobile_number}
-                  onChange={(e) => setEditFormData({ ...editFormData, mobile_number: e.target.value })}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, mobile_number: e.target.value })
+                  }
                   className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm font-mono outline-none focus:border-emerald-500/40"
                 />
               </div>
@@ -605,7 +608,9 @@ export default function PatientView({
                 </label>
                 <textarea
                   value={editFormData.complete_address}
-                  onChange={(e) => setEditFormData({ ...editFormData, complete_address: e.target.value })}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, complete_address: e.target.value })
+                  }
                   className="w-full bg-white dark:bg-neutral-900 border border-gray-200 dark:border-neutral-700 rounded-xl px-4 py-3 text-gray-800 dark:text-neutral-100 text-sm outline-none focus:border-emerald-500/40 h-24"
                 />
               </div>
@@ -1143,9 +1148,7 @@ export default function PatientView({
                           )
                           setInvoices((prev) => ({ ...prev, [patient.id]: refreshed }))
                         } catch (err) {
-                          alert(
-                            err instanceof Error ? err.message : 'Failed to generate invoice'
-                          )
+                          alert(err instanceof Error ? err.message : 'Failed to generate invoice')
                         }
                       }}
                       className="text-[9px] px-3 py-1.5 bg-gray-50 dark:bg-neutral-800/80 hover:bg-gray-100 dark:hover:bg-neutral-800 dark:bg-neutral-800 rounded-lg border border-gray-200 dark:border-neutral-700 transition-colors"
@@ -1190,11 +1193,11 @@ export default function PatientView({
                                   </span>
                                   <button
                                     onClick={async () => {
-                                        if (
-                                          !confirm(
-                                            `Mark invoice for PKR ${(inv.amount ?? 0).toLocaleString()} as PAID?`
-                                          )
+                                      if (
+                                        !confirm(
+                                          `Mark invoice for PKR ${(inv.amount ?? 0).toLocaleString()} as PAID?`
                                         )
+                                      )
                                         return
                                       await patientInvoiceService.markAsPaid(inv.id)
                                       const refreshed =

@@ -250,70 +250,70 @@ function AppContent() {
                   </div>
                 }
               >
-              {activeView === 'dashboard' && (
-                <ErrorBoundary>
-                  <DashboardView setActiveView={setActiveView} />
-                </ErrorBoundary>
-              )}
-              {activeView === 'staff' && (
-                <ErrorBoundary>
-                  <StaffView
-                    setActiveView={setActiveView}
-                    onSelectPatient={setHighlightedPatientId}
-                  />
-                </ErrorBoundary>
-              )}
-              {activeView === 'ocr' && (
-                <ErrorBoundary>
-                  <OCRView />
-                </ErrorBoundary>
-              )}
-              {activeView === 'patients' && (
-                <ErrorBoundary>
-                  <PatientView
-                    highlightedPatientId={highlightedPatientId}
-                    onClearHighlight={() => setHighlightedPatientId(null)}
-                  />
-                </ErrorBoundary>
-              )}
-              {activeView === 'matchmaker' && (
-                <ErrorBoundary>
-                  <MatchmakerView />
-                </ErrorBoundary>
-              )}
-              {activeView === 'attendance' && (
-                <ErrorBoundary>
-                  <AttendanceView />
-                </ErrorBoundary>
-              )}
-              {activeView === 'memory' && (
-                <ErrorBoundary>
-                  <MemoryView />
-                </ErrorBoundary>
-              )}
-              {activeView === 'patient_intakes' && (
-                <ErrorBoundary>
-                  <PatientIntakesView />
-                </ErrorBoundary>
-              )}
-              {activeView === 'staff_intakes' && (
-                <ErrorBoundary>
-                  <StaffIntakesView />
-                </ErrorBoundary>
-              )}
-              {activeView === 'finance' && (
-                <ErrorBoundary>
-                  <FinanceView />
-                </ErrorBoundary>
-              )}
+                {activeView === 'dashboard' && (
+                  <ErrorBoundary>
+                    <DashboardView setActiveView={setActiveView} />
+                  </ErrorBoundary>
+                )}
+                {activeView === 'staff' && (
+                  <ErrorBoundary>
+                    <StaffView
+                      setActiveView={setActiveView}
+                      onSelectPatient={setHighlightedPatientId}
+                    />
+                  </ErrorBoundary>
+                )}
+                {activeView === 'ocr' && (
+                  <ErrorBoundary>
+                    <OCRView />
+                  </ErrorBoundary>
+                )}
+                {activeView === 'patients' && (
+                  <ErrorBoundary>
+                    <PatientView
+                      highlightedPatientId={highlightedPatientId}
+                      onClearHighlight={() => setHighlightedPatientId(null)}
+                    />
+                  </ErrorBoundary>
+                )}
+                {activeView === 'matchmaker' && (
+                  <ErrorBoundary>
+                    <MatchmakerView />
+                  </ErrorBoundary>
+                )}
+                {activeView === 'attendance' && (
+                  <ErrorBoundary>
+                    <AttendanceView />
+                  </ErrorBoundary>
+                )}
+                {activeView === 'memory' && (
+                  <ErrorBoundary>
+                    <MemoryView />
+                  </ErrorBoundary>
+                )}
+                {activeView === 'patient_intakes' && (
+                  <ErrorBoundary>
+                    <PatientIntakesView />
+                  </ErrorBoundary>
+                )}
+                {activeView === 'staff_intakes' && (
+                  <ErrorBoundary>
+                    <StaffIntakesView />
+                  </ErrorBoundary>
+                )}
+                {activeView === 'finance' && (
+                  <ErrorBoundary>
+                    <FinanceView />
+                  </ErrorBoundary>
+                )}
 
-              {activeView === 'whatsapp' && (
-                <div className="glass-card p-12 text-center opacity-50">
-                  <MessageSquare size={48} className="mx-auto mb-4" />
-                  <h2 className="text-xl font-medium">WhatsApp Analytics</h2>
-                  <p>Broadcast engagement and contact label tracking coming in Phase 2.</p>
-                </div>
-              )}
+                {activeView === 'whatsapp' && (
+                  <div className="glass-card p-12 text-center opacity-50">
+                    <MessageSquare size={48} className="mx-auto mb-4" />
+                    <h2 className="text-xl font-medium">WhatsApp Analytics</h2>
+                    <p>Broadcast engagement and contact label tracking coming in Phase 2.</p>
+                  </div>
+                )}
               </Suspense>
             </motion.div>
           </AnimatePresence>
