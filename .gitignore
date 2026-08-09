@@ -15,3 +15,11 @@ gha-creds-*.json
 
 # Supabase CLI auto-generated metadata
 supabase/.temp/
+
+# Playwright MCP session snapshots + QA screenshots
+.playwright-mcp/
+.screenshots/
+*.png
+*.jpeg
+*.jpg
+build_log.txt
