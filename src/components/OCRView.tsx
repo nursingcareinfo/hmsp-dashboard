@@ -283,7 +283,7 @@ export default function OCRView() {
                     : 'bg-gray-50 dark:bg-neutral-800/80 text-gray-400 dark:text-neutral-500 hover:text-gray-800 dark:text-neutral-100 border border-gray-200 dark:border-neutral-700'
                 )}
               >
-                AI Batch Upload
+                Upload PNC and CV for Automatic Staff Entries
               </button>
             </div>
 
